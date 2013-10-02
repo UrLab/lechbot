@@ -15,8 +15,13 @@ CHANNELS_PROD = ['#urlab']
 CHANNELS_DEV  = ['#titoufaitdestests']
 CHANNELS = PRODUCTION ? CHANNELS_PROD : CHANNELS_DEV
 
-URLAB_WIKI_USERNAME = "TitouBot"
-URLAB_WIKI_PASSWORD = "l3chb0t"
+begin
+  require './config'
+rescue Exception
+  $stderr.puts "Missing config.rb !"
+  exit 1
+end
+
 URLAB_WIKI_MOTDURL  = "http://wiki.urlab.be/#{PRODUCTION ? 'MusicOfTheDay' : 'User:TitouBot'}"
 
 MUSIC_PROVIDERS = [
