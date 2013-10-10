@@ -104,6 +104,13 @@ lechbot = Cinch::Bot.new do
       msg.reply "@#{user}: «#{text}»"
   end
   
+  on :message, /^\!joke$/ do |msg|
+    page = Nokogiri::HTML open("http://www.blaguesdegeek.com/aleatoire.html")
+    joke = page.css('.blague').first
+    joketext = joke.css('.contenu').first.text.gsub(/[\r\n]+|<br>/,'; ')
+    msg.reply joketext
+  end
+
   #Explain the meaning of Lechbot's life
   on :message, /^\!lechbot/ do |msg|
     msg.reply "Hello, I'm LechBot ! I collect musics links passing on this chan and I can give you a random one with `!music [all]`"
