@@ -22,6 +22,12 @@ rescue Exception
   exit 1
 end
 
+class Time
+  def same_day? other
+    day == other.day && month == other.month && year == other.year
+  end
+end
+
 URLAB_WIKI_MOTDURL  = "http://wiki.urlab.be/#{PRODUCTION ? 'MusicOfTheDay' : 'User:TitouBot'}"
 
 MUSIC_PROVIDERS = [
@@ -37,6 +43,7 @@ lechbot = Cinch::Bot.new do
     conf.channels = CHANNELS
     conf.nick = Nick
     conf.realname = Nick
+    @last_motd = nil
   end
   
   helpers do
@@ -51,9 +58,11 @@ lechbot = Cinch::Bot.new do
   on :topic do |m|
     return unless m.channel.name == CHANNELS.first
     
-    unless m.message =~ /^\s*(https?:\/\/[^\s]+)/
+    if not m.message =~ /^\s*(https?:\/\/[^\s]+)/
       #Say that we didn't find any url
       m.reply "Hey ! You changed topic, but I didn't find any URL in its beginning =/"
+    elsif @last_motd && @last_motd.
+      m.reply "The MotD has already changed today"
     else
       url = URI.parse $1
       if MUSIC_PROVIDERS.include? url.host
@@ -87,6 +96,7 @@ lechbot = Cinch::Bot.new do
       
       #Say something on the chan
       m.reply "Updated #{URLAB_WIKI_MOTDURL} page with #{url} from #{m.user} !"
+      @last_motd = Time.now
     end
   end
   
