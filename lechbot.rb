@@ -61,7 +61,7 @@ lechbot = Cinch::Bot.new do
     if not m.message =~ /^\s*(https?:\/\/[^\s]+)/
       #Say that we didn't find any url
       m.reply "Hey ! You changed topic, but I didn't find any URL in its beginning =/"
-    elsif @last_motd && @last_motd.
+    elsif @last_motd && @last_motd.same_day?(Time.now)
       m.reply "The MotD has already changed today"
     else
       url = URI.parse $1
