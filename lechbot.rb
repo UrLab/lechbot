@@ -181,6 +181,11 @@ lechbot = Cinch::Bot.new do
     event_of_the_day = `egrep -h "$(date +"%m/%d|%b* %d")" /usr/share/calendar/* | cut -f 2`
     bot.quit event_of_the_day.split(/\n/).shuffle.pop
   end
+
+  #Cool stuff
+  on :action, /^slaps #{Nick}/ do |msg|
+    msg.reply "Oh oui, encore."
+  end
 end
 
 
