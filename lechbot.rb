@@ -2,11 +2,12 @@
 
 require 'cinch'
 require 'mechanize'
-require './models'
+require "./models"
 require 'nokogiri'
 require 'open-uri'
 require 'json'
 require 'rufus/scheduler'
+require 'twitter'
 
 PRODUCTION = false
 
@@ -181,6 +182,21 @@ lechbot = Cinch::Bot.new do
   on :message, /^tg #{Nick}/i do |msg|
     event_of_the_day = `egrep -h "$(date +"%m/%d|%b* %d")" /usr/share/calendar/* | cut -f 2`
     bot.quit event_of_the_day.split(/\n/).shuffle.pop
+  end
+
+  #Twitter
+  on :message, /^\!twitter (.*)/ do |msg, tweet|
+    Twitter.update(tweet)
+    msg.reply "Pinky Pinky"
+  end
+  on :message, /^\!tweet (.*)/ do |msg, tweet|
+    Twitter.update(tweet)
+    msg.reply "Pinky Pinky"
+  end
+
+  #Cool stuff
+  on :action, /^slaps #{Nick}/ do |msg|
+    msg.reply "Oh yes, more."
   end
 end
 
