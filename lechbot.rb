@@ -8,7 +8,7 @@ require 'open-uri'
 require 'json'
 require 'rufus/scheduler'
 
-PRODUCTION = true
+PRODUCTION = false
 
 #First channel has authority on topic change, !open/!close/!status
 CHANNELS_PROD = ['#urlab']
@@ -29,6 +29,7 @@ class Time
 end
 
 URLAB_WIKI_MOTDURL  = "http://wiki.urlab.be/#{PRODUCTION ? 'MusicOfTheDay' : 'User:TitouBot'}"
+WIKI_CHANGES_URL = URI.parse "http://wiki.urlab.be/Special:RecentChanges"
 
 MUSIC_PROVIDERS = [
   'soundcloud.com', 
@@ -189,12 +190,12 @@ lechbot = Cinch::Bot.new do
 end
 
 
-### Trash reminder ###
+### CRONs ###
 now = Time.now
 wed = Time.new now.year, now.month, now.day, 20   #Today 20h
 wed += 86400 until wed.wednesday? && wed>Time.now
 
-scheduler = Rufus::Scheduler.start_new
+scheduler = Rufus::Scheduler.new
 scheduler.every '1w', first_at:wed do
   pamela_data = JSON.parse open("http://pamela.urlab.be/mac.json").read
   people = pamela_data['color'] + pamela_data['grey']
@@ -203,6 +204,31 @@ scheduler.every '1w', first_at:wed do
     randomly_chosen = people.shuffle.first 
     lechbot.channels.first.send "Hey #{randomly_chosen} ! Could you PLEAAAASE take out the trash ?"
   end
+end
+
+scheduler.every '1m' do 
+  puts "START FINDING CHANGES ON WIKI"
+  page = Nokogiri::HTML open(WIKI_CHANGES_URL.to_s).read
+  difflinks = page.css '#mw-content-text .special a[tabindex]'
+  changed = []
+
+  difflinks.each do |link|
+    if link.text == "diff"
+      href = URI.parse "#{WIKI_CHANGES_URL.scheme}://#{WIKI_CHANGES_URL.host}#{link.attr 'href'}"
+      if href.query =~ /diff=(\d+)/ && ! Wikichange.get($1)
+        diff_id = $1
+        page_name = href.query.gsub /.*title=([^&]+).*/, '\1'
+        if page_name != 'MusicOfTheDay'
+          changed << Wikichange.create(id:diff_id, url:href, name:page_name)
+        end
+      end
+    end
+  end
+  
+  changed.each do |ch|
+    lechbot.channels.first.send ch.to_s
+  end
+  puts "FOUND #{changed.length} changes. Goodbye"
 end
 ### ###
 

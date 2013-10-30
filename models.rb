@@ -32,5 +32,17 @@ class Music
   end
 end
 
+class Wikichange
+  include DataMapper::Resource
+  
+  property :id, Serial
+  property :url, URI
+  property :name, String
+  
+  def to_s
+    "Page #{name} changed #{url.to_s}"
+  end
+end
+
 DataMapper.finalize
 DataMapper.auto_upgrade!
