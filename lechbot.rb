@@ -29,7 +29,7 @@ class Time
 end
 
 URLAB_WIKI_MOTDURL  = "http://wiki.urlab.be/#{PRODUCTION ? 'MusicOfTheDay' : 'User:TitouBot'}"
-WIKI_CHANGES_URL = URI.parse "http://wiki.urlab.be/Special:RecentChanges"
+WIKI_CHANGES_URL = URI.parse "http://wiki.urlab.be/Special:RecentChanges?hideminor=1"
 
 MUSIC_PROVIDERS = [
   'soundcloud.com', 
