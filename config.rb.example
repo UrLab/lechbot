@@ -1,9 +1,9 @@
+PRODUCTION = false
+
 URLAB_WIKI_USERNAME = "username"
 URLAB_WIKI_PASSWORD = "password"
-Twitter.configure do |config|
-  config.consumer_key = YOUR_CONSUMER_KEY
-  config.consumer_secret = YOUR_CONSUMER_SECRET
-  config.oauth_token = YOUR_OAUTH_TOKEN
-  config.oauth_token_secret = YOUR_OAUTH_TOKEN_SECRET
-end
 
+TWITTER_CONSUMER_KEY = "your consumer key"
+TWITTER_CONSUMER_SECRET = "your consumer secret"
+TWITTER_OAUTH_TOKEN = "oauth token"
+TWITTER_OAUTH_SECRET = "oauth secret"

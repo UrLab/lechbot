@@ -9,19 +9,17 @@ require 'json'
 require 'rufus/scheduler'
 require 'twitter'
 
-PRODUCTION = false
-
-#First channel has authority on topic change, !open/!close/!status
-CHANNELS_PROD = ['#urlab']
-CHANNELS_DEV  = ['#titoufaitdestests']
-CHANNELS = PRODUCTION ? CHANNELS_PROD : CHANNELS_DEV
-
 begin
   require './config'
 rescue Exception
   $stderr.puts "Missing config.rb !"
   exit 1
 end
+
+#First channel has authority on topic change, !open/!close/!status
+CHANNELS_PROD = ['#urlab']
+CHANNELS_DEV  = ['#titoufaitdestests']
+CHANNELS = PRODUCTION ? CHANNELS_PROD : CHANNELS_DEV
 
 class Time
   def same_day? other
@@ -38,7 +36,7 @@ MUSIC_PROVIDERS = [
 ]
 
 lechbot = Cinch::Bot.new do
-  Nick = "LechBot"
+  Nick = PRODUCTION ? "LechBot" : "DechBot"
   
   configure do |conf|
     conf.server = "irc.freenode.org"
@@ -46,6 +44,13 @@ lechbot = Cinch::Bot.new do
     conf.nick = Nick
     conf.realname = Nick
     @last_motd = nil
+
+    Twitter.configure do |config|
+      config.consumer_key = TWITTER_CONSUMER_KEY
+      config.consumer_secret = TWITTER_CONSUMER_SECRET
+      config.oauth_token = TWITTER_OAUTH_TOKEN
+      config.oauth_token_secret = TWITTER_OAUTH_SECRET
+    end
   end
   
   helpers do
@@ -189,10 +194,6 @@ lechbot = Cinch::Bot.new do
     Twitter.update(tweet)
     msg.reply "Pinky Pinky"
   end
-  on :message, /^\!tweet (.*)/ do |msg, tweet|
-    Twitter.update(tweet)
-    msg.reply "Pinky Pinky"
-  end
 
   #Cool stuff
   on :action, /^slaps #{Nick}/ do |msg|
@@ -204,7 +205,7 @@ end
 ### CRONs ###
 now = Time.now
 wed = Time.new now.year, now.month, now.day, 20   #Today 20h
-wed += 86400 until wed.wednesday? && wed>Time.now
+wed += 86400 until wed.wednesday? && wed>Time.now #Next wednesday, 20h
 
 scheduler = Rufus::Scheduler.new
 scheduler.every '1w', first_at:wed do
