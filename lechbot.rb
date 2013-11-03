@@ -35,6 +35,8 @@ MUSIC_PROVIDERS = [
   'youtube.com', 'www.youtube.com', 'youtu.be'
 ]
 
+GIT_VERSION = `git log | head -1`.split(' ').pop
+
 lechbot = Cinch::Bot.new do
   Nick = PRODUCTION ? "LechBot" : "DechBot"
   
@@ -146,6 +148,11 @@ lechbot = Cinch::Bot.new do
         msg.reply "The space is open #{since}, and there are now #{people} people \\o/"
       end
     end
+  end
+
+  on :message, /^\!version$/ do |msg|
+    prefix = PRODUCTION ? "https://github.com/titouanc/lechbot/commit/" : ""
+    msg.reply prefix+GIT_VERSION
   end
 
   #!open & !close
