@@ -8,6 +8,7 @@ require 'open-uri'
 require 'json'
 require 'rufus/scheduler'
 require 'twitter'
+require 'bunny'
 
 begin
   require './config'
@@ -248,6 +249,24 @@ scheduler.every '1m' do
     lechbot.channels.first.send ch.to_s
   end
   puts "FOUND #{changed.length} changes. Goodbye"
+end
+### ###
+
+### Events ###
+amq_conn = Bunny.new AMQ_SERVER
+amq_conn.start
+chan = amq_conn.create_channel
+queue = chan.queue EVENTS_QUEUE
+queue.subscribe do |delivery_info, metadata, payload|
+  data = JSON.parse payload
+  if data.key? 'trigger'
+    case data['trigger']
+    when 'door'
+      lechbot.channels.first.send "Someone opened the stairs door..."
+    when 'bell'
+      lechbot.channels.first.send "Someone is at the entrance door..."
+    end
+  end
 end
 ### ###
 
