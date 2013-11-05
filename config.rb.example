@@ -7,3 +7,6 @@ TWITTER_CONSUMER_KEY = "your consumer key"
 TWITTER_CONSUMER_SECRET = "your consumer secret"
 TWITTER_OAUTH_TOKEN = "oauth token"
 TWITTER_OAUTH_SECRET = "oauth secret"
+
+AMQ_SERVER = {host:'', user:'', pass:''}
+EVENTS_QUEUE = 'api.events.feed'
