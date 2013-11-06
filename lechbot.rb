@@ -111,8 +111,8 @@ lechbot = Cinch::Bot.new do
   end
   
   #Post Tweet when a Twitter URL pass by
-  on :message, /(https?:\/\/(?:mobile\.)twitter\.com\/[^\/]+(\/status\/\d+)?)/ do |msg, url|
-      page = Nokogiri::HTML open(url)
+  on :message,/(https?:\/\/(mobile\.)?twitter\.com\/[^\/]+(\/status\/\d+)?)/ do |msg, url|
+      page = Nokogiri::HTML open(url.gsub(/:\/\/mobile\./, '://'))
       tweet = page.css('.tweet').first
       user = tweet.css('.fullname').first.text
       text = tweet.css('.tweet-text').first.text
