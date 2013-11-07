@@ -243,6 +243,8 @@ queue.subscribe do |delivery_info, metadata, payload|
           lechbot.channels.first.send "La porte des escaliers s'ouvre..."
         when 'bell'
           lechbot.channels.first.send "On sonne à la porte !"
+        when 'radiator'
+          lechbot.channels.first.send "Le radiateur est allumé"
         end
       end
     end
