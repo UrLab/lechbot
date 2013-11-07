@@ -9,6 +9,7 @@ require 'json'
 require 'rufus/scheduler'
 require 'twitter'
 require 'bunny'
+require 'time'
 
 begin
   require './config'
@@ -232,14 +233,21 @@ amq_conn.start
 chan = amq_conn.create_channel
 queue = chan.queue EVENTS_QUEUE
 queue.subscribe do |delivery_info, metadata, payload|
-  data = JSON.parse payload
-  if data.key? 'trigger'
-    case data['trigger']
-    when 'door'
-      lechbot.channels.first.send "La porte des escaliers s'ouvre..."
-    when 'bell'
-      lechbot.channels.first.send "On sonne à la porte !"
+  begin
+    data = JSON.parse payload
+    if data.key?('trigger') && data.key?('time')
+      msgtime = Time.parse data['time']
+      if Time.now - msgtime < 120 #Ignore messages older than 2mins
+        case data['trigger']
+        when 'door'
+          lechbot.channels.first.send "La porte des escaliers s'ouvre..."
+        when 'bell'
+          lechbot.channels.first.send "On sonne à la porte !"
+        end
+      end
     end
+  rescue
+    
   end
 end
 ### ###
