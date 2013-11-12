@@ -229,29 +229,33 @@ end
 ### ###
 
 ### Events ###
-amq_conn = Bunny.new AMQ_SERVER
-amq_conn.start
-chan = amq_conn.create_channel
-queue = chan.queue EVENTS_QUEUE
-queue.subscribe do |delivery_info, metadata, payload|
-  begin
-    data = JSON.parse payload
-    if data.key?('trigger') && data.key?('time')
-      msgtime = Time.parse data['time']
-      if Time.now - msgtime < 120 #Ignore messages older than 2mins
-        case data['trigger']
-        when 'door'
-          lechbot.channels.first.send "La porte des escaliers s'ouvre..."
-        when 'bell'
-          lechbot.channels.first.send "On sonne à la porte !"
-        when 'radiator'
-          lechbot.channels.first.send "Le radiateur est allumé"
+begin
+  amq_conn = Bunny.new AMQ_SERVER
+  amq_conn.start
+  chan = amq_conn.create_channel
+  queue = chan.queue EVENTS_QUEUE
+  queue.subscribe do |delivery_info, metadata, payload|
+    begin
+      data = JSON.parse payload
+      if data.key?('trigger') && data.key?('time')
+        msgtime = Time.parse data['time']
+        if Time.now - msgtime < 120 #Ignore messages older than 2mins
+          case data['trigger']
+          when 'door'
+            lechbot.channels.first.send "La porte des escaliers s'ouvre..."
+          when 'bell'
+            lechbot.channels.first.send "On sonne à la porte !"
+          when 'radiator'
+            lechbot.channels.first.send "Le radiateur est allumé"
+          end
         end
       end
+    rescue
+      
     end
-  rescue
-    
   end
+rescue Bunny::TCPConnectionFailed
+  puts "\033[31mUnable to connect to RabbitMQ server. No events for this instance !\033[0m"
 end
 ### ###
 
