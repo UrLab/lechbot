@@ -152,7 +152,7 @@ lechbot = Cinch::Bot.new do
   #!open & !close
   on :message, /^\!(open|close)/ do |msg, status|
     if msg.channel == CHANNELS.first
-      baseurl = "http://api.urlab.be/spaceapi/statuschange"
+      baseurl = PRODUCTION ? "http://api.urlab.be/spaceapi/statuschange" : ""
       begin
         response = open("#{baseurl}?status=#{status}")
         if status == "open"
@@ -161,7 +161,8 @@ lechbot = Cinch::Bot.new do
           msg.reply "Le hackerspace est fermé. N'oubliez pas d'éteindre les lumières et le radiateur !"
         end
       rescue Exception => e
-        msg.reply "Erreur d'accès à SpaceAPI: #{e} !!! (As-tu attendu 5min depuis le dernire changement de statut ?)"
+        suffix = "(As-tu attendu 5min depuis le dernier changement de statut ?)"
+        msg.reply "Erreur d'accès à SpaceAPI: #{e} !!! #{suffix if PRODUCTION}"
       end
     end
   end
