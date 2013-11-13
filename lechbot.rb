@@ -20,7 +20,7 @@ end
 
 #First channel has authority on topic change, !open/!close/!status
 CHANNELS_PROD = ['#urlab']
-CHANNELS_DEV  = ['#astafaitdestests']
+CHANNELS_DEV  = ['#titoufaitdestests']
 CHANNELS = PRODUCTION ? CHANNELS_PROD : CHANNELS_DEV
 
 class Time
