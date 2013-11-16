@@ -75,7 +75,7 @@ lechbot = Cinch::Bot.new do
   end
   
   on :message, /^\!version$/ do |msg|
-    prefix = PRODUCTION ? "https://github.com/titouanc/lechbot/commit/" : ""
+    prefix = PRODUCTION ? "https://github.com/titouanc/lechbot/tree/" : ""
     msg.reply prefix+GIT_VERSION
   end
 
