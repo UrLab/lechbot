@@ -5,14 +5,14 @@ require 'json'
 class StatusBot
     include Cinch::Plugin
 
-    PAMELA_URL = "http://pamela.urlab.be/mac.json"
-    GET_STATUS_URL = "http://api.urlab.be/spaceapi/status"
-    CHANGE_STATUS_URL = "" #"http://api.urlab.be/spaceapi/statuschange"
-
     match /(open|close)/, :method => :changeStatus
     def changeStatus msg, status
+        if ! config[:status_change_url] || config[:status_change_url].empty?
+            msg.reply "URL de changement de statut non configurée"
+            return
+        end
         begin
-            response = open("#{CHANGE_STATUS_URL}?status=#{status}")
+            response = open("#{config[:status_change_url]}?status=#{status}")
             if status == "open"
                 msg.reply "Le hackerspace est ouvert. PONEYZ EVERYWHERE <3"
             else
@@ -26,12 +26,20 @@ class StatusBot
 
     match /status/, :method => :status
     def status msg
-        response = JSON.parse open(GET_STATUS_URL).read
+        if ! config[:status_get_url] || config[:status_get_url].empty?
+            msg.reply "URL de récupération de statut non configurée"
+            return
+        end
+        if ! config[:pamela_url] || config[:pamela_url].empty?
+            msg.reply "URL Pamela configurée"
+            return
+        end
+        response = JSON.parse open(config[:status_get_url]).read
         since = (response.key? 'since') ? "depuis le #{Time.at(response['since']).strftime('%d/%m/%Y %H:%M')}" : ''
         if response['state'] == "closed"
             msg.reply "Le hackerspace est fermé #{since} /o\\"
         else
-            pamela_data = JSON.parse open(PAMELA_URL).read
+            pamela_data = JSON.parse open(config[:pamela_url]).read
             people = pamela_data['color'].length + pamela_data['grey'].length
             msg.reply "Le hackerspace est ouvert #{since}, et il y a en ce moment #{people} personnes \\o/"
         end

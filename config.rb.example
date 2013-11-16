@@ -1,12 +1,18 @@
 PRODUCTION = false
 
-URLAB_WIKI_USERNAME = "username"
-URLAB_WIKI_PASSWORD = "password"
+URLAB_WIKI_USERNAME = ""
+URLAB_WIKI_PASSWORD = ""
 
-TWITTER_CONSUMER_KEY = "your consumer key"
-TWITTER_CONSUMER_SECRET = "your consumer secret"
-TWITTER_OAUTH_TOKEN = "oauth token"
-TWITTER_OAUTH_SECRET = "oauth secret"
+TWITTER_CONSUMER_KEY = ""
+TWITTER_CONSUMER_SECRET = ""
+TWITTER_OAUTH_TOKEN = ""
+TWITTER_OAUTH_SECRET = ""
 
-AMQ_SERVER = {host:'', user:'', pass:''}
+URLAB_WIKI_MOTDURL = "http://wiki.urlab.be/User:TitouBot"
+
+AMQ_SERVER = {host:'localhost', user:'guest', pass:'guest'}
 EVENTS_QUEUE = 'api.events.feed'
+
+PAMELA_URL = "http://pamela.urlab.be/mac.json"
+STATUS_GET_URL = "http://api.urlab.be/spaceapi/status"
+STATUS_CHANGE_URL = ""

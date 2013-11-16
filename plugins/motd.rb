@@ -18,6 +18,8 @@ class MotdBot
             msg.reply "Pas d'url, pas de MotD d°-°b"
         elsif @last_motd && @last_motd.same_day?(Time.now)
             msg.reply "Le MotD a déjà été changé aujourd'hui !"
+        elsif ! config[:motd_wiki_url] || config[:motd_wiki_url].empty?
+            msg.reply "L'URL du MotD manque dans la configuration"
         else
             url = URI.parse $1
           
@@ -27,7 +29,7 @@ class MotdBot
             end
           
             #Go to homepage
-            wiki_URI = URI.parse URLAB_WIKI_MOTDURL
+            wiki_URI = URI.parse config[:motd_wiki_url]
             homepage = agent.get "http://#{wiki_URI.host}/"
             loginpage = agent.click homepage.link_with(:text => /log in/i)
             loggedhome = loginpage.form_with(:name => 'userlogin'){|form|
@@ -37,7 +39,7 @@ class MotdBot
           
             #We're now logged in
           
-            mypage = agent.get URLAB_WIKI_MOTDURL
+            mypage = agent.get config[:motd_wiki_url]
             editpage = agent.click mypage.link_with(:text => /edit/i)
             #We have the edit page
             donepage = editpage.form_with(:name => 'editform'){|form|

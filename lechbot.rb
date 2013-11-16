@@ -27,7 +27,6 @@ CHANNELS_PROD = ['#urlab']
 CHANNELS_DEV  = ['#titoufaitdestests']
 CHANNELS = PRODUCTION ? CHANNELS_PROD : CHANNELS_DEV
 
-URLAB_WIKI_MOTDURL  = "http://wiki.urlab.be/#{PRODUCTION ? 'MusicOfTheDay' : 'User:TitouBot'}"
 WIKI_CHANGES_URL = URI.parse "http://wiki.urlab.be/Special:RecentChanges?hideminor=1"
 
 MUSIC_PROVIDERS = [
@@ -53,6 +52,16 @@ lechbot = Cinch::Bot.new do
       consumer_secret: TWITTER_CONSUMER_SECRET,
       oauth_token: TWITTER_OAUTH_TOKEN,
       oauth_token_secret: TWITTER_OAUTH_SECRET 
+    }
+
+    conf.plugins.options[MotdBot] = {
+      motd_wiki_url: URLAB_WIKI_MOTDURL
+    }
+
+    conf.plugins.options[StatusBot] = {
+      status_get_url: STATUS_GET_URL,
+      status_change_url: STATUS_CHANGE_URL,
+      pamela_url: PAMELA_URL
     }
   end
     
