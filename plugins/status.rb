@@ -2,12 +2,14 @@
 
 require 'open-uri'
 require 'json'
+
 class StatusBot
     include Cinch::Plugin
 
+    $opentime = 0
+    $closetime = 0
     match /(open|close)\s*(\d*)/, :method => :changeStatus
-    closetime = 0
-    def changeStatus msg, status
+    def changeStatus msg, status, delay
         if ! config[:status_change_url] || config[:status_change_url].empty?
             msg.reply "URL de changement de statut non configurée"
             return
@@ -21,11 +23,13 @@ class StatusBot
                     msg.reply "Le hackerspace est fermé. N'oubliez pas d'éteindre les lumières et le radiateur !"
                 end
             else
-                closetime = Time.now + 60*delay.to_i
                 if status == "open"
-                    msg.reply "Le hs ouvrira dans #{delay} minutes, à #{closetime.strftime('%H:%M')}"
+                    $opentime = Time.now + 60*delay.to_i
+                    msg.reply "Le hs ouvrira dans #{delay} minutes, à #{$opentime.strftime('%H:%M')}"
                 elsif status == "close"
-                    msg.reply "Le hs fermera dans #{delay} minutes, à #{closetime.strftime('%H:%M')}"
+                    $closetime = Time.now + 60*delay.to_i
+                    msg.reply "Le hs fermera dans #{delay} minutes, à #{$closetime.strftime('%H:%M')}"
+                end
             end
 
         rescue Exception => e
@@ -41,22 +45,22 @@ class StatusBot
             return
         end
         if ! config[:pamela_url] || config[:pamela_url].empty?
-            msg.reply "URL Pamela configurée"
+            msg.reply "URL Pamela non configurée"
             return
         end
         response = JSON.parse open(config[:status_get_url]).read
         since = (response.key? 'since') ? "depuis le #{Time.at(response['since']).strftime('%d/%m/%Y %H:%M')}" : ''
         if response['state'] == "closed"
             msg.reply "Le hackerspace est fermé #{since} /o\\"
-            if (Time.now <=> closetime) == -1
-                msg.reply "Le hs ouvrira à #{(closetime).strftime('%H:%M')}"
+            if (Time.now <=> $opentime) == -1
+                msg.reply "Le hs ouvrira à #{($opentime).strftime('%H:%M')}"
             end
         else
             pamela_data = JSON.parse open(config[:pamela_url]).read
             people = pamela_data['color'].length + pamela_data['grey'].length
             msg.reply "Le hackerspace est ouvert #{since}, et il y a en ce moment #{people} personnes \\o/"
-            if (Time.now <=> closetime) == -1
-                msg.reply "Le hs fermera à #{(closetime).strftime('%H:%M')}"
+            if (Time.now <=> $closetime) == -1
+                msg.reply "Le hs fermera à #{($closetime).strftime('%H:%M')}"
             end
         end
     end
