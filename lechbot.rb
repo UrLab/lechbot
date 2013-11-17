@@ -24,7 +24,7 @@ end
 
 #First channel has authority on topic change, !open/!close/!status
 CHANNELS_PROD = ['#urlab']
-CHANNELS_DEV  = ['#titoufaitdestests']
+CHANNELS_DEV  = ['#astafaitdestests']
 CHANNELS = PRODUCTION ? CHANNELS_PROD : CHANNELS_DEV
 
 WIKI_CHANGES_URL = URI.parse "http://wiki.urlab.be/Special:RecentChanges?hideminor=1"
