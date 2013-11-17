@@ -24,7 +24,7 @@ end
 
 #First channel has authority on topic change, !open/!close/!status
 CHANNELS_PROD = ['#urlab']
-CHANNELS_DEV  = ['#astafaitdestests']
+CHANNELS_DEV  = ['#titoufaitdestests']
 CHANNELS = PRODUCTION ? CHANNELS_PROD : CHANNELS_DEV
 
 WIKI_CHANGES_URL = URI.parse "http://wiki.urlab.be/Special:RecentChanges?hideminor=1"
@@ -160,7 +160,7 @@ begin
       
     end
   end
-rescue Bunny::TCPConnectionFailed
+rescue Bunny::TCPConnectionFailed, Bunny::AuthenticationFailureError
   puts "\033[31mUnable to connect to RabbitMQ server. No events for this instance !\033[0m"
 end
 ### ###
