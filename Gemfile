@@ -7,3 +7,7 @@ gem 'dm-sqlite-adapter'
 gem 'rufus-scheduler'
 gem 'twitter'
 gem 'bunny'
+
+group :development do
+  gem 'sinatra'
+end

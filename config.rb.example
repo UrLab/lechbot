@@ -14,5 +14,5 @@ AMQ_SERVER = {host:'localhost', user:'guest', pass:'guest'}
 EVENTS_QUEUE = 'api.events.feed'
 
 PAMELA_URL = "http://pamela.urlab.be/mac.json"
-STATUS_GET_URL = "http://api.urlab.be/spaceapi/status"
-STATUS_CHANGE_URL = ""
+STATUS_GET_URL = "http://localhost:4567/getstatus"
+STATUS_CHANGE_URL = "http://localhost:4567/changestatus"
