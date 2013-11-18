@@ -20,6 +20,10 @@ class MotdBot
             msg.reply "Le MotD a déjà été changé aujourd'hui !"
         elsif ! config[:motd_wiki_url] || config[:motd_wiki_url].empty?
             msg.reply "L'URL du MotD manque dans la configuration"
+        elsif ! config[:username] || config[:username].empty?
+            msg.reply "Nom d'utilisateur sur le wiki manquant"
+        elsif ! config[:password] || config[:password].empty?
+            msg.reply "Mot de passe du wiki manquant"
         else
             url = URI.parse $1
           
@@ -33,8 +37,8 @@ class MotdBot
             homepage = agent.get "http://#{wiki_URI.host}/"
             loginpage = agent.click homepage.link_with(:text => /log in/i)
             loggedhome = loginpage.form_with(:name => 'userlogin'){|form|
-                form.wpName  = URLAB_WIKI_USERNAME
-                form.wpPassword = URLAB_WIKI_PASSWORD
+                form.wpName  = config[:username],
+                form.wpPassword = config[:password]
             }.submit
           
             #We're now logged in

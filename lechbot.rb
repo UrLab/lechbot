@@ -15,6 +15,7 @@ require './plugins/status'
 require './plugins/motd'
 require './plugins/twitter'
 require './plugins/janitor'
+require './plugins/wikichanges'
 
 begin
   require './config'
@@ -27,8 +28,6 @@ end
 CHANNELS_PROD = ['#urlab']
 CHANNELS_DEV  = ['#titoufaitdestests']
 CHANNELS = PRODUCTION ? CHANNELS_PROD : CHANNELS_DEV
-
-WIKI_CHANGES_URL = URI.parse "http://wiki.urlab.be/Special:RecentChanges?hideminor=1"
 
 MUSIC_PROVIDERS = [
   'soundcloud.com', 
@@ -45,7 +44,13 @@ lechbot = Cinch::Bot.new do
     conf.channels = CHANNELS
     conf.nick = Nick
     conf.realname = Nick
-    config.plugins.plugins = [StatusBot, MotdBot, TwitterBot, JanitorBot]
+    config.plugins.plugins = [
+      StatusBot, 
+      MotdBot, 
+      TwitterBot, 
+      JanitorBot,
+      WikiChangesBot
+    ]
     @last_motd = nil
 
     conf.plugins.options[TwitterBot] = {
@@ -56,7 +61,9 @@ lechbot = Cinch::Bot.new do
     }
 
     conf.plugins.options[MotdBot] = {
-      motd_wiki_url: URLAB_WIKI_MOTDURL
+      motd_wiki_url: URLAB_WIKI_MOTDURL,
+      username: URLAB_WIKI_USERNAME,
+      password: URLAB_WIKI_PASSWORD
     }
 
     conf.plugins.options[StatusBot] = {
@@ -67,6 +74,11 @@ lechbot = Cinch::Bot.new do
 
     conf.plugins.options[JanitorBot] = {
       pamela_url: PAMELA_URL
+    }
+
+    conf.plugins.options[WikiChangesBot] = {
+      wiki_changes_url: WIKI_CHANGES_URL,
+      username: URLAB_WIKI_USERNAME
     }
   end
     
@@ -95,35 +107,6 @@ lechbot = Cinch::Bot.new do
     msg.reply "Oh oui, encoooore !"
   end
 end
-
-
-### CRONs ###
-scheduler = Rufus::Scheduler.new
-scheduler.every '1m' do 
-  puts "START FINDING CHANGES ON WIKI"
-  page = Nokogiri::HTML open(WIKI_CHANGES_URL.to_s).read
-  difflinks = page.css '#mw-content-text .special a[tabindex]'
-  changed = []
-
-  difflinks.each do |link|
-    if link.text == "diff"
-      href = URI.parse "#{WIKI_CHANGES_URL.scheme}://#{WIKI_CHANGES_URL.host}#{link.attr 'href'}"
-      if href.query =~ /diff=(\d+)/ && ! Wikichange.get($1)
-        diff_id = $1
-        page_name = href.query.gsub /.*title=([^&]+).*/, '\1'
-        if page_name != 'MusicOfTheDay'
-          changed << Wikichange.create(id:diff_id, url:href, name:page_name)
-        end
-      end
-    end
-  end
-  
-  changed.each do |ch|
-    lechbot.channels.first.send ch.to_s
-  end
-  puts "FOUND #{changed.length} changes. Goodbye"
-end
-### ###
 
 ### Events ###
 begin

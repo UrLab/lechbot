@@ -9,14 +9,13 @@ class JanitorBot
 	include Cinch::Plugin
 
 	listen_to :connect, :method => :start
-
 	def start *args
 		now = Time.now
 		wed = Time.new now.year, now.month, now.day, 20   #Today 20h
 		wed += 86400 until wed.wednesday? && wed>Time.now #Next wednesday, 20h
 
 		@scheduler = Rufus::Scheduler.new
-		bot.debug "Created scheduler"
+		bot.info "Created scheduler for JANITOR"
 
 		@scheduler.every '1w', first_at:wed do
 			pamela_data = JSON.parse open(config[:pamela_url]).read
