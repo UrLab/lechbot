@@ -53,15 +53,15 @@ class StatusBot
         since = (response.key? 'since') ? "depuis le #{Time.at(response['since']).strftime('%d/%m/%Y %H:%M')}" : ''
         if response['state'] == "closed"
             msg.reply "Le hackerspace est fermé #{since} /o\\"
-            if (Time.now <=> $opentime) == -1
-                msg.reply "Le hs ouvrira à #{($opentime).strftime('%H:%M')}"
+            if Time.now < $opentime
+                msg.reply "Le hs ouvrira à #{$opentime.strftime('%H:%M')}"
             end
         else
             pamela_data = JSON.parse open(config[:pamela_url]).read
             people = pamela_data['color'].length + pamela_data['grey'].length
             msg.reply "Le hackerspace est ouvert #{since}, et il y a en ce moment #{people} personnes \\o/"
-            if (Time.now <=> $closetime) == -1
-                msg.reply "Le hs fermera à #{($closetime).strftime('%H:%M')}"
+            if Time.now < $closetime
+                msg.reply "Le hs fermera à #{$closetime.strftime('%H:%M')}"
             end
         end
     end
