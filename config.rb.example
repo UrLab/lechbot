@@ -2,6 +2,7 @@ PRODUCTION = false
 
 URLAB_WIKI_USERNAME = ""
 URLAB_WIKI_PASSWORD = ""
+WIKI_CHANGES_URL = "http://wiki.urlab.be/Special:RecentChanges?hideminor=1"
 
 TWITTER_CONSUMER_KEY = ""
 TWITTER_CONSUMER_SECRET = ""

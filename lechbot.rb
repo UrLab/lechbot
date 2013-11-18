@@ -1,21 +1,13 @@
 # encoding: utf-8
 
 require 'cinch'
-require 'mechanize'
-require "./models"
-require 'nokogiri'
-require 'open-uri'
-require 'json'
-require 'rufus/scheduler'
-require 'twitter'
-require 'bunny'
-require 'time'
 
 require './plugins/status'
 require './plugins/motd'
 require './plugins/twitter'
 require './plugins/janitor'
 require './plugins/wikichanges'
+require './plugins/HAL'
 
 begin
   require './config'
@@ -28,11 +20,6 @@ end
 CHANNELS_PROD = ['#urlab']
 CHANNELS_DEV  = ['#titoufaitdestests']
 CHANNELS = PRODUCTION ? CHANNELS_PROD : CHANNELS_DEV
-
-MUSIC_PROVIDERS = [
-  'soundcloud.com', 
-  'youtube.com', 'www.youtube.com', 'youtu.be'
-]
 
 GIT_VERSION = `git log | head -1`.split(' ').pop
 
@@ -49,7 +36,8 @@ lechbot = Cinch::Bot.new do
       MotdBot, 
       TwitterBot, 
       JanitorBot,
-      WikiChangesBot
+      WikiChangesBot,
+      HALBot
     ]
     @last_motd = nil
 
@@ -80,6 +68,11 @@ lechbot = Cinch::Bot.new do
       wiki_changes_url: WIKI_CHANGES_URL,
       username: URLAB_WIKI_USERNAME
     }
+
+    conf.plugins.options[HALBot] = {
+      amq_queue: EVENTS_QUEUE,
+      amq_server: AMQ_SERVER
+    }
   end
     
   #Explain the meaning of Lechbot's life
@@ -107,36 +100,5 @@ lechbot = Cinch::Bot.new do
     msg.reply "Oh oui, encoooore !"
   end
 end
-
-### Events ###
-begin
-  amq_conn = Bunny.new AMQ_SERVER
-  amq_conn.start
-  chan = amq_conn.create_channel
-  queue = chan.queue EVENTS_QUEUE
-  queue.subscribe do |delivery_info, metadata, payload|
-    begin
-      data = JSON.parse payload
-      if data.key?('trigger') && data.key?('time')
-        msgtime = Time.parse data['time']
-        if Time.now - msgtime < 120 #Ignore messages older than 2mins
-          case data['trigger']
-          when 'door'
-            lechbot.channels.first.send "La porte des escaliers s'ouvre..."
-          when 'bell'
-            lechbot.channels.first.send "On sonne à la porte !"
-          when 'radiator'
-            lechbot.channels.first.send "Le radiateur est allumé"
-          end
-        end
-      end
-    rescue
-      
-    end
-  end
-rescue Bunny::TCPConnectionFailed, Bunny::AuthenticationFailureError
-  puts "\033[31mUnable to connect to RabbitMQ server. No events for this instance !\033[0m"
-end
-### ###
 
 lechbot.start
