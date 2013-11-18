@@ -45,11 +45,11 @@ class MotdBot
             donepage = editpage.form_with(:name => 'editform'){|form|
                 pubtime = Time.now.strftime "%d/%m/%Y a %H:%M"
                 #Adding an entry (new music)
-                form.wpTextbox1 = form.wpTextbox1 + "\n*#{m.user} #{url} (#{pubtime})"
+                form.wpTextbox1 = form.wpTextbox1 + "\n*#{msg.user} #{url} (#{pubtime})"
             }.submit
           
             #Say something on the chan
-            msg.reply "#{m.user} gagne le MotD !"
+            msg.reply "#{msg.user} gagne le MotD !"
             @last_motd = Time.now
         end
     end
