@@ -20,6 +20,10 @@ class MotdBot
             msg.reply "Le MotD a déjà été changé aujourd'hui !"
         elsif ! config[:motd_wiki_url] || config[:motd_wiki_url].empty?
             msg.reply "L'URL du MotD manque dans la configuration"
+        elsif ! config[:username] || config[:username].empty?
+            msg.reply "Nom d'utilisateur sur le wiki manquant"
+        elsif ! config[:password] || config[:password].empty?
+            msg.reply "Mot de passe du wiki manquant"
         else
             url = URI.parse $1
           
@@ -33,8 +37,8 @@ class MotdBot
             homepage = agent.get "http://#{wiki_URI.host}/"
             loginpage = agent.click homepage.link_with(:text => /log in/i)
             loggedhome = loginpage.form_with(:name => 'userlogin'){|form|
-                form.wpName  = URLAB_WIKI_USERNAME
-                form.wpPassword = URLAB_WIKI_PASSWORD
+                form.wpName  = config[:username],
+                form.wpPassword = config[:password]
             }.submit
           
             #We're now logged in
@@ -45,11 +49,11 @@ class MotdBot
             donepage = editpage.form_with(:name => 'editform'){|form|
                 pubtime = Time.now.strftime "%d/%m/%Y a %H:%M"
                 #Adding an entry (new music)
-                form.wpTextbox1 = form.wpTextbox1 + "\n*#{m.user} #{url} (#{pubtime})"
+                form.wpTextbox1 = form.wpTextbox1 + "\n*#{msg.user} #{url} (#{pubtime})"
             }.submit
           
             #Say something on the chan
-            msg.reply "#{m.user} gagne le MotD !"
+            msg.reply "#{msg.user} gagne le MotD !"
             @last_motd = Time.now
         end
     end
