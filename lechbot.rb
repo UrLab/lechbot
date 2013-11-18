@@ -14,6 +14,7 @@ require 'time'
 require './plugins/status'
 require './plugins/motd'
 require './plugins/twitter'
+require './plugins/janitor'
 
 begin
   require './config'
@@ -44,7 +45,7 @@ lechbot = Cinch::Bot.new do
     conf.channels = CHANNELS
     conf.nick = Nick
     conf.realname = Nick
-    config.plugins.plugins = [StatusBot, MotdBot, TwitterBot]
+    config.plugins.plugins = [StatusBot, MotdBot, TwitterBot, JanitorBot]
     @last_motd = nil
 
     conf.plugins.options[TwitterBot] = {
@@ -61,6 +62,10 @@ lechbot = Cinch::Bot.new do
     conf.plugins.options[StatusBot] = {
       status_get_url: STATUS_GET_URL,
       status_change_url: STATUS_CHANGE_URL,
+      pamela_url: PAMELA_URL
+    }
+
+    conf.plugins.options[JanitorBot] = {
       pamela_url: PAMELA_URL
     }
   end
@@ -93,21 +98,7 @@ end
 
 
 ### CRONs ###
-now = Time.now
-wed = Time.new now.year, now.month, now.day, 20   #Today 20h
-wed += 86400 until wed.wednesday? && wed>Time.now #Next wednesday, 20h
-
 scheduler = Rufus::Scheduler.new
-scheduler.every '1w', first_at:wed do
-  pamela_data = JSON.parse open("http://pamela.urlab.be/mac.json").read
-  people = pamela_data['color'] + pamela_data['grey']
-  
-  unless people.empty?
-    randomly_chosen = people.shuffle.first 
-    lechbot.channels.first.send "Salut #{randomly_chosen} ! Tu pourrais vider la poubelle s'il-te-plaît ?"
-  end
-end
-
 scheduler.every '1m' do 
   puts "START FINDING CHANGES ON WIKI"
   page = Nokogiri::HTML open(WIKI_CHANGES_URL.to_s).read
