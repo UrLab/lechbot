@@ -160,7 +160,7 @@ begin
       
     end
   end
-rescue Bunny::TCPConnectionFailed
+rescue Bunny::TCPConnectionFailed, Bunny::AuthenticationFailureError
   puts "\033[31mUnable to connect to RabbitMQ server. No events for this instance !\033[0m"
 end
 ### ###
