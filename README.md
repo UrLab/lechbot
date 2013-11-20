@@ -3,11 +3,12 @@ cinch-based IRC bot for #urlab on freenode
 
 ## Dependencies
  
-* Ruby
-* RabbitMQ (for hackerspace events)
+* Ruby (`ruby` command), Rubygems (`gem` command)
+* RabbitMQ (for hackerspace events) (`rabbitmq-server` service)
+* Bundler gem (`gem install bundler`)
 
 ## Setup
-
+	
 	$ bundle install [--without development]
 	$ cp config.rb.example config.rb
 
