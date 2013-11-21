@@ -65,6 +65,7 @@ class WikiChangesBot
 			each_diff do |diff_id, title, href, author|
 				# Stop if we reach a diff we already know
 				break if diff_id <= lastDiff
+				next if author == config[:username]
 				bot.channels.first.send "#{author} a modifié #{title} #{href}"
 				newDiff = diff_id if diff_id > newDiff
 				changes += 1
