@@ -39,7 +39,7 @@ class TwitterBot
 	match TWITTER_URL, :method => :showTweet, :prefix => //
 	def showTweet msg
 		tweet = Twitter.status(url2tweetid msg.message)
-		msg.reply "@#{tweet.from_user}: «#{tweet.text}»"
+		msg.reply "@#{tweet.from_user}: « #{tweet.text} »"
 	end
 
 	match /twitter\s(.+)/, :method => :postTweet
