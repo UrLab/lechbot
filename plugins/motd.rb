@@ -90,7 +90,15 @@ class MotdBot
                 state[:music][:changed] = Time.now
                 state[:music][:text] = url
                 makeTopic state, msg.channel
-                msg.reply "#{msg.user} gagne le MotD !"
+
+                title = ""
+                begin
+                    page = Nokogiri::HTML open(url)
+                    title = ": " + page.css('title').text
+                rescue Exception => e
+                    bot.error "MotD title fetch error #{e.to_s} !!!"
+                end
+                msg.reply "#{msg.user} a changé la musique du jour #{title}"
             end
         end
     end
