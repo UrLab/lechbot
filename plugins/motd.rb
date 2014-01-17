@@ -3,13 +3,6 @@
 require 'cinch'
 require 'mechanize'
 
-class Time
-    def same_day? other
-        day == other.day && month == other.month && year == other.year
-    end
-end
-
-
 module MediaWiki
     def login wiki_url, user, pass
         #Build a new browser
