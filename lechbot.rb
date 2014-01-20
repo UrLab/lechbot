@@ -8,6 +8,7 @@ require './plugins/twitter'
 require './plugins/janitor'
 require './plugins/wikichanges'
 require './plugins/HAL'
+require './plugins/help'
 
 begin
   require './config'
@@ -37,9 +38,9 @@ lechbot = Cinch::Bot.new do
       TwitterBot, 
       JanitorBot,
       WikiChangesBot,
-      HALBot
+      HALBot,
+      Cinch::Help
     ]
-    @last_motd = nil
 
     conf.plugins.options[TwitterBot] = {
       consumer_key: TWITTER_CONSUMER_KEY,

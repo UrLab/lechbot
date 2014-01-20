@@ -7,6 +7,15 @@ require 'json'
 class StatusBot
     include Cinch::Plugin
 
+    set :help, <<-EOF
+!status
+  Affiche le statut (ouvert/fermé) du hackerspace.
+!open
+  Ouvre le hackerspace: le site indique que nous sommes ouverts, les LEDs et la musique s'allument.
+!close
+  Ferme le hackerspace: le site indique que nous sommes fermés, les LEDs et la musique s'éteignent. 
+EOF
+
     $opentime = 0
     $closetime = 0
     match /(open|close)\s*(\d*)/, :method => :changeStatus

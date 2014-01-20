@@ -39,6 +39,13 @@ class MotdBot
 
     STATEFILE = 'motd.yml'
 
+    set :help, <<-EOF
+!motd <url>
+  Change la musique du jour (max 1x par jour calendrier). NB: ceci n'inclut pas le sujet du chan
+!topic <texte>
+  Change le sujet du chan. NB: ceci n'inclut pas la musique du jour.
+EOF
+
     def withState
         state = {}
         if File.exists? STATEFILE

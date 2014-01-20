@@ -7,6 +7,8 @@ require 'nokogiri'
 class WikiChangesBot
 	include Cinch::Plugin
 
+	set :help, "Affiche les changements sur le wiki"
+
 	PERSISTENCE_FILE = ".wiki_last_diff"
 
 	def saveLastDiff diffid
