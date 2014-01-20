@@ -4,7 +4,7 @@ require 'cinch'
 require 'rufus/scheduler'
 require 'nokogiri'
 
-class WikiChangesBot
+class WikiChanges
 	include Cinch::Plugin
 
 	set :help, "Affiche les changements sur le wiki"

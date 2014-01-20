@@ -33,44 +33,44 @@ lechbot = Cinch::Bot.new do
     conf.nick = Nick
     conf.realname = Nick
     config.plugins.plugins = [
-      StatusBot, 
-      MotdBot, 
-      TwitterBot, 
-      JanitorBot,
-      WikiChangesBot,
-      HALBot,
+      Status, 
+      Motd, 
+      Twitteur, 
+      Janitor,
+      WikiChanges,
+      HAL,
       Cinch::Help
     ]
 
-    conf.plugins.options[TwitterBot] = {
+    conf.plugins.options[Twitteur] = {
       consumer_key: TWITTER_CONSUMER_KEY,
       consumer_secret: TWITTER_CONSUMER_SECRET,
       oauth_token: TWITTER_OAUTH_TOKEN,
       oauth_token_secret: TWITTER_OAUTH_SECRET 
     }
 
-    conf.plugins.options[MotdBot] = {
+    conf.plugins.options[Motd] = {
       motd_wiki_url: URLAB_WIKI_MOTDURL,
       username: URLAB_WIKI_USERNAME,
       password: URLAB_WIKI_PASSWORD
     }
 
-    conf.plugins.options[StatusBot] = {
+    conf.plugins.options[Status] = {
       status_get_url: STATUS_GET_URL,
       status_change_url: STATUS_CHANGE_URL,
       pamela_url: PAMELA_URL
     }
 
-    conf.plugins.options[JanitorBot] = {
+    conf.plugins.options[Janitor] = {
       pamela_url: PAMELA_URL
     }
 
-    conf.plugins.options[WikiChangesBot] = {
+    conf.plugins.options[WikiChanges] = {
       wiki_changes_url: WIKI_CHANGES_URL,
       username: URLAB_WIKI_USERNAME
     }
 
-    conf.plugins.options[HALBot] = {
+    conf.plugins.options[HAL] = {
       amq_queue: EVENTS_QUEUE,
       amq_server: AMQ_SERVER
     }
@@ -78,11 +78,8 @@ lechbot = Cinch::Bot.new do
     
   #Explain the meaning of Lechbot's life
   on :message, /^\!lechbot$/ do |msg|
-    msg.reply "Salut, je suis #{Nick} ! Je tiens la page #{URLAB_WIKI_MOTDURL} à jour."
-    msg.reply "Je m'occupe aussi d'ouvrir/fermer UrLab grâce à vos !open et !close."
-    msg.reply "Je vous tiens informé des modifications sur le Wiki, et si vous me donnez une URL Twitter, je vous affiche le tweet correspondant."
-    msg.reply "Enfin, grâce à mon ami HAL, je vous informe de tout mouvement au space."
-    msg.reply "Si je deviens trop encombrant, tuez-moi avec `tg #{Nick}`"
+    msg.reply "Essaye peut-être de me demander de l'aide... (#{bot.nick}: help)"
+    msg.reply "(Je réponds aussi en query)"
   end
   
   on :message, /^\!version$/ do |msg|

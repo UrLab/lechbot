@@ -4,7 +4,7 @@ require 'cinch'
 require 'bunny'
 require 'time'
 
-class HALBot
+class HAL
     include Cinch::Plugin
 
     set :help, "Indique ce qui se passe au hackerspace"

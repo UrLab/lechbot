@@ -5,7 +5,7 @@ require 'rufus/scheduler'
 require 'open-uri'
 require 'json'
 
-class JanitorBot
+class Janitor
     include Cinch::Plugin
 
     set :help, "Tous les mercredis, si le hackerspace est ouvert, un volontaire est désigné pour sortir la poubelle"

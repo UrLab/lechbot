@@ -4,7 +4,7 @@ require 'cinch'
 require 'open-uri'
 require 'json'
 
-class StatusBot
+class Status
     include Cinch::Plugin
 
     set :help, <<-EOF

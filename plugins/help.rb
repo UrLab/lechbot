@@ -151,7 +151,7 @@ EOF
       response << "Désolé, je ne trouve pas '#{query}'."
     end
 
-    response << "# => void" if response.empty?
+    response << "Rien à signaler (Ce plugin n'a peut-être pas d'interface publique)" if response.empty?
     msg.reply(response)
   end
 

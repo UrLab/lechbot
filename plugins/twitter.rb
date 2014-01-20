@@ -4,7 +4,7 @@ require 'cinch'
 require 'twitter'
 require 'nokogiri'
 
-class TwitterBot
+class Twitteur
     include Cinch::Plugin
 
     set :help, <<-EOF

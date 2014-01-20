@@ -33,7 +33,7 @@ module MediaWiki
     end
 end
 
-class MotdBot
+class Motd
     include Cinch::Plugin
     include MediaWiki
 
