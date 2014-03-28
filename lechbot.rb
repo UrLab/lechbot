@@ -28,7 +28,7 @@ lechbot = Cinch::Bot.new do
   Nick = PRODUCTION ? "LechBot" : "DechBot"
   
   configure do |conf|
-    conf.server = "irc.freenode.org"
+    conf.server = "chat.freenode.org"
     conf.channels = CHANNELS
     conf.nick = Nick
     conf.realname = Nick
