@@ -9,17 +9,24 @@ class HAL
 
     set :help, "Indique ce qui se passe au hackerspace"
 
+    TRIGGERS_TEXTS = {
+        'door' => "La porte des escaliers s'ouvre...",
+        'bell' => "On sonne à la porte !",
+        'radiator' => "Le radiateur est allumé",
+        'hs_open' => "Le hackerspace est ouvert ! RAINBOWZ NSA PONEYZ EVERYWHERE \\o/",
+        'hs_close' => "Le hackerspace est fermé ! N'oubliez pas d'éteindre les lumières et le radiateur."
+    }
+
     def speakMessage msg
         msgtime = Time.parse msg['time']
-        return if Time.now-msgtime > 120
-        case msg['trigger']
-        when 'door'
-            bot.channels.first.send "La porte des escaliers s'ouvre..."
-        when 'bell'
-            bot.channels.first.send "On sonne à la porte !"
-        when 'radiator'
-            bot.channels.first.send "Le radiateur est allumé"
+
+        #Drop messages older than 2 mins
+        if Time.now-msgtime > 120 || ! TRIGGERS_TEXTS.key?(msg['trigger'])
+            bot.info "Drop message #{msg}"
+            return
         end
+
+        bot.channels.first.send TRIGGERS_TEXTS[msg['trigger']]
     end
 
     listen_to :connect, :method => :start
