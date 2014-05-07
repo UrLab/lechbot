@@ -112,10 +112,15 @@ EOF
 
     match /topic/, :method => :changeTopic
     def changeTopic msg
-        withState do |state|
-            state[:topic][:text] = msg.message.gsub /\!topic\s*/, ''
-            state[:topic][:changed] = Time.now
-            makeTopic state, msg.channel
+        newtopic = msg.message.gsub(/\!topic\s*/, '').strip
+        if newtopic.empty?
+            msg.reply "Topic vide, je ne cautionne certainement pas !"
+        else
+            withState do |state|
+                state[:topic][:text] = newtopic
+                state[:topic][:changed] = Time.now
+                makeTopic state, msg.channel
+            end
         end
     end
 end
