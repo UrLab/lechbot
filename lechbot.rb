@@ -9,6 +9,7 @@ require './plugins/janitor'
 require './plugins/wikichanges'
 require './plugins/HAL'
 require './plugins/help'
+require './plugins/reminder'
 
 begin
   require './config'
@@ -39,6 +40,7 @@ lechbot = Cinch::Bot.new do
       Janitor,
       WikiChanges,
       HAL,
+      Reminder,
       Cinch::Help
     ]
 
@@ -73,6 +75,10 @@ lechbot = Cinch::Bot.new do
     conf.plugins.options[HAL] = {
       amq_queue: EVENTS_QUEUE,
       amq_server: AMQ_SERVER
+    }
+
+    conf.plugins.options[Reminder] = {
+      events_url: EVENTS_URL
     }
   end
     
