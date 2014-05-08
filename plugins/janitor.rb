@@ -8,7 +8,7 @@ require 'json'
 class Janitor
     include Cinch::Plugin
 
-    set :help, "Tous les mercredis, si le hackerspace est ouvert, un volontaire est désigné pour sortir la poubelle"
+    set :help, "Tous les mercredis, si le hackerspace est ouvert, deux volontaires sont désignés pour sortir la poubelle"
 
     listen_to :connect, :method => :start
     def start *args
