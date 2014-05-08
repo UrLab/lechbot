@@ -18,4 +18,4 @@ PAMELA_URL = "http://pamela.urlab.be/mac.json"
 STATUS_GET_URL = "http://localhost:4567/getstatus"
 STATUS_CHANGE_URL = "http://localhost:4567/changestatus"
 
-EVENTS_URL = "http://urlab.be/events"
+EVENTS_URL = "http://urlab.be/events.json"
