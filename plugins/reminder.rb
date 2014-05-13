@@ -21,7 +21,7 @@ class Reminder
             payload = JSON.parse open(config[:events_url]).read
 
             payload['events'].each do |ev|
-                name, url, date = ev['name'], 'https:'+ev['url'], Time.parse(ev['date'])
+                name, url, date = ev['name'], ev['url'], Time.parse(ev['date'])
                 dt = date-now
                 debug "EVENT: DT=#{dt} #{date} #{name} #{url}"
 
