@@ -38,7 +38,7 @@ class Reminder
         @scheduler.every '1h', first_at:(Time.now+10) do
             now = Time.now
             each_event do |ev|
-                name, url, date = ev['name'], 'https:'+ev['url'], Time.parse(ev['date'])
+                name, url, date = ev['name'], ev['url'], Time.parse(ev['date'])
                 dt = date-now
                 debug "EVENT: DT=#{dt} #{date} #{name} #{url}"
 
