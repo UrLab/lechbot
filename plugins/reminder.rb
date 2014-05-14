@@ -9,7 +9,26 @@ require 'time'
 class Reminder
     include Cinch::Plugin
 
+    DTRANGES = {
+        (7*86400-3600)..(7*86400) => "dans une semaine",
+        (3*86400-3600)..(3*86400) => "dans 3 jours",
+        82800..86400 => "demain",
+        7200..10800 => "dans moins de 3h"
+    }
+
     set :help, "Rappel des events a venir"
+
+    def each_event &block
+        payload = nil
+        begin
+            payload = JSON.parse open(config[:events_url]).read
+        rescue Exception => err
+            debug "Error when fetching events: #{err.class} #{err}"
+        end
+        if payload
+            payload['events'].each &block
+        end
+    end
 
     listen_to :connect, :method => :start
     def start *args
@@ -18,23 +37,17 @@ class Reminder
 
         @scheduler.every '1h', first_at:(Time.now+10) do
             now = Time.now
-            payload = JSON.parse open(config[:events_url]).read
-
-            payload['events'].each do |ev|
+            each_event do |ev|
                 name, url, date = ev['name'], 'https:'+ev['url'], Time.parse(ev['date'])
                 dt = date-now
                 debug "EVENT: DT=#{dt} #{date} #{name} #{url}"
 
-                case dt
-                when 7*86400-3600..7*86400
-                    bot.channels.first.send "=== Rappel === *#{name}* a lieu dans une semaine #{url}"
-                when 3*86400-3600..3*86400
-                    bot.channels.first.send "=== Rappel === *#{name}* a lieu dans 3 jours #{url}"
-                when 82800..86400
-                    bot.channels.first.send "=== Rappel === *#{name}* a lieu demain #{url}"
-                when 7200..10800
-                    bot.channels.first.send "=== Rappel === *#{name}* a lieu dans moins de 3h ! #{url}"
-                end 
+                DTRANGES.each do |dtrange, dtname|
+                    if dtrange.include? dt
+                        bot.channels.first.send "=== Rappel === #{name} a lieu #{dtname} #{url}"
+                        break
+                    end
+                end
             end
         end
     end
