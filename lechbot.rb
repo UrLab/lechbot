@@ -2,14 +2,9 @@
 
 require 'cinch'
 
-require './plugins/status'
-require './plugins/motd'
-require './plugins/twitter'
-require './plugins/janitor'
-require './plugins/wikichanges'
-require './plugins/HAL'
-require './plugins/help'
-require './plugins/reminder'
+%w(status motd twitter janitor wikichanges HAL help reminder kanboard).each do |plugin|
+  require "./plugins/#{plugin}"
+end
 
 begin
   require './config'
@@ -41,6 +36,7 @@ lechbot = Cinch::Bot.new do
       WikiChanges,
       HAL,
       Reminder,
+      Kanboarder,
       Cinch::Help
     ]
 
@@ -78,7 +74,16 @@ lechbot = Cinch::Bot.new do
     }
 
     conf.plugins.options[Reminder] = {
-      events_url: EVENTS_URL
+      events_url: EVENTS_URL,
+      kan_user: KAN_USERNAME,
+      kan_pass: KAN_PASSWORD,
+      kan_board: KAN_BOARD
+    }
+
+    conf.plugins.options[Kanboarder] = {
+      kan_user: KAN_USERNAME,
+      kan_pass: KAN_PASSWORD,
+      kan_board: KAN_BOARD
     }
   end
     

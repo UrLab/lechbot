@@ -5,6 +5,7 @@ require 'rufus/scheduler'
 require 'open-uri'
 require 'json'
 require 'time'
+require './lib/kanboard'
 
 class Reminder
     include Cinch::Plugin
@@ -30,23 +31,34 @@ class Reminder
         end
     end
 
+    def remind name, url, date, dt_prefix="a lieu"
+        dt = date-Time.now
+        debug "EVENT: DT=#{dt} #{date} #{name} #{url}"
+
+        DTRANGES.each do |dtrange, dtname|
+            if dtrange.include? dt
+                bot.channels.first.send "=== Rappel === #{name} #{dt_prefix} #{dtname} #{url}"
+                break
+            end
+        end
+    end
+
     listen_to :connect, :method => :start
     def start *args
         @scheduler = Rufus::Scheduler.new
         bot.info "Created scheduler for JANITOR"
 
         @scheduler.every '1h', first_at:(Time.now+10) do
-            now = Time.now
             each_event do |ev|
                 name, url, date = ev['name'], ev['url'], Time.parse(ev['date'])
-                dt = date-now
-                debug "EVENT: DT=#{dt} #{date} #{name} #{url}"
+                remind name, url, date
+            end
 
-                DTRANGES.each do |dtrange, dtname|
-                    if dtrange.include? dt
-                        bot.channels.first.send "=== Rappel === #{name} a lieu #{dtname} #{url}"
-                        break
-                    end
+            kan = Kanboard.new(config[:kan_user], config[:kan_pass])
+            kan[config[:kan_board]].each do |task|
+                name, date, url = task[:name], task[:date], task[:url]
+                if date
+                    remind name, url, date, "est à faire pour"
                 end
             end
         end
