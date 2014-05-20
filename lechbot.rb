@@ -48,9 +48,9 @@ lechbot = Cinch::Bot.new do
     }
 
     conf.plugins.options[Motd] = {
-      motd_wiki_url: URLAB_WIKI_MOTDURL,
-      username: URLAB_WIKI_USERNAME,
-      password: URLAB_WIKI_PASSWORD
+      motd_wiki_url: "#{WIKI_URL}/#{WIKI_MOTD}",
+      username: WIKI_USERNAME,
+      password: WIKI_PASSWORD
     }
 
     conf.plugins.options[Status] = {
@@ -64,13 +64,13 @@ lechbot = Cinch::Bot.new do
     }
 
     conf.plugins.options[WikiChanges] = {
-      wiki_changes_url: WIKI_CHANGES_URL,
-      username: URLAB_WIKI_USERNAME
+      wiki_changes_url: "#{WIKI_URL}/#{WIKI_CHANGES}",
+      username: WIKI_USERNAME
     }
 
     conf.plugins.options[HAL] = {
-      amq_queue: EVENTS_QUEUE,
-      amq_server: AMQ_SERVER
+      amq_queue: HAL_EVENTS,
+      amq_server: HAL_AMQ_BROKER
     }
 
     conf.plugins.options[Reminder] = {

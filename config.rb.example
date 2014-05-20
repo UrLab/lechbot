@@ -3,23 +3,22 @@
 # Enable official bot for #UrLab or not
 PRODUCTION = false
 
-# WIKI
-URLAB_WIKI_USERNAME = ""
-URLAB_WIKI_PASSWORD = ""
-WIKI_CHANGES_URL = "http://wiki.urlab.be/Special:RecentChanges?hideminor=1"
+# WIKI && MotD
+WIKI_URL = "http://wiki.urlab.be"
+WIKI_USERNAME = ""
+WIKI_PASSWORD = ""
+WIKI_CHANGES = "Special:RecentChanges?hideminor=1"
+WIKI_MOTD = "User:#{WIKI_USERNAME}"
 
-# MotD
-URLAB_WIKI_MOTDURL = "http://wiki.urlab.be/User:TitouBot"
-
-#Twitter
+# Twitter (https://dev.twitter.com/discussions/631)
 TWITTER_CONSUMER_KEY = ""
 TWITTER_CONSUMER_SECRET = ""
 TWITTER_OAUTH_TOKEN = ""
 TWITTER_OAUTH_SECRET = ""
 
-#HAL
-AMQ_SERVER = {host:'localhost', user:'guest', pass:'guest'}
-EVENTS_QUEUE = 'api.events.feed'
+# HAL
+HAL_AMQ_BROKER = {host:'localhost', user:'guest', pass:'guest'}
+HAL_EVENTS = 'api.events.feed'
 
 # Pamela
 PAMELA_URL = "http://pamela.urlab.be/mac.json"
@@ -28,10 +27,10 @@ PAMELA_URL = "http://pamela.urlab.be/mac.json"
 STATUS_GET_URL = "http://localhost:4567/getstatus"
 STATUS_CHANGE_URL = "http://localhost:4567/changestatus"
 
-#Events reminder
+# Events reminder
 EVENTS_URL = "http://urlab.be/events.json"
 
-#kanboard
+# Kanboard
 KAN_USERNAME = ""
 KAN_PASSWORD = ""
-KAN_BOARD = ""
+KAN_BOARD = "Mise en place de KanBoard @ UrLab"
