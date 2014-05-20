@@ -89,8 +89,7 @@ lechbot = Cinch::Bot.new do
     
   #Explain the meaning of Lechbot's life
   on :message, /^\!lechbot$/ do |msg|
-    msg.reply "Essaye peut-être de me demander de l'aide... (#{bot.nick}: help)"
-    msg.reply "(Je réponds aussi en query)"
+    msg.reply "Hilight me ! (#{bot.nick}: help). Je réponds aussi en query"
   end
   
   on :message, /^\!version$/ do |msg|
@@ -106,7 +105,7 @@ lechbot = Cinch::Bot.new do
 
   #Cool stuff
   on :action, /^slaps #{Nick}/ do |msg|
-    msg.reply "Oh oui, encoooore !"
+    msg.reply "#{msg.user}: Oh oui, encoooore !"
   end
 end
 

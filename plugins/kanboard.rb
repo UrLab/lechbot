@@ -6,7 +6,11 @@ require './lib/kanboard'
 class Kanboarder
     include Cinch::Plugin
 
-    set :help, "Interaction avec Kanboard (kanboard.urlab.be)"
+    set :help, <<-EOF
+!kanboard <texte>
+  Cree une nouvelle tache sur la board principale de kanboard. Si la chaine :dd/mm ou :dd/mm/yyyy est trouvée, donne cette échéance à la carte. 
+  Exemple: !kanboard Tuer le monde :21/12/2012
+EOF
 
     match /kanboard\s+([^\s].*)/, :method => :post_to_kanboard
     def post_to_kanboard msg, content
