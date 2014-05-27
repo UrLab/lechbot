@@ -54,12 +54,16 @@ class Reminder
                 remind name, url, date
             end
 
-            kan = Kanboard.new(config[:kan_user], config[:kan_pass])
-            kan[config[:kan_board]].each do |task|
-                name, date, url = task[:name], task[:date], task[:url]
-                if date
-                    remind name, url, date, "est à faire pour"
+            begin
+                kan = Kanboard.new(config[:kan_user], config[:kan_pass])
+                kan[config[:kan_board]].each do |task|
+                    name, date, url = task[:name], task[:date], task[:url]
+                    if date
+                        remind name, url, date, "est à faire pour"
+                    end
                 end
+            rescue Exception => err
+                debug "Error when fetching kanboard cards: #{err.class} #{err}"
             end
         end
     end
