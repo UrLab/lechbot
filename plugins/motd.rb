@@ -47,32 +47,36 @@ class Motd
 EOF
 
     def withState
-        state = {}
+        state = false
         fd = nil
         if File.exists? STATEFILE
             fd = File.open STATEFILE, 'r+'
             fd.flock File::LOCK_EX
             state = YAML.load File.read(STATEFILE)
-            fd.seek 0
-            fd.truncate 0
         else
-            state = {
-                music: {
-                    text: "http://www.youtube.com/watch?v=p8oi6M4z_e0",
-                    changed: Time.at(0)
-                }, 
-                topic: {
-                    text: "Brace yourself, LechBot is coming !!!",
-                    changed: Time.at(0)
-                }
-            }
             fd = File.open STATEFILE, 'w'
             fd.flock File::LOCK_EX
         end
-        yield state
-        fd.write YAML.dump(state)
-        fd.flock File::LOCK_UN
-        fd.close
+        state ||= {
+            music: {
+                text: "http://www.youtube.com/watch?v=p8oi6M4z_e0",
+                changed: Time.at(0)
+            }, 
+            topic: {
+                text: "Brace yourself, LechBot is coming !!!",
+                changed: Time.at(0)
+            }
+        }
+
+        begin
+            yield state
+            fd.seek 0
+            fd.truncate 0
+            fd.write YAML.dump(state)
+        ensure
+            fd.flock File::LOCK_UN
+            fd.close
+        end
     end
 
     def makeTopic state, chan
