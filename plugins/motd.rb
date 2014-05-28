@@ -48,8 +48,13 @@ EOF
 
     def withState
         state = {}
+        fd = nil
         if File.exists? STATEFILE
+            fd = File.open STATEFILE, 'r+'
+            fd.flock File::LOCK_EX
             state = YAML.load File.read(STATEFILE)
+            fd.seek 0
+            fd.truncate 0
         else
             state = {
                 music: {
@@ -61,9 +66,13 @@ EOF
                     changed: Time.at(0)
                 }
             }
+            fd = File.open STATEFILE, 'w'
+            fd.flock File::LOCK_EX
         end
         yield state
-        File.write STATEFILE, YAML.dump(state)
+        fd.write YAML.dump(state)
+        fd.flock File::LOCK_UN
+        fd.close
     end
 
     def makeTopic state, chan
