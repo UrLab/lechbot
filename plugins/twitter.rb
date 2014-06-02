@@ -47,6 +47,7 @@ EOF
 
     match TWITTER_URL, :method => :showTweet, :prefix => //
     def showTweet msg
+        return if msg.user.nick == 'my_little_poney'
         tweet = Twitter.status(url2tweetid msg.message)
         msg.reply "@#{tweet.from_user}: « #{tweet.text} »"
     end
