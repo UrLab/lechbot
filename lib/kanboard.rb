@@ -44,13 +44,13 @@ class Kanboard
     end
 
     def [] board=1
-        get_board(board).search('.task').map do |task|
-            date = task.search('.task-date')
+        get_board(board).search('.task-board').map do |task|
+            date = task.search('.task-board-date')
             {
-                name:  task.search('.task-title').text.strip, 
+                name:  task.search('.task-board-title').text.strip, 
                 url:   @server+task.search('a')[0].attributes['href'].to_s,
                 date:  date.empty? ? nil : Time.parse(date.text.strip),
-                owner: task.search('.task-user').text.strip
+                owner: task.search('.task-board-user').text.strip
             }
         end
     end
