@@ -46,9 +46,10 @@ class Reminder
     listen_to :connect, :method => :start
     def start *args
         @scheduler = Rufus::Scheduler.new
-        bot.info "Created scheduler for JANITOR"
+        bot.info "Created scheduler for REMINDER"
 
         @scheduler.every '1h', first_at:(Time.now+10) do
+            info "START FINDING THINGS TO REMIND"
             each_event do |ev|
                 name, url, date = ev['name'], ev['url'], Time.parse(ev['date'])
                 remind name, url, date
@@ -65,6 +66,7 @@ class Reminder
             rescue Exception => err
                 debug "Error when fetching kanboard cards: #{err.class} #{err}"
             end
+            info "NOTHING LEFT TO REMIND"
         end
     end
 end
