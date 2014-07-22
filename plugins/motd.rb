@@ -47,23 +47,36 @@ class Motd
 EOF
 
     def withState
-        state = {}
+        state = false
+        fd = nil
         if File.exists? STATEFILE
+            fd = File.open STATEFILE, 'r+'
+            fd.flock File::LOCK_EX
             state = YAML.load File.read(STATEFILE)
         else
-            state = {
-                music: {
-                    text: "http://www.youtube.com/watch?v=p8oi6M4z_e0",
-                    changed: Time.at(0)
-                }, 
-                topic: {
-                    text: "Brace yourself, LechBot is coming !!!",
-                    changed: Time.at(0)
-                }
-            }
+            fd = File.open STATEFILE, 'w'
+            fd.flock File::LOCK_EX
         end
-        yield state
-        File.write STATEFILE, YAML.dump(state)
+        state ||= {
+            music: {
+                text: "http://www.youtube.com/watch?v=p8oi6M4z_e0",
+                changed: Time.at(0)
+            }, 
+            topic: {
+                text: "Brace yourself, LechBot is coming !!!",
+                changed: Time.at(0)
+            }
+        }
+
+        begin
+            yield state
+            fd.seek 0
+            fd.truncate 0
+            fd.write YAML.dump(state)
+        ensure
+            fd.flock File::LOCK_UN
+            fd.close
+        end
     end
 
     def makeTopic state, chan
@@ -92,7 +105,7 @@ EOF
         msg.reply "#{msg.user}: *JE* m'occupe du MotD !!! (utilise !motd et/ou !topic)"
     end
 
-    match /motd/, :method => :tellMotd
+    match /motd\s*$/, :method => :tellMotd
     def tellMotd msg
        tell msg, :music 
     end
@@ -114,7 +127,7 @@ EOF
                 
                 state[:music][:changed] = Time.now
                 state[:music][:text] = url
-                state[:music][:author] = msg.user
+                state[:music][:author] = msg.user.name
                 makeTopic state, msg.channel
 
                 title = ""
@@ -129,18 +142,18 @@ EOF
         end
     end
 
-    match /topic/, :method => :tellTopic
-    def tellTopic msg
-        tell msg, :topic
-    end
-
-    match /topic\s+[^\s+]/
-    def changeTopic msg
+    match /topic\s+([^\s].*)\s*$/, :method => :changeTopic
+    def changeTopic msg, text
         withState do |state|
-            state[:topic][:text] = msg.message.gsub /^\!topic\s+/, ''
+            state[:topic][:text] = text
             state[:topic][:changed] = Time.now
-            state[:topic][:author] = msg.user
+            state[:topic][:author] = msg.user.name
             makeTopic state, msg.channel
         end
+    end
+
+    match /topic\s*$/, :method => :tellTopic
+    def tellTopic msg
+        tell msg, :topic
     end
 end

@@ -31,17 +31,21 @@ class WikiChanges
 	end
 
 	def each_diff
-		page = Nokogiri::HTML open(config[:wiki_changes_url].to_s).read
-		page.css('.mw-changeslist-line-not-watched').each do |change|
-			link = change.css('a[tabindex]').first
-			if link && link.text == 'diff'
-				author = change.css('.mw-userlink').first.text
-				title = link.attr 'title'
-				diff_id = (link.attr('href') =~ /diff=([^&]+)/) ? $1.to_i : 0
-				partial_href = link.attr 'href'
-				href = URI.parse "#{scheme}://#{host}#{partial_href}"
-				yield diff_id, title, href, author
+		begin
+			page = Nokogiri::HTML open(config[:wiki_changes_url].to_s).read
+			page.css('.mw-changeslist-line-not-watched').each do |change|
+				link = change.css('a[tabindex]').first
+				if link && link.text == 'diff'
+					author = change.css('.mw-userlink').first.text
+					title = link.attr 'title'
+					diff_id = (link.attr('href') =~ /diff=([^&]+)/) ? $1.to_i : 0
+					partial_href = link.attr 'href'
+					href = URI.parse "#{scheme}://#{host}#{partial_href}"
+					yield diff_id, title, href, author
+				end
 			end
+		rescue Exception => err
+			debug "Error when retrieving wiki changes: #{err.class} #{err}"
 		end
 	end
 

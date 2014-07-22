@@ -8,7 +8,7 @@ require 'json'
 class Janitor
     include Cinch::Plugin
 
-    set :help, "Tous les mercredis, si le hackerspace est ouvert, un volontaire est désigné pour sortir la poubelle"
+    set :help, "Tous les mercredis, si le hackerspace est ouvert, deux volontaires sont désignés pour sortir la poubelle"
 
     listen_to :connect, :method => :start
     def start *args
@@ -23,8 +23,8 @@ class Janitor
             pamela_data = JSON.parse open(config[:pamela_url]).read
             people = pamela_data['color'] + pamela_data['grey']
             unless people.empty?
-                randomly_chosen = people.shuffle.first 
-                bot.channels.first.send "Salut #{randomly_chosen} ! Tu pourrais vider la poubelle s'il-te-plaît ?"
+                randomly_chosen = people.shuffle[0...2] 
+                bot.channels.first.send "Salut #{randomly_chosen*' & '} ! Vous pourriez vider la poubelle s'il-vous-plaît ?"
             end
         end
     end

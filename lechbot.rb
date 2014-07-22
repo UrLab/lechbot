@@ -2,13 +2,9 @@
 
 require 'cinch'
 
-require './plugins/status'
-require './plugins/motd'
-require './plugins/twitter'
-require './plugins/janitor'
-require './plugins/wikichanges'
-require './plugins/HAL'
-require './plugins/help'
+%w(status motd twitter janitor wikichanges HAL help reminder kanboard).each do |plugin|
+  require "./plugins/#{plugin}"
+end
 
 begin
   require './config'
@@ -29,7 +25,7 @@ lechbot = Cinch::Bot.new do
   Nick = PRODUCTION ? "LechBot" : "DechBot"
   
   configure do |conf|
-    conf.server = "irc.freenode.org"
+    conf.server = "chat.freenode.org"
     conf.channels = CHANNELS
     conf.nick = Nick
     conf.realname = Nick
@@ -40,6 +36,8 @@ lechbot = Cinch::Bot.new do
       Janitor,
       WikiChanges,
       HAL,
+      Reminder,
+      Kanboarder,
       Cinch::Help
     ]
 
@@ -51,9 +49,9 @@ lechbot = Cinch::Bot.new do
     }
 
     conf.plugins.options[Motd] = {
-      motd_wiki_url: URLAB_WIKI_MOTDURL,
-      username: URLAB_WIKI_USERNAME,
-      password: URLAB_WIKI_PASSWORD
+      motd_wiki_url: "#{WIKI_URL}/#{WIKI_MOTD}",
+      username: WIKI_USERNAME,
+      password: WIKI_PASSWORD
     }
 
     conf.plugins.options[Status] = {
@@ -67,20 +65,32 @@ lechbot = Cinch::Bot.new do
     }
 
     conf.plugins.options[WikiChanges] = {
-      wiki_changes_url: WIKI_CHANGES_URL,
-      username: URLAB_WIKI_USERNAME
+      wiki_changes_url: "#{WIKI_URL}/#{WIKI_CHANGES}",
+      username: WIKI_USERNAME
     }
 
     conf.plugins.options[HAL] = {
-      amq_queue: EVENTS_QUEUE,
-      amq_server: AMQ_SERVER
+      amq_queue: HAL_EVENTS,
+      amq_server: HAL_AMQ_BROKER
+    }
+
+    conf.plugins.options[Reminder] = {
+      events_url: EVENTS_URL,
+      kan_user: KAN_USERNAME,
+      kan_pass: KAN_PASSWORD,
+      kan_board: KAN_BOARD
+    }
+
+    conf.plugins.options[Kanboarder] = {
+      kan_user: KAN_USERNAME,
+      kan_pass: KAN_PASSWORD,
+      kan_board: KAN_BOARD
     }
   end
     
   #Explain the meaning of Lechbot's life
   on :message, /^\!lechbot *$/ do |msg|
-    msg.reply "Essaye peut-être de me demander de l'aide... (#{bot.nick}: help)"
-    msg.reply "(Je réponds aussi en query)"
+    msg.reply "Hilight me ! (#{bot.nick}: help). Je réponds aussi en query"
   end
   
   on :message, /^\!version *$/ do |msg|
@@ -107,7 +117,7 @@ lechbot = Cinch::Bot.new do
 
   #Cool stuff
   on :action, /^slaps #{Nick}/ do |msg|
-    msg.reply "Oh oui, encoooore !"
+    msg.reply "#{msg.user}: Oh oui, encoooore !"
   end
 end
 
