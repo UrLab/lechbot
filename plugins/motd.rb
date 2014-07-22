@@ -70,6 +70,19 @@ EOF
         chan.topic = "#{state[:music][:text]} :: #{state[:topic][:text]}"
     end
 
+    def tell msg, stateKey
+        response = "BITE"
+        withState do |state|
+            values = state[stateKey]
+            if values
+                author = values.key?(:author) ? values[:author] : "un inconnu"
+                date = values.key?(:changed) ? values[:changed].strftime("Le %d/%m/%Y à %H:%M") : "jamais"
+                response = "#{date} par #{author}"
+            end
+        end
+        msg.reply response
+    end
+
     listen_to :topic, :method => :remakeTopic
     def remakeTopic msg
         return if msg.user == bot.name
@@ -79,7 +92,12 @@ EOF
         msg.reply "#{msg.user}: *JE* m'occupe du MotD !!! (utilise !motd et/ou !topic)"
     end
 
-    match /motd\s*(https?:\/\/[^\s]+)/, :method => :changeMotd
+    match /motd/, :method => :tellMotd
+    def tellMotd msg
+       tell msg, :music 
+    end
+
+    match /motd\s+(https?:\/\/[^\s]+)/, :method => :changeMotd
     def changeMotd msg, url
         withState do |state|
             if state[:music][:changed].to_date == Time.now.to_date
@@ -96,6 +114,7 @@ EOF
                 
                 state[:music][:changed] = Time.now
                 state[:music][:text] = url
+                state[:music][:author] = msg.user
                 makeTopic state, msg.channel
 
                 title = ""
@@ -105,16 +124,22 @@ EOF
                 rescue Exception => e
                     bot.error "MotD title fetch error #{e.to_s} !!!"
                 end
-                msg.reply "#{msg.user} a changé la musique du jour #{title}"
+                msg.reply "#{msg.user} a changé la musique du jour#{title}"
             end
         end
     end
 
-    match /topic/, :method => :changeTopic
+    match /topic/, :method => :tellTopic
+    def tellTopic msg
+        tell msg, :topic
+    end
+
+    match /topic\s+[^\s+]/
     def changeTopic msg
         withState do |state|
-            state[:topic][:text] = msg.message.gsub /\!topic\s*/, ''
+            state[:topic][:text] = msg.message.gsub /^\!topic\s+/, ''
             state[:topic][:changed] = Time.now
+            state[:topic][:author] = msg.user
             makeTopic state, msg.channel
         end
     end
