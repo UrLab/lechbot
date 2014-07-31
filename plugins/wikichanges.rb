@@ -51,7 +51,7 @@ class WikiChanges
 
 	listen_to :connect, :method => :start
 	def start *args
-		if ! config[:wiki_changes_url] || config[:wiki_changes_url].empty?
+		if ! config[:wiki_changes_url] || "#{config[:wiki_changes_url]}".empty?
 			bot.debug "URL de changements sur le wiki non configurée"
 			return
 		end
