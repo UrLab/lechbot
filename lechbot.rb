@@ -21,6 +21,7 @@ CHANNELS = PRODUCTION ? CHANNELS_PROD : CHANNELS_DEV
 GIT_VERSION = `git log | head -1`.split(' ').pop
 
 lechbot = Cinch::Bot.new do
+  STARTED = Time.now
   Nick = PRODUCTION ? "LechBot" : "DechBot"
   
   configure do |conf|
@@ -88,13 +89,24 @@ lechbot = Cinch::Bot.new do
   end
     
   #Explain the meaning of Lechbot's life
-  on :message, /^\!lechbot$/ do |msg|
+  on :message, /^\!lechbot *$/ do |msg|
     msg.reply "Hilight me ! (#{bot.nick}: help). Je réponds aussi en query"
   end
   
-  on :message, /^\!version$/ do |msg|
+  on :message, /^\!version *$/ do |msg|
     prefix = PRODUCTION ? "https://github.com/titouanc/lechbot/tree/" : ""
     msg.reply prefix+GIT_VERSION
+  end
+
+  on :message, /^\!uptime *$/ do |msg|
+    dt = (Time.now - STARTED).to_i
+    days = dt/86400
+    dt %= 86400
+    hours = dt/24
+    dt %= 24
+    minutes = dt/60
+    seconds = dt%60
+    msg.reply "#{days} jours #{hours}h #{minutes}m #{seconds}s"
   end
 
   #KTFB (Kill This Fuckin' Bot)
