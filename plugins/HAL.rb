@@ -10,9 +10,10 @@ class HAL
     set :help, "Indique ce qui se passe au hackerspace"
 
     TRIGGERS_TEXTS = {
-        'door' => "La porte des escaliers s'ouvre...",
+        'door_stairs' => "Quelqu'un est de passage",
         'bell' => "On sonne à la porte !",
-        'radiator' => "Le radiateur est allumé",
+        'heater_on' => "Le radiateur est allumé",
+        'heater_off' => "Le radiateur est éteint",
         'hs_open' => "Le hackerspace est ouvert ! RAINBOWZ NSA PONEYZ EVERYWHERE \\o/",
         'hs_close' => "Le hackerspace est fermé ! N'oubliez pas d'éteindre les lumières et le radiateur."
     }
@@ -44,7 +45,7 @@ class HAL
                 data = JSON.parse payload
                 if data.key?('trigger') && data.key?('time')
                     speakMessage data
-                  end
+                end
             end
         rescue Bunny::TCPConnectionFailed, Bunny::AuthenticationFailureError
               bot.debug "Unable to connect to RabbitMQ server. No events for this instance !"
