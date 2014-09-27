@@ -10,42 +10,11 @@ class Status
     set :help, <<-EOF
 !status
   Affiche le statut (ouvert/fermé) du hackerspace.
-!open
-  Ouvre le hackerspace: le site indique que nous sommes ouverts, les LEDs et la musique s'allument.
-!close
-  Ferme le hackerspace: le site indique que nous sommes fermés, les LEDs et la musique s'éteignent. 
 EOF
 
-    $opentime = 0
-    $closetime = 0
     match /(open|close)\s*(\d*)/, :method => :changeStatus
     def changeStatus msg, status, delay
-        if ! config[:status_change_url] || config[:status_change_url].empty?
-            msg.reply "URL de changement de statut non configurée"
-            return
-        end
-        begin
-            if delay.empty?
-                response = open("#{config[:status_change_url]}?status=#{status}")
-                if status == "open"
-                    msg.reply "Le hackerspace est ouvert. PONEYZ EVERYWHERE <3"
-                else
-                    msg.reply "Le hackerspace est fermé. N'oubliez pas d'éteindre les lumières et le radiateur !"
-                end
-            else
-                if status == "open"
-                    $opentime = Time.now + 60*delay.to_i
-                    msg.reply "Le hs ouvrira dans #{delay} minutes, à #{$opentime.strftime('%H:%M')}"
-                elsif status == "close"
-                    $closetime = Time.now + 60*delay.to_i
-                    msg.reply "Le hs fermera dans #{delay} minutes, à #{$closetime.strftime('%H:%M')}"
-                end
-            end
-
-        rescue Exception => e
-            suffix = "(As-tu attendu 5min depuis le dernier changement de statut ?)"
-            msg.reply "Erreur d'accès à SpaceAPI: #{e} !!! #{suffix if PRODUCTION}"
-        end
+        msg.reply "#{msg.user}: Hey ! Maintenant on utilise l'interrupteur :)"
     end
 
     match /status/, :method => :status
