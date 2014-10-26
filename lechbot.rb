@@ -2,7 +2,7 @@
 
 require 'cinch'
 
-%w(status motd twitter janitor wikichanges HAL help reminder kanboard).each do |plugin|
+%w(status motd twitter janitor wikichanges HAL help reminder kanboard techwednesday).each do |plugin|
   require "./plugins/#{plugin}"
 end
 
@@ -38,6 +38,7 @@ lechbot = Cinch::Bot.new do
       HAL,
       Reminder,
       Kanboarder,
+      TechWednesday,
       Cinch::Help
     ]
 
@@ -85,6 +86,12 @@ lechbot = Cinch::Bot.new do
       kan_user: KAN_USERNAME,
       kan_pass: KAN_PASSWORD,
       kan_board: KAN_BOARD
+    }
+
+    conf.plugins.options[TechWednesday] = {
+      wiki_url: WIKI_URL,
+      username: WIKI_USERNAME,
+      password: WIKI_PASSWORD
     }
   end
     
