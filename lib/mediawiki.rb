@@ -29,6 +29,20 @@ module MediaWiki
         }.submit
     end
 
+    def find_tw_date page
+        page.search(".wikitable").search("tr").each do |tr|
+            th = tr.search("th")
+            next if th.length.zero?
+
+            if th.first.text.strip == "Date"
+                td = tr.search("td")
+                next if td.length.zero?
+                return Time.parse td.text
+            end
+        end
+        return nil
+    end
+
     def next_tw agent
         this_year = Time.now.year.to_s
 
@@ -47,19 +61,8 @@ module MediaWiki
             a_num <=> b_num
         }.each do |event_link|
             page = agent.get event_link.href
-            page.search(".wikitable").search("tr").each do |tr|
-                th = tr.search("th")
-                next if th.length.zero?
-
-                if th.first.text.strip == "Date"
-                    td = tr.search("td")
-                    next if td.length.zero?
-                    date = Time.parse td.text
-
-                    # TW are sorted by number
-                    return page if date >= Time.now
-                end
-            end
+            date = find_tw_date page
+            return page if date && date >= Time.now
         end
         return nil
     end
