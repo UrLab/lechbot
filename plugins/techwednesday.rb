@@ -35,8 +35,9 @@ EOF
                 msg.reply " - #{point}"
             end
         else
+            point = "#{point} (#{msg.user})"
             next_tw_add_point next_tw_page, point
-            msg.reply "Point ajouté à l'ordre du jour du prochain #{tw_str}"
+            msg.reply "« #{point} » ajouté à l'ordre du jour du prochain #{tw_str}"
         end
 
         msg.reply("#{next_tw_page.uri}")
