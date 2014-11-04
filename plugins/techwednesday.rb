@@ -15,7 +15,7 @@ class TechWednesday
 EOF
 
     match /tw$/, :method => :tw
-    match /tw ([^ ]+)/, :method => :tw
+    match /tw (.+)/, :method => :tw
     def tw msg, point=''
         point.strip!
         msg.reply "Un instant..."
