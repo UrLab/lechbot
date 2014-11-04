@@ -14,8 +14,9 @@ class TechWednesday
   Ajoute <votre point> à l'ordre du jour du prochain TechWednesday
 EOF
 
-    match /tw (.*)/, :method => :tw
-    def tw msg, point
+    match /tw$/, :method => :tw
+    match /tw ([^ ]+)/, :method => :tw
+    def tw msg, point=''
         point.strip!
         msg.reply "Un instant..."
 
