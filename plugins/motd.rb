@@ -59,7 +59,15 @@ EOF
             values = state[stateKey]
             if values
                 author = values.key?(:author) ? values[:author] : "un inconnu"
-                date = values.key?(:changed) ? values[:changed].strftime("Le %d/%m/%Y à %H:%M") : "jamais"
+                date = if values.key?(:changed)
+                    if values[:changed].to_date == Time.now.to_date
+                        values[:changed].strftime("Aujourd'hui à %H:%M")
+                    else
+                        values[:changed].strftime("Le %d/%m/%Y à %H:%M")
+                    end
+                else
+                    "jamais"
+                end
                 response = "#{date} par #{author}"
             end
         end
