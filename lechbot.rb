@@ -62,7 +62,9 @@ lechbot = Cinch::Bot.new do
     }
 
     conf.plugins.options[Janitor] = {
-      pamela_url: PAMELA_URL
+      pamela_url: PAMELA_URL,
+      amq_queue: HAL_NOTIFS,
+      amq_server: HAL_AMQ_BROKER
     }
 
     conf.plugins.options[WikiChanges] = {
