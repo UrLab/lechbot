@@ -22,12 +22,12 @@ class HAL
         msgtime = Time.parse msg['time']
 
         #Drop messages older than 2 mins
-        if Time.now-msgtime > 120 || ! TRIGGERS_TEXTS.key?(msg['trigger'])
+        if Time.now-msgtime > 120 || ! TRIGGERS_TEXTS.key?(msg['name'])
             bot.info "Drop message #{msg}"
             return
         end
 
-        bot.channels.first.send TRIGGERS_TEXTS[msg['trigger']]
+        bot.channels.first.send TRIGGERS_TEXTS[msg['name']]
     end
 
     listen_to :connect, :method => :start
@@ -43,7 +43,7 @@ class HAL
 
             queue.subscribe do |delivery_info, metadata, payload|
                 data = JSON.parse payload
-                if data.key?('trigger') && data.key?('time')
+                if data.key?('name') && data.key?('time')
                     speakMessage data
                 end
             end

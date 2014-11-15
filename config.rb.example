@@ -19,6 +19,7 @@ TWITTER_OAUTH_SECRET = ""
 # HAL
 HAL_AMQ_BROKER = {host:'localhost', user:'guest', pass:'guest'}
 HAL_EVENTS = 'test.hal.events'
+HAL_NOTIFS = 'test.hal.notifs'
 
 # Pamela
 PAMELA_URL = "http://pamela.urlab.be/mac.json"

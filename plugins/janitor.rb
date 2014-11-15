@@ -10,6 +10,17 @@ class Janitor
 
     set :help, "Tous les mercredis, si le hackerspace est ouvert, deux volontaires sont désignés pour sortir la poubelle"
 
+    def notification name
+        amq_conn = Bunny.new config[:amq_server]
+        amq_conn.start
+        chan = amq_conn.create_channel
+        queue = chan.queue config[:amq_queue]
+        queue.publish({
+            'name' => name, 
+            'time' => Time.now.strftime("%Y-%m-%d %H:%M:%S")
+        }.to_json)
+    end
+
     listen_to :connect, :method => :start
     def start *args
         now = Time.now
@@ -24,6 +35,7 @@ class Janitor
             people = pamela_data['color'] + pamela_data['grey']
             unless people.empty?
                 randomly_chosen = people.shuffle[0...2] 
+                notification "trash"
                 bot.channels.first.send "Salut #{randomly_chosen*' & '} ! Vous pourriez vider la poubelle s'il-vous-plaît ?"
             end
         end
