@@ -3,6 +3,8 @@
 # Enable official bot for #UrLab or not
 PRODUCTION = false
 
+SENTRY_URL = ''
+
 # WIKI && MotD
 WIKI_URL = "http://wiki.urlab.be"
 WIKI_USERNAME = ""
