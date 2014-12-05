@@ -6,6 +6,7 @@ require 'open-uri'
 require 'json'
 
 class Janitor
+    MNESIA = ".janitor_last_chosen"
     include Cinch::Plugin
 
     set :help, "Tous les mercredis, si le hackerspace est ouvert, deux volontaires sont désignés pour sortir la poubelle"
@@ -34,9 +35,21 @@ class Janitor
             pamela_data = JSON.parse open(config[:pamela_url]).read
             people = pamela_data['color'] + pamela_data['grey']
             unless people.empty?
-                randomly_chosen = people.shuffle[0...2] 
+                ineligible = []
+                begin
+                    ineligible = JSON.parse File.read(MNESIA)
+                rescue
+                end
+
+                choosable = people - ineligible
+                choosable = people if choosable.length < 2
+
+                randomly_chosen = choosable.shuffle[0...2] 
                 notification "trash"
                 bot.channels.first.send "Salut #{randomly_chosen*' & '} ! Vous pourriez vider la poubelle s'il-vous-plaît ?"
+                File.open(MNESIA, "w") do |f|
+                    f.puts randomly_chosen.to_json
+                end
             end
         end
     end
