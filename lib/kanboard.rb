@@ -49,7 +49,7 @@ class Kanboard
             {
                 name:  task.search('.task-board-title').text.strip, 
                 url:   @server+task.search('a')[0].attributes['href'].to_s,
-                date:  date.empty? ? nil : Time.parse(date.text.strip),
+                date:  date.empty? ? nil : Time.parse(date.text.strip.gsub('é','e').gsub('û','u')),
                 owner: task.search('.task-board-user').text.strip
             }
         end
