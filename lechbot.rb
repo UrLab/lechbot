@@ -3,8 +3,8 @@
 require 'cinch'
 require 'raven'
 
-%w(status motd twitter janitor wikichanges HAL help reminder kanboard techwednesday).each do |plugin|
-  require "./plugins/#{plugin}"
+Dir["./plugins/*.rb"].each do |plugin|
+  require plugin
 end
 
 begin
@@ -41,6 +41,7 @@ def build_lechbot
         Reminder,
         Kanboarder,
         TechWednesday,
+        Github,
         Cinch::Help
       ]
 
