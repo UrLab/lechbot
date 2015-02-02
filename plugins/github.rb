@@ -23,7 +23,7 @@ EOF
             bot.info "Grab info for #{repo_id}"
             name = "#{repo['name']}"
             if repo['stargazers_count'] > 100
-                name = "#{name} #{repo['stargazers_count']}*"
+                name = "#{name} (#{repo['stargazers_count']} *)"
             end
             desc = "#{repo['description']}"
             msg.reply "#{name}: #{desc}"
