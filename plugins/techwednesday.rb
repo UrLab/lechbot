@@ -39,6 +39,10 @@ EOF
             point = "#{point} (#{msg.user})"
             next_tw_add_point next_tw_page, point
             msg.reply "« #{point} » ajouté à l'ordre du jour du prochain #{tw_str}"
+            n_points = 1 + next_tw_oj(next_tw_page).length
+            if n_points >= 10
+                msg.reply "*Attention*: ordre du jour chargé (#{n_points} points)"
+            end
         end
 
         msg.reply("#{next_tw_page.uri}")
