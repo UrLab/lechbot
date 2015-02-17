@@ -19,6 +19,12 @@ class HAL
         'passage' => "Il y a quelqu'un à l'intéreur"
     }
 
+    TRIGGERS_RATELIMIT = {
+        'passage': 3600,
+    }
+
+    TRIGGER_LAST = {}
+
     def speakMessage msg
         msgtime = Time.parse msg['time']
 
@@ -28,7 +34,12 @@ class HAL
             return
         end
 
+        trig = msg['name']
+        limit = TRIGGERS_RATELIMIT[trig]
+        last = TRIGGER_LAST[trig]
+        return if limit && last && Time.now - last < limit
         bot.channels.first.send TRIGGERS_TEXTS[msg['name']]
+        TRIGGER_LAST[trig] = Time.now
     end
 
     listen_to :connect, :method => :start
