@@ -20,7 +20,7 @@ class HAL
     }
 
     TRIGGERS_RATELIMIT = {
-        'passage': 3600,
+        'passage' => 3600,
     }
 
     TRIGGER_LAST = {}
