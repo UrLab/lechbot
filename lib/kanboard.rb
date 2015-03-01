@@ -4,6 +4,11 @@ require 'mechanize'
 require 'time'
 
 class Kanboard
+    Months = [
+        "janvier", "février", "mars", "avril", "mai", "juin",
+        "juillet", "août", "septembre", "octobre", "novembre", "décembre"
+    ]
+
     def initialize username, password, server="http://kanboard.urlab.be/"
         @server = server
         @agent = Mechanize.new do |mech|
@@ -43,13 +48,22 @@ class Kanboard
         form.submit.uri
     end
 
+    def parseDate datestr
+        if datestr =~ /(\d{1,2}) (#{Months*"|"}) (\d{4})/
+            day = $1.to_i
+            month = 1 + Months.index($2)
+            year = $3.to_i
+            Time.mktime(year, month, day, 20)
+        end
+    end
+
     def [] board=1
         get_board(board).search('.task-board').map do |task|
             date = task.search('.task-board-date')
             {
                 name:  task.search('.task-board-title').text.strip, 
                 url:   @server+task.search('a')[0].attributes['href'].to_s,
-                date:  date.empty? ? nil : Time.parse(date.text.strip.gsub('é','e').gsub('û','u')),
+                date:  parseDate(date.text),
                 owner: task.search('.task-board-user').text.strip
             }
         end
