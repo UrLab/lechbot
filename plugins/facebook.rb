@@ -7,7 +7,7 @@ class Facebook
     include Cinch::Plugin
 
     set :help, <<-EOF
-!facebook <message>
+!fb <message>
   Publie <message> sur la page UrLab (urlabbxl).
 EOF
 
