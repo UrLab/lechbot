@@ -8,6 +8,7 @@ gem 'rufus-scheduler'
 gem 'twitter', '=4.8.1'
 gem 'bunny'
 gem "sentry-raven", :git => "https://github.com/getsentry/raven-ruby.git"
+gem "koala"
 
 group :development do
   gem 'sinatra'

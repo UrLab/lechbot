@@ -18,6 +18,11 @@ TWITTER_CONSUMER_SECRET = ""
 TWITTER_OAUTH_TOKEN = ""
 TWITTER_OAUTH_SECRET = ""
 
+# Facebook
+FACEBOOK_USER_ID = ""
+FACEBOOK_USER_ID = ""
+FACEBOOK_TOKEN = ""
+
 # HAL
 HAL_AMQ_BROKER = {host:'localhost', user:'guest', pass:'guest'}
 HAL_EVENTS = 'test.hal.events'

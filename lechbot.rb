@@ -42,8 +42,15 @@ def build_lechbot
         Kanboarder,
         TechWednesday,
         Github,
+        Facebook,
         Cinch::Help
       ]
+
+      conf.plugins.options[Facebook] = {
+        fb_userid: FACEBOOK_USER_ID,
+        fb_pageid: FACEBOOK_PAGE_ID,
+        fb_token: FACEBOOK_TOKEN
+      }
 
       conf.plugins.options[Twitteur] = {
         consumer_key: TWITTER_CONSUMER_KEY,
