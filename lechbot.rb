@@ -119,10 +119,8 @@ def build_lechbot
 
     on :message, /^\!uptime *$/ do |msg|
       dt = (Time.now - started).to_i
-      days = dt/86400
-      dt %= 86400
-      hours = dt/24
-      dt %= 24
+      days, dt = dt/86400, dt%86400
+      hours, dt = dt/24, dt%24
       minutes = dt/60
       seconds = dt%60
       msg.reply "#{days} jours #{hours}h #{minutes}m #{seconds}s"
