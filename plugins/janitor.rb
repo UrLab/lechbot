@@ -22,6 +22,12 @@ class Janitor
         }.to_json)
     end
 
+    match /poke\s*$/, :method => :poke_hackerspace
+    def poke_hackerspace msg
+       notification "poke"
+       msg.reply "Coucou HAL (de la part de #{msg.user}) !!!"
+    end
+
     listen_to :connect, :method => :start
     def start *args
         now = Time.now
