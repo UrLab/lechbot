@@ -16,7 +16,8 @@ class HAL
         'heater_off' => "Le radiateur est éteint",
         'hs_open' => "Le hackerspace est ouvert ! RAINBOWZ NSA PONEYZ EVERYWHERE \\o/",
         'hs_close' => "Le hackerspace est fermé ! N'oubliez pas d'éteindre les lumières et le radiateur.",
-        'passage' => "Il y a quelqu'un à l'intérieur"
+        'passage' => "Il y a quelqu'un à l'intérieur",
+        'kitchen_move' => "Il y a du mouvement dans la cuisine",
     }
 
     TRIGGERS_RATELIMIT = {
