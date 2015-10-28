@@ -22,6 +22,8 @@ class HAL
 
     TRIGGERS_RATELIMIT = {
         'passage' => 3600,
+        'kitchen_move' => 60,
+        'door_stairs' => 60,
     }
 
     TRIGGER_LAST = {}
