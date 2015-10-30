@@ -20,6 +20,7 @@ class Janitor
             'name' => name, 
             'time' => Time.now.strftime("%Y-%m-%d %H:%M:%S")
         }.to_json)
+        chan.close
     end
 
     match /poke\s*$/, :method => :poke_hackerspace
