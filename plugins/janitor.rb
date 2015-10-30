@@ -21,6 +21,7 @@ class Janitor
             'time' => Time.now.strftime("%Y-%m-%d %H:%M:%S")
         }.to_json)
         chan.close
+        amq_conn.close
     end
 
     match /poke\s*$/, :method => :poke_hackerspace
