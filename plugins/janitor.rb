@@ -41,7 +41,7 @@ class Janitor
 
         @scheduler.every '1w', first_at:wed do
             pamela_data = JSON.parse open(config[:pamela_url]).read
-            people = pamela_data['color'] + pamela_data['grey']
+            people = pamela_data['users'].map{|e| e['username']} + pamela_data['unknown_mac']
             unless people.empty?
                 ineligible = []
                 begin

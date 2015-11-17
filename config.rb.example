@@ -29,11 +29,12 @@ HAL_EVENTS = 'test.hal.events'
 HAL_NOTIFS = 'test.hal.notifs'
 
 # Pamela
-PAMELA_URL = "http://pamela.urlab.be/mac.json"
+PAMELA_URL = "http://incubator.urlab.be/space/pamela"
 
 # Hackerspace status
 STATUS_GET_URL = "http://localhost:4567/getstatus"
 STATUS_CHANGE_URL = "http://localhost:4567/changestatus"
+STATUS_CHANGE_SECRET = ""
 
 # Events reminder
 EVENTS_URL = "http://urlab.be/events.json"

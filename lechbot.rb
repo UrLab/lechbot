@@ -68,6 +68,7 @@ def build_lechbot
       conf.plugins.options[Status] = {
         status_get_url: STATUS_GET_URL,
         status_change_url: STATUS_CHANGE_URL,
+        status_change_secret: STATUS_CHANGE_SECRET,
         pamela_url: PAMELA_URL
       }
 

@@ -3,6 +3,7 @@
 require 'cinch'
 require 'open-uri'
 require 'json'
+require 'net/http'
 
 class Status
     include Cinch::Plugin
@@ -23,7 +24,9 @@ EOF
             msg.reply "URL de changement de statut non configurée"
             return
         end
-        open("#{config[:status_change_url]}?status=#{status}")
+        uri = URI(config[:status_change_url])
+        is_open = (status == 'open') ? '1' : '0'
+        Net::HTTP.post_form(uri, 'secret' => config[:status_change_secret], 'open' => is_open)
         if status == "open"
             msg.reply "Le hackerspace est ouvert. Dites bonjour à HAL de ma part !"
         else
@@ -43,12 +46,13 @@ EOF
             return
         end
         response = JSON.parse open(config[:status_get_url]).read
-        since = (response.key? 'since') ? "depuis le #{Time.at(response['since']).strftime('%d/%m/%Y %H:%M')}" : ''
-        if response['state'] == "closed"
+        state = response['state']
+        since = (state.key? 'lastchange') ? "depuis le #{Time.at(state['lastchange']).strftime('%d/%m/%Y %H:%M')}" : ''
+
+        unless state['open']
             msg.reply "Le hackerspace est fermé #{since} /o\\"
         else
-            pamela_data = JSON.parse open(config[:pamela_url]).read
-            people = pamela_data['color'].length + pamela_data['grey'].length
+            people = response['sensors']['people_now_present'][0]['value']
             msg.reply "Le hackerspace est ouvert #{since}, et il y a en ce moment #{people} personnes \\o/"
         end
     end
