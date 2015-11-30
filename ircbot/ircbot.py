@@ -1,11 +1,24 @@
 import re
 import logging
 import asyncio
-from collections import namedtuple
+import humanize
+from datetime import datetime
 
 from asyncirc import irc
 
-logger = logging.getLogger(__name__)
+TIME_FORMATS = [
+    "%Y-%m-%dT%H:%M:%SZ",
+    "%Y-%m-%d %H:%M:%S",
+]
+
+
+def parse_time(timestr):
+    for fmt in TIME_FORMATS:
+        try:
+            return datetime.strptime(timestr, fmt)
+        except:
+            pass
+    raise ValueError("Cannot parse time " + timestr)
 
 
 class Message:
@@ -25,6 +38,14 @@ class IRCBot:
         self.commands = []
         self.nickname = nickname
         self.channels = channels
+        self.log = logging.getLogger(__name__)
+
+    def naturaltime(self, time):
+        if isinstance(time, float) or isinstance(time, int):
+            time = datetime.fromtimestamp(time)
+        elif isinstance(time, str) or isinstance(time, unicode):
+            time = parse_time(time)
+        return humanize.naturaltime(time)
 
     def connect(self):
         self.conn = irc.connect("chat.freenode.net", 6697, use_ssl=True)\
@@ -33,7 +54,7 @@ class IRCBot:
 
         @self.conn.on("join")
         def on_join(message, user, channel):
-            logger.info("Joining " + channel)
+            self.log.info("Joining " + channel)
 
         self.conn.on("message")(self.dispatch_message)
 
@@ -52,7 +73,7 @@ class IRCBot:
             match = pattern.match(text)
             if match:
                 msg = Message(user, target, text, match.groups(), self)
-                logger.debug("Match for %s" % pattern)
+                self.log.debug("Match for %s" % pattern)
                 r = callback(msg)
                 if asyncio.iscoroutine(r):
                     asyncio.async(r)
@@ -64,7 +85,7 @@ class IRCBot:
         if getattr(self, 'conn', None):
             self.conn.say(target, text)
         else:
-            logger.warning("%s << %s [NOT CONNECTED]" % (target, text))
+            self.log.warning("%s << %s [NOT CONNECTED]" % (target, text))
 
     def set_topic(self, topic, target=None):
         if target is None:
@@ -72,7 +93,7 @@ class IRCBot:
         if getattr(self, 'conn', None):
             self.conn.writeln('TOPIC %s : %s' % (target, topic))
         else:
-            logger.warning("%s :: %s [NOT CONNECTED]" % (target, topic))
+            self.log.warning("%s :: %s [NOT CONNECTED]" % (target, topic))
 
     def help(self, msg):
         """Affiche l'aide"""
