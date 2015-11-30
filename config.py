@@ -5,8 +5,8 @@ BOT_CLASS = MockIRCBot
 DEBUG = True
 LOGLEVEL = logging.INFO
 
-NICKNAME = "DechBot" if DEBUG else "Lechbot"
-CHANS = ['#titoufaitdestests'] if DEBUG else ['#urlab']
+NICKNAME = "DechBot"
+CHANS = ['#titoufaitdestests']
 
 INCUBATOR_SECRET = "Vairy sicret"
 INCUBATOR = "http://localhost:8000/"
