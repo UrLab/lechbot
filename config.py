@@ -1,10 +1,15 @@
+from ircbot import MockIRCBot
+import logging
+
+BOT_CLASS = MockIRCBot
 DEBUG = True
+LOGLEVEL = logging.INFO
 
 NICKNAME = "DechBot" if DEBUG else "Lechbot"
 CHANS = ['#titoufaitdestests'] if DEBUG else ['#urlab']
 
 INCUBATOR_SECRET = "Vairy sicret"
-STATUS_CHANGE_URL = "http://localhost:8000/space/change_status"
+INCUBATOR = "http://localhost:8000/"
 SPACEAPI = "http://localhost:8000/spaceapi.json"
 
 try:

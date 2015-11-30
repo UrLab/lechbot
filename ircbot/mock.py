@@ -52,14 +52,19 @@ is_printable = lambda c: unicodedata.category(c) != 'Cc'
 class MockIRCBot(IRCBot):
     def say(self, text, target):
         text = ''.join(filter(is_printable, text))
-        print("\033[1;33m%s\033[0m << %s" % (target, text))
+        print("%s < \033[1;33m%s\033[0m> %s" % (target, self.nickname, text))
+
+    def set_topic(self, text, target=None):
+        if target is None:
+            target = self.channels[0]
+        print("\033[1;36mSet topic of %s\033[0m %s" % (target, text))
 
     def stdin_mainloop(self):
-        print(">>> RUNNING IN COMMAND LINE MODE ONLY <<<")
+        print("\033[1;31m>>> RUNNING IN COMMAND LINE MODE ONLY <<<\033[0m")
         user = namedtuple('User', ['nick'])("cli")
         while True:
             text = yield from async_input("")
-            print("\033[1;34m%s\033[0m >> %s" % (self.channels[0], text))
+            print("%s < \033[1;34mcli\033[0m> %s" % (self.channels[0], text))
             self.dispatch_message(None, user, self.channels[0], text)
 
     def run(self):

@@ -66,6 +66,14 @@ class IRCBot:
         else:
             logger.warning("%s << %s [NOT CONNECTED]" % (target, text))
 
+    def set_topic(self, topic, target=None):
+        if target is None:
+            target = self.channels[0]
+        if getattr(self, 'conn', None):
+            self.conn.writeln('TOPIC %s : %s' % (target, topic))
+        else:
+            logger.warning("%s :: %s [NOT CONNECTED]" % (target, topic))
+
     def help(self, msg):
         """Affiche l'aide"""
         msg.reply("Je te réponds en privé ;)", hilight=True)
