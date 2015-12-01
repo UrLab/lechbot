@@ -14,4 +14,4 @@
 Create a file called local_config.py (in the same directory as config.py), and edit config values as needed.
 In order to test the bot locally, you might be interested in runnning an instance of [UrLab's Incubator](https://github.com/UrLab/incubator).
 
-Then `python lechbot.py`. By default, it will run in an interactive shell without connecting to IRC. To connect to IRC, set the config value `BOT_HAL = IRCBot`.
+Then `python lechbot.py`. By default, it will run in an interactive shell without connecting to IRC. To connect to IRC, set the config value `BOT_CLASS = IRCBot`.
