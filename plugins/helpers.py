@@ -16,8 +16,9 @@ def private_api(endpoint, data):
     """Call UrLab incubator private API"""
     data['secret'] = INCUBATOR_SECRET
     response = yield from aiohttp.post(mkurl(endpoint), data=data)
-    assert response.status == 200
+    status_code = response.status
     yield from response.release()
+    assert status_code == 200
 
 
 @asyncio.coroutine
@@ -37,7 +38,5 @@ def public_api(endpoint):
 
 @asyncio.coroutine
 def spaceapi():
-    response = yield from aiohttp.get(SPACEAPI)
-    res = yield from response.json()
-    yield from response.release()
+    res = yield from public_api(SPACEAPI)
     return res

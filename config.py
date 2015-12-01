@@ -10,7 +10,7 @@ CHANS = ['#titoufaitdestests']
 
 INCUBATOR_SECRET = "Vairy sicret"
 INCUBATOR = "http://localhost:8000/"
-SPACEAPI = "http://localhost:8000/spaceapi.json"
+SPACEAPI = INCUBATOR + "spaceapi.json"
 
 try:
     from local_config import *  # pragma: no flakes
