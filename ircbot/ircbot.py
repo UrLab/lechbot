@@ -35,7 +35,7 @@ class Message:
 
 class IRCBot:
     def __init__(self, nickname, channels):
-        self.commands = []
+        self.commands, self.join_callbacks, self.connect_callbacks = [], [], []
         self.nickname = nickname
         self.channels = channels
         self.log = logging.getLogger(__name__)
@@ -47,6 +47,10 @@ class IRCBot:
             time = parse_time(time)
         return humanize.naturaltime(time)
 
+    def spawn(self, maybe_coroutine):
+        if asyncio.iscoroutine(maybe_coroutine):
+            asyncio.async(maybe_coroutine)
+
     def connect(self):
         self.conn = irc.connect("chat.freenode.net", 6697, use_ssl=True)\
                        .register(self.nickname, "ident", "LechBot")\
@@ -54,9 +58,13 @@ class IRCBot:
 
         @self.conn.on("join")
         def on_join(message, user, channel):
-            self.log.info("Joining " + channel)
-
+            msg = Message(user, channel, None, [], self)
+            for callback in self.join_callbacks:
+                self.spawn(callback(msg))
         self.conn.on("message")(self.dispatch_message)
+
+        for callback in self.connect_callbacks:
+            self.spawn(callback())
 
     def run(self):
         self.connect()
@@ -68,15 +76,21 @@ class IRCBot:
             return func
         return wrapper
 
+    def on_join(self, func):
+        self.join_callbacks.append(func)
+        return func
+
+    def on_connect(self, func):
+        self.connect_callbacks.append(func)
+        return func
+
     def dispatch_message(self, message, user, target, text):
         for (pattern, callback) in self.commands:
             match = pattern.match(text)
             if match:
                 msg = Message(user, target, text, match.groups(), self)
                 self.log.debug("Match for %s" % pattern)
-                r = callback(msg)
-                if asyncio.iscoroutine(r):
-                    asyncio.async(r)
+                self.spawn(callback(msg))
                 break
 
     def say(self, text, target=None):

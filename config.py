@@ -12,6 +12,12 @@ INCUBATOR_SECRET = "Vairy sicret"
 INCUBATOR = "http://localhost:8000/"
 SPACEAPI = INCUBATOR + "spaceapi.json"
 
+RMQ_HOST = "localhost"
+RMQ_USER = "guest"
+RMQ_PASSWORD = "guest"
+LECHBOT_EVENTS_QUEUE = "test.hal.events"
+LECHBOT_NOTIFS_QUEUE = "test.hal.notifs"
+
 try:
     from local_config import *  # pragma: no flakes
 except ImportError:
