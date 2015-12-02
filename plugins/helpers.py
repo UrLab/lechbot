@@ -39,7 +39,8 @@ def public_api(endpoint):
         url = mkurl(path.join('api', endpoint.lstrip('/')))
     else:
         url = endpoint
-    response = yield from aiohttp.get(url)
+    headers = {'User-agent': "UrLab [LechBot]"}
+    response = yield from aiohttp.get(url, headers=headers)
     res = yield from response.json()
     yield from response.release()
     return res

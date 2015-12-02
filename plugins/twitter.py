@@ -12,8 +12,3 @@ def load(bot):
         user, status = msg.args
         msg.reply("Not implemented")
         bot.log.info('Retweet @' + user + ' by ' + msg.user.nick)
-
-    @bot.command(r'.*https?://.*twitter.com/([^/]+)/status/(\d+)')
-    def message_tweet(msg):
-        """Affiche le texte d'un tweet"""
-        msg.reply("Not implemented")
