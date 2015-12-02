@@ -1,0 +1,4 @@
+asyncio-irc
+aiohttp
+aioamqp
+humanize
