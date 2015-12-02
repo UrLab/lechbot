@@ -1,4 +1,4 @@
-from .helpers import public_api
+from .helpers import public_api, twitter
 
 
 def load(bot):
@@ -6,24 +6,26 @@ def load(bot):
     def github(msg):
         url = "https://api.github.com/repos/{}/{}".format(*msg.args[:2])
         repo = yield from public_api(url)
-        fmt = "{name} ({language}) {stargazers_count}*: {description}"
+        fmt = "{name} [{language}] ({stargazers_count}*): «{description}»"
         msg.reply(fmt.format(**repo))
 
-    @bot.command(r'.*https?://(?:m\.)twitter.com/([^/]+)/status/(\d+)')
-    def twitter(msg):
-        msg.reply("Not implemented")
+    @bot.command(r'.*https?://twitter.com/[^/]+/status/(\d+)')
+    def twitter_status(msg):
+        tweet = yield from twitter.status(msg.args[0])
+        f = {'name': tweet['user']['screen_name'], 'text': tweet['text']}
+        msg.reply("@{name}: «{text}»".format(**f))
 
-    @bot.command(r'https?://(?:www\.)reddit\.com/r/([\w\d_\.-]+)/comments/([\w\d_\.-]+)')
+    @bot.command(r'.*https?://www\.reddit\.com/r/([\w\d_\.-]+)/comments/([\w\d_\.-]+)')
     def reddit(msg):
         url = "https://api.reddit.com/r/{}/comments/{}".format(*msg.args[:2])
         data = yield from public_api(url)
         post = data[0]['data']['children'][0]['data']
-        fmt = "{author} ({upvote_ratio}+): {title} {url}"
+        fmt = "{author} ({upvote_ratio}+): «{title}» {url}"
         msg.reply(fmt.format(**post))
 
-    @bot.command(r'https?://news\.ycombinator\.com/item\?id=(\d+)')
+    @bot.command(r'.*https?://news\.ycombinator\.com/item\?id=(\d+)')
     def hackernews(msg):
         url = "https://hacker-news.firebaseio.com/v0/item/"
         post = yield from public_api(url + "{}.json".format(msg.args[0]))
-        fmt = "{by}: {title} {url}"
+        fmt = "{by}: «{title}» {url}"
         msg.reply(fmt.format(**post))

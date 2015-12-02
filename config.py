@@ -18,6 +18,9 @@ RMQ_PASSWORD = "guest"
 LECHBOT_EVENTS_QUEUE = "test.hal.events"
 LECHBOT_NOTIFS_QUEUE = "test.hal.notifs"
 
+TWITTER_CONSUMER_KEY = "consumer"
+TWITTER_CONSUMER_SECRET = "secret"
+
 try:
     from local_config import *  # pragma: no flakes
 except ImportError:
