@@ -68,4 +68,6 @@ class MockIRCBot(IRCBot):
             self.dispatch_message(None, user, self.channels[0], text)
 
     def run(self):
+        for callback in self.connect_callbacks:
+            self.spawn(callback())
         asyncio.get_event_loop().run_until_complete(self.stdin_mainloop())

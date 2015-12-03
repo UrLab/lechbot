@@ -4,8 +4,6 @@ from datetime import datetime
 from logging import getLogger
 from .helpers import private_api
 
-logger = getLogger()
-
 
 def load(bot):
     def make_topic(msg, new_topic=None, new_music=None):
@@ -37,7 +35,7 @@ def load(bot):
                 'nick': msg.user.nick,
                 'url': msg.args[0]
             })
-            logger.info("Music of the day changed by " + msg.user.nick)
+            bot.log.info("Music of the day changed by " + msg.user.nick)
             make_topic(msg, new_music=msg.args[0])
             msg.reply("tu viens de changer la musique du jour >>> d*-*b <<<",
                       hilight=True)
@@ -48,14 +46,14 @@ def load(bot):
     def prepend_topic(msg):
         with Persistent('topic.json') as current_topic:
             topic = current_topic.get('topic', {}).get('text', '')
-        make_topic(msg, new_topic=msg.args[0] + ' :: ' + current)
-        logger.info("Topic changed by " + msg.user.nick)
+        make_topic(msg, new_topic=msg.args[0] + ' :: ' + topic)
+        bot.log.info("Topic changed by " + msg.user.nick)
 
     @bot.command(r'\!topic +([^ ].+)')
     def topic(msg):
         """Change l'annonce du chat"""
         make_topic(msg, new_topic=msg.args[0])
-        logger.info("Topic changed by " + msg.user.nick)
+        bot.log.info("Topic changed by " + msg.user.nick)
 
     @bot.command(r'\!(topic|motd)')
     def tell_topic(msg):
