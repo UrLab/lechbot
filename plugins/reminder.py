@@ -100,7 +100,7 @@ def load(bot):
                         bot.say(fmt.format(who=who, action=task['action']))
 
                         # Envoi d'une notification sonore au hackerspace
-                        lechbot_notif('trash')
+                        yield from lechbot_notif('trash')
 
                         # On enregitre dans le cache
                         janitor[name] = {'time': now, 'who': who}
