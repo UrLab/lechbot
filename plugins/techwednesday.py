@@ -1,6 +1,5 @@
 from .helpers import public_api, private_api, mkurl
-from operator import itemgetter
-from datetime import datetime
+from ircbot.text import bold, blue
 
 
 def load(bot):
@@ -11,7 +10,7 @@ def load(bot):
             'point': msg.args[0] + ' (' + msg.user.nick + ')'
         })
         msg.reply(
-            'Point "' + msg.args[0] + '" ajouté à l\'ordre du jour',
+            'Point "' + bold(msg.args[0]) + '" ajouté à l\'ordre du jour',
             hilight=True)
         bot.log.info('Add "' + msg.args[0] + '" to next tw by ' + msg.user.nick)
 
@@ -21,9 +20,9 @@ def load(bot):
         try:
             next_meeting = yield from public_api('/events/next_meeting')
             when = bot.naturaltime(next_meeting['event']['start'])
-            msg.reply("Prochaine réunion " + when)
+            msg.reply(bold("Prochaine réunion " + when))
             for line in next_meeting['OJ'].split('\n'):
                 msg.reply(line.strip())
-            msg.reply(mkurl("meetings/" + str(next_meeting['id'])))
+            msg.reply(blue(mkurl("meetings/" + str(next_meeting['id']))))
         except:
             msg.reply("Pas de prochain tw trouvé")
