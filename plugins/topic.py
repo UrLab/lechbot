@@ -44,6 +44,13 @@ def load(bot):
         except:
             msg.reply("Impossible de changer la musique du jour !")
 
+    @bot.command(r'\!topic prepend +([^ ].+)')
+    def prepend_topic(msg):
+        with Persistent('topic.json') as current_topic:
+            topic = current_topic.get('topic', {}).get('text', '')
+        make_topic(msg, new_topic=msg.args[0] + ' :: ' + current)
+        logger.info("Topic changed by " + msg.user.nick)
+
     @bot.command(r'\!topic +([^ ].+)')
     def topic(msg):
         """Change l'annonce du chat"""
