@@ -50,7 +50,9 @@ is_printable = lambda c: unicodedata.category(c) != 'Cc'
 
 
 class MockIRCBot(IRCBot):
-    def say(self, text, target):
+    def say(self, text, target=None):
+        if target is None:
+            target = self.channels[0]
         text = ''.join(filter(is_printable, text))
         print("%s < \033[1;33m%s\033[0m> %s" % (target, self.nickname, text))
 

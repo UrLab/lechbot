@@ -43,7 +43,7 @@ class IRCBot:
     def naturaltime(self, time):
         if isinstance(time, float) or isinstance(time, int):
             time = datetime.fromtimestamp(time)
-        elif isinstance(time, str) or isinstance(time, unicode):
+        elif isinstance(time, str):
             time = parse_time(time)
         return humanize.naturaltime(time)
 

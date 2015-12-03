@@ -1,6 +1,7 @@
 import json
-from fcntl import flock, LOCK_UN, LOCK_EX
 import logging
+from fcntl import flock, LOCK_UN, LOCK_EX
+from copy import deepcopy
 
 logger = logging.getLogger()
 
@@ -21,12 +22,14 @@ class Persistent:
         except:
             logger.exception("Cannot load from " + self.file)
             self.db = {}
+        self._initial = deepcopy(self.db)
         return self.db
 
     def __exit__(self, *args, **kwargs):
-        self.fd.seek(0)
-        json.dump(self.db, self.fd)
-        self.fd.truncate()
+        if self._initial != self.db:
+            self.fd.seek(0)
+            json.dump(self.db, self.fd)
+            self.fd.truncate()
+            logger.info("Saved " + repr(self.db) + " to " + self.file)
         flock(self.fd, LOCK_UN)
         self.fd.close()
-        logger.info("Saved " + repr(self.db) + " to " + self.file)
