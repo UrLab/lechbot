@@ -19,3 +19,4 @@ def load(bot):
         url = 'statuses/retweet/{}.json'.format(tweet_id)
         yield from twitter.request('POST', url)
         yield from twitter_status(msg)
+        msg.reply("Retweeté \\\\o<", hilight=True)

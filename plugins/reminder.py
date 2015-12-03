@@ -1,7 +1,7 @@
 import asyncio
 import random
 from ircbot.persist import Persistent
-from .helpers import public_api, spaceapi, mkurl, lechbot_notif
+from .helpers import public_api, spaceapi, mkurl, lechbot_notif, protect
 from datetime import datetime
 from time import time
 from operator import itemgetter
@@ -37,15 +37,6 @@ JANITOR_TASKS = {
         'action': 'passer un coup de balais dans le hackerspace'
     }
 }
-
-
-def protect(func):
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except:
-            logger.exception("Error in {}".format(func.__name__))
-    return wrapper
 
 
 def load(bot):
@@ -109,6 +100,6 @@ def load(bot):
     @bot.on_connect
     def reminder():
         while True:
+            yield from asyncio.sleep(PERIOD)
             yield from remind_events()
             yield from janitor()
-            yield from asyncio.sleep(PERIOD)

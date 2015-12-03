@@ -16,6 +16,18 @@ logger = getLogger(__name__)
 TIMEFMT = "%Y-%m-%d %H:%M:%S"
 
 
+def protect(func):
+    def wrapper(*args, **kwargs):
+        try:
+            r = func(*args, **kwargs)
+            if asyncio.iscoroutine(r):
+                r = yield from r
+            return r
+        except:
+            logger.exception("Error in {}".format(func.__name__))
+    return wrapper
+
+
 def mkurl(endpoint, host=INCUBATOR):
     url = str(host)
     if url[-1] != '/':
@@ -60,47 +72,40 @@ def rmq_error_callback(exc):
 
 
 @asyncio.coroutine
+@protect
 def lechbot_event_consume(coroutine):
-    try:
-        transport, protocol = yield from aioamqp.connect(
-            host=RMQ_HOST, login=RMQ_USER, password=RMQ_PASSWORD,
-            on_error=rmq_error_callback)
-        channel = yield from protocol.channel()
-        queue = yield from channel.queue_declare(LECHBOT_EVENTS_QUEUE)
+    transport, protocol = yield from aioamqp.connect(
+        host=RMQ_HOST, login=RMQ_USER, password=RMQ_PASSWORD,
+        on_error=rmq_error_callback)
+    channel = yield from protocol.channel()
+    queue = yield from channel.queue_declare(LECHBOT_EVENTS_QUEUE)
 
-        @asyncio.coroutine
-        def consume(body, envelope, properties):
-            yield from channel.basic_client_ack(envelope.delivery_tag)
-            try:
-                msg = json.loads(body.decode())
-                now = datetime.now()
-                msgtime = datetime.strptime(
-                    msg.get('time', now.strftime(TIMEFMT)), TIMEFMT)
-                if (now - msgtime).total_seconds() < 120:
-                    yield from coroutine(msg['name'])
-            except:
-                logger.exception("Error when consuming message from " +
-                                 LECHBOT_EVENTS_QUEUE)
+    @asyncio.coroutine
+    @protect
+    def consume(body, envelope, properties):
+        yield from channel.basic_client_ack(envelope.delivery_tag)
+        msg = json.loads(body.decode())
+        now = datetime.now()
+        msgtime = datetime.strptime(
+            msg.get('time', now.strftime(TIMEFMT)), TIMEFMT)
+        if (now - msgtime).total_seconds() < 120:
+            yield from coroutine(msg['name'])
 
-        yield from channel.basic_consume(LECHBOT_EVENTS_QUEUE, callback=consume)
-    except aioamqp.AmqpClosedConnection:
-        logger.exception("Closed connection")
+    yield from channel.basic_consume(LECHBOT_EVENTS_QUEUE, callback=consume)
 
 
 @asyncio.coroutine
+@protect
 def lechbot_notif(notif_name):
-    try:
-        transport, protocol = yield from aioamqp.connect(
-            host=RMQ_HOST, login=RMQ_USER, password=RMQ_PASSWORD,
-            on_error=rmq_error_callback)
-        channel = yield from protocol.channel()
-        yield from channel.queue_declare(LECHBOT_NOTIFS_QUEUE)
-        msg = {'time': datetime.now().strftime(TIMEFMT), 'name': notif_name}
-        yield from channel.publish(json.dumps(msg), '', LECHBOT_NOTIFS_QUEUE)
-        yield from protocol.close()
-        transport.close()
-    except aioamqp.AmqpClosedConnection:
-        logger.exception("Closed connection")
+    transport, protocol = yield from aioamqp.connect(
+        host=RMQ_HOST, login=RMQ_USER, password=RMQ_PASSWORD,
+        on_error=rmq_error_callback)
+    channel = yield from protocol.channel()
+    yield from channel.queue_declare(LECHBOT_NOTIFS_QUEUE)
+    msg = {'time': datetime.now().strftime(TIMEFMT), 'name': notif_name}
+    yield from channel.publish(json.dumps(msg), '', LECHBOT_NOTIFS_QUEUE)
+    yield from protocol.close()
+    transport.close()
 
 
 class AsyncTwitter:
