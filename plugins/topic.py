@@ -1,5 +1,6 @@
 from ircbot.persist import Persistent
 from time import time
+from datetime import datetime
 from logging import getLogger
 from .helpers import private_api
 
@@ -23,6 +24,13 @@ def load(bot):
     @bot.command(r'\!motd +(https?://[^ ]+)')
     def music_of_the_day(msg):
         """Change la musique du jour"""
+        now = datetime.now()
+        with Persistent('topic.json') as current_topic:
+            last = datetime.fromtimestamp(current_topic['motd']['last_changed'])
+        if last.date() == now.date():
+            msg.reply("La musique du jour a déjà été changée aujourd'hui",
+                      hilight=True)
+            return
         try:
             yield from private_api('/space/change_motd', {
                 'nick': msg.user.nick,
