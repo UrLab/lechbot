@@ -64,6 +64,7 @@ class IRCBot:
         self.conn = irc.connect("chat.freenode.net", 6697, use_ssl=True)\
                        .register(self.nickname, "ident", "LechBot")\
                        .join(self.channels)
+        self.conn.queue_timer = 0.25
 
         @self.conn.on("join")
         def on_join(message, user, channel):
