@@ -5,10 +5,12 @@ import json
 from os import path
 from datetime import datetime
 from logging import getLogger
+from aioauth_client import TwitterClient
 from config import (INCUBATOR, INCUBATOR_SECRET, SPACEAPI,
                     RMQ_HOST, RMQ_USER, RMQ_PASSWORD,
                     LECHBOT_EVENTS_QUEUE, LECHBOT_NOTIFS_QUEUE,
-                    TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET)
+                    TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET,
+                    TWITTER_OAUTH_TOKEN, TWITTER_OAUTH_SECRET)
 
 logger = getLogger(__name__)
 TIMEFMT = "%Y-%m-%d %H:%M:%S"
@@ -49,8 +51,7 @@ def public_api(endpoint):
 
 @asyncio.coroutine
 def spaceapi():
-    res = yield from public_api(SPACEAPI)
-    return res
+    return public_api(SPACEAPI)
 
 
 @asyncio.coroutine
@@ -104,47 +105,16 @@ def lechbot_notif(notif_name):
 
 class AsyncTwitter:
     def __init__(self):
-        self.connected = False
+        self.client = TwitterClient(
+            consumer_key=TWITTER_CONSUMER_KEY,
+            consumer_secret=TWITTER_CONSUMER_SECRET,
+            oauth_token=TWITTER_OAUTH_TOKEN,
+            oauth_token_secret=TWITTER_OAUTH_SECRET)
 
-    @asyncio.coroutine
-    def connect(self):
-        auth_query = {
-            'auth': aiohttp.BasicAuth(
-                TWITTER_CONSUMER_KEY,
-                TWITTER_CONSUMER_SECRET
-            ),
-            'data': {'grant_type': 'client_credentials'},
-            'headers': {'Content-Type': "application/x-www-form-urlencoded"},
-        }
-
-        auth_url = "https://api.twitter.com/oauth2/token"
-        response = yield from aiohttp.post(auth_url, **auth_query)
-        data = yield from response.json()
-        yield from response.release()
-        self.auth = {'Authorization': 'Bearer ' + data['access_token']}
-        logger.info("Connected to Twitter")
-        self.connected = True
-
-    @asyncio.coroutine
-    def query(self, kind, endpoint, **data):
-        if not self.connected:
-            yield from self.connect()
-        if not endpoint.endswith('.json'):
-            endpoint += '.json'
-        url = "https://api.twitter.com/1.1" + endpoint
-        if kind != 'POST':
-            q = "&".join("{}={}".format(k, v) for k, v in data.items())
-            if q:
-                url += '?' + q
-            response = yield from aiohttp.get(url, headers=self.auth)
-        else:
-            response = yield from aiohttp.get(url, headers=self.auth, data=data)
+    def request(self, *args, **kwargs):
+        response = yield from self.client.request(*args, **kwargs)
         res = yield from response.json()
         yield from response.release()
         return res
-
-    @asyncio.coroutine
-    def status(self, id):
-        return self.query('GET', '/statuses/show', id=id)
 
 twitter = AsyncTwitter()

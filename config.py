@@ -20,6 +20,8 @@ LECHBOT_NOTIFS_QUEUE = "test.hal.notifs"
 
 TWITTER_CONSUMER_KEY = "consumer"
 TWITTER_CONSUMER_SECRET = "secret"
+TWITTER_OAUTH_TOKEN = "token"
+TWITTER_OAUTH_SECRET = "token-secret"
 
 try:
     from local_config import *  # pragma: no flakes
