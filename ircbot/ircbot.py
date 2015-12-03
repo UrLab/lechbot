@@ -51,6 +51,15 @@ class IRCBot:
         if asyncio.iscoroutine(maybe_coroutine):
             asyncio.async(maybe_coroutine)
 
+    def _invoke_connect_callbacks(self):
+        for callback in self.connect_callbacks:
+            self.spawn(callback())
+
+    def _invoke_join_callbacks(self, user, chan):
+        msg = Message(user, chan, None, [], self)
+        for callback in self.join_callbacks:
+            self.spawn(callback(msg))
+
     def connect(self):
         self.conn = irc.connect("chat.freenode.net", 6697, use_ssl=True)\
                        .register(self.nickname, "ident", "LechBot")\
@@ -58,13 +67,9 @@ class IRCBot:
 
         @self.conn.on("join")
         def on_join(message, user, channel):
-            msg = Message(user, channel, None, [], self)
-            for callback in self.join_callbacks:
-                self.spawn(callback(msg))
+            self._invoke_join_callbacks(user, channel)
+        self._invoke_connect_callbacks()
         self.conn.on("message")(self.dispatch_message)
-
-        for callback in self.connect_callbacks:
-            self.spawn(callback())
 
     def run(self):
         self.connect()
@@ -93,13 +98,16 @@ class IRCBot:
                 self.spawn(callback(msg))
                 break
 
-    def say(self, text, target=None):
-        if target is None:
-            target = self.channels[0]
+    def _say(self, text, target):
         if getattr(self, 'conn', None):
             self.conn.say(target, text)
         else:
             self.log.warning("%s << %s [NOT CONNECTED]" % (target, text))
+
+    def say(self, text, target=None):
+        if target is None:
+            target = self.channels[0]
+        self._say(text, target)
 
     def set_topic(self, topic, target=None):
         if target is None:

@@ -50,9 +50,7 @@ is_printable = lambda c: unicodedata.category(c) != 'Cc'
 
 
 class MockIRCBot(IRCBot):
-    def say(self, text, target=None):
-        if target is None:
-            target = self.channels[0]
+    def _say(self, text, target=None):
         text = ''.join(filter(is_printable, text))
         print("%s < \033[1;33m%s\033[0m> %s" % (target, self.nickname, text))
 
@@ -70,6 +68,7 @@ class MockIRCBot(IRCBot):
             self.dispatch_message(None, user, self.channels[0], text)
 
     def run(self):
-        for callback in self.connect_callbacks:
-            self.spawn(callback())
+        self._invoke_connect_callbacks()
+        for chan in self.channels:
+            self._invoke_join_callbacks(None, chan)
         asyncio.get_event_loop().run_until_complete(self.stdin_mainloop())
