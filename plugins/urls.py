@@ -4,7 +4,6 @@ from .helpers import public_api, twitter
 def twitter_status(msg):
     url = 'statuses/show/{}.json'.format(msg.args[0])
     tweet = yield from twitter.request('GET', url)
-    print(repr(tweet))
     f = {'name': tweet['user']['screen_name'], 'text': tweet['text']}
     msg.reply("@{name}: «{text}»".format(**f))
 
