@@ -26,7 +26,8 @@ def load(bot):
         """Change la musique du jour"""
         now = datetime.now()
         with Persistent('topic.json') as current_topic:
-            last = datetime.fromtimestamp(current_topic['motd']['last_changed'])
+            last = datetime.fromtimestamp(current_topic.get('motd', {})\
+                                                       .get('last_changed', 0))
         if last.date() == now.date():
             msg.reply("La musique du jour a déjà été changée aujourd'hui",
                       hilight=True)
