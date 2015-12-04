@@ -1,2 +1,2 @@
 from .ircbot import IRCBot
-from .mock import MockIRCBot
+from .mock import CLIBot

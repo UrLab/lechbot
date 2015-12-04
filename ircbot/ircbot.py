@@ -3,8 +3,8 @@ import logging
 import asyncio
 import humanize
 from datetime import datetime
-
 from asyncirc import irc
+from .text import IRCColors
 
 TIME_FORMATS = [
     "%Y-%m-%dT%H:%M:%SZ",
@@ -34,6 +34,8 @@ class Message:
 
 
 class IRCBot:
+    text = IRCColors
+
     def __init__(self, nickname, channels):
         self.commands, self.join_callbacks, self.connect_callbacks = [], [], []
         self.nickname = nickname

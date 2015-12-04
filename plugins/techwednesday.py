@@ -1,8 +1,9 @@
 from .helpers import public_api, private_api, mkurl
-from ircbot.text import bold, blue
 
 
 def load(bot):
+    bold, blue = bot.text.bold, bot.text.blue
+
     @bot.command(r'\!tw +([^ ].+)')
     def add_to_next_tw(msg):
         """Ajoute un point à l'ordre du jour de la prochaine réunion"""

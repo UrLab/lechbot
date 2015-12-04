@@ -1,12 +1,11 @@
 from .helpers import public_api, twitter
-from ircbot.text import bold, red, green, yellow, purple, grey, blue
 
 
 def twitter_status(msg):
     url = 'statuses/show/{}.json'.format(msg.args[0])
     tweet = yield from twitter.request('GET', url)
     f = {
-        'name': bold('@', tweet['user']['screen_name']),
+        'name': msg.bot.text.bold('@', tweet['user']['screen_name']),
         'text': tweet['text']
     }
     msg.reply("{name}: «{text}»".format(**f))
@@ -15,9 +14,9 @@ def twitter_status(msg):
 def github(msg):
     url = "https://api.github.com/repos/{}/{}".format(*msg.args)
     repo = yield from public_api(url)
-    repo['name'] = bold(repo['name'])
-    repo['language'] = purple('[', repo['language'], ']')
-    repo['stars'] = yellow('(', repo['stargazers_count'], '*)')
+    repo['name'] = msg.bot.text.bold(repo['name'])
+    repo['language'] = msg.bot.text.purple('[', repo['language'], ']')
+    repo['stars'] = msg.bot.text.yellow('(', repo['stargazers_count'], '*)')
     fmt = "{name} {language} {stars}: «{description}»"
     msg.reply(fmt.format(**repo))
 
@@ -27,23 +26,23 @@ def github_issue(msg):
     args = user, repo, id
     url = "https://api.github.com/repos/{}/{}/issues/{}".format(*args)
     issue = yield from public_api(url)
-    issue['author'] = bold('@' + issue['user']['login'])
-    issue['labels'] = ' '.join(grey('(%s)') % x['name'] for x in issue['labels'])
+    issue['author'] = msg.bot.text.bold('@' + issue['user']['login'])
+    issue['labels'] = ' '.join(msg.bot.text.grey('(%s)') % x['name'] for x in issue['labels'])
     if issue['state'] == 'open':
-        issue['number'] = green('[#', issue['number'], ' (open)]')
+        issue['number'] = msg.bot.text.green('[#', issue['number'], ' (open)]')
     elif issue['state'] == 'closed':
-        issue['number'] = red('[#', issue['number'], ' (closed)]')
+        issue['number'] = msg.bot.text.red('[#', issue['number'], ' (closed)]')
     fmt = "{author} {number}: «{title}» {labels}"
     msg.reply(fmt.format(**issue))
 
 
 def reddit(msg):
-    url = "https://api.reddit.com/r/{}/comments/{}".format(*msg.args[:2])
+    url = "https://api.msg.bot.text.reddit.com/r/{}/comments/{}".format(*msg.args[:2])
     data = yield from public_api(url)
     post = data[0]['data']['children'][0]['data']
-    post['author'] = bold('@' + post['author'])
-    post['upvote_ratio'] = yellow('(', post['upvote_ratio'], '+)')
-    post['url'] = blue(post['url'])
+    post['author'] = msg.bot.text.bold('@' + post['author'])
+    post['upvote_ratio'] = msg.bot.text.yellow('(', post['upvote_ratio'], '+)')
+    post['url'] = msg.bot.text.blue(post['url'])
     fmt = "{author} {upvote_ratio}: «{title}» {url}"
     msg.reply(fmt.format(**post))
 
@@ -51,8 +50,8 @@ def reddit(msg):
 def hackernews(msg):
     url = "https://hacker-news.firebaseio.com/v0/item/"
     post = yield from public_api(url + "{}.json".format(msg.args[0]))
-    post['by'] = bold('@', post['by'])
-    post['url'] = blue(post['url'])
+    post['by'] = msg.bot.text.bold('@', post['by'])
+    post['url'] = msg.bot.text.blue(post['url'])
     fmt = "{by}: «{title}» {url}"
     msg.reply(fmt.format(**post))
 

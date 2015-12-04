@@ -10,6 +10,7 @@ import unicodedata
 from asyncio.streams import StreamWriter, FlowControlMixin
 from collections import namedtuple
 from .ircbot import IRCBot
+from .text import CLIColors
 
 reader, writer = None, None
 
@@ -49,9 +50,10 @@ def async_input(message):
 is_printable = lambda c: unicodedata.category(c) != 'Cc'
 
 
-class MockIRCBot(IRCBot):
+class CLIBot(IRCBot):
+    text = CLIColors
+
     def _say(self, text, target=None):
-        text = ''.join(filter(is_printable, text))
         print("%s < \033[1;33m%s\033[0m> %s" % (target, self.nickname, text))
 
     def set_topic(self, text, target=None):

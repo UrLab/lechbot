@@ -1,7 +1,7 @@
-from ircbot import MockIRCBot
+from ircbot import CLIBot
 import logging
 
-BOT_CLASS = MockIRCBot
+BOT_CLASS = CLIBot
 DEBUG = True
 LOGLEVEL = logging.INFO
 
