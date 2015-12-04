@@ -26,8 +26,10 @@ class Message:
         self.user, self.chan, self.text, self.args = user, chan, text, args
         self.bot = bot
 
+    is_private = property(lambda self: self.chan == self.bot.nickname)
+
     def reply(self, text, private=False, hilight=False):
-        target = self.user.nick if private else self.chan
+        target = self.user.nick if private or self.is_private else self.chan
         if hilight:
             text = self.user.nick + ': ' + text
         self.bot.say(text, target=target)
