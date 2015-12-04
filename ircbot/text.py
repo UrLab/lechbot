@@ -14,8 +14,8 @@ class IRCColors:
     bold = staticmethod(make_style('\x02', '\x02'))
     red = staticmethod(make_style('\x035', '\x03'))
     green = staticmethod(make_style('\x033', '\x03'))
-    yellow = staticmethod(make_style('\x038', '\x03'))
-    blue = staticmethod(make_style('\x0312', '\x03'))
+    yellow = staticmethod(make_style('\x037', '\x03'))
+    blue = staticmethod(make_style('\x032', '\x03'))
     purple = staticmethod(make_style('\x036', '\x03'))
     grey = staticmethod(make_style('\x0315', '\x03'))
 
