@@ -23,7 +23,9 @@ def load(bot):
             when = bot.naturaltime(next_meeting['event']['start'])
             msg.reply(bold("Prochaine réunion " + when))
             for line in next_meeting['OJ'].split('\n'):
-                msg.reply(line.strip())
+                line = line.strip()
+                if line:
+                    msg.reply(line)
             msg.reply(blue(mkurl("meetings/" + str(next_meeting['id']))))
         except:
             msg.reply("Pas de prochain tw trouvé")
