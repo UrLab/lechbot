@@ -2,7 +2,7 @@ import re
 import logging
 import asyncio
 import humanize
-from datetime import datetime
+from datetime import datetime, timedelta
 from asyncirc import irc
 from .text import IRCColors
 
@@ -49,6 +49,8 @@ class IRCBot:
             time = datetime.fromtimestamp(time)
         elif isinstance(time, str):
             time = parse_time(time)
+        elif isinstance(time, timedelta):
+            return humanize.naturaldelta(time)
         return humanize.naturaltime(time)
 
     def spawn(self, maybe_coroutine):

@@ -1,9 +1,4 @@
-from ircbot import CLIBot
-import logging
-
-BOT_CLASS = CLIBot
 DEBUG = True
-LOGLEVEL = logging.INFO
 
 NICKNAME = "DechBot"
 CHANS = ['#titoufaitdestests']
