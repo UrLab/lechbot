@@ -6,9 +6,6 @@ from datetime import datetime
 from time import time
 from operator import itemgetter
 
-from logging import getLogger
-logger = getLogger(__name__)
-
 minutes = 60
 hours = 60*minutes
 days = 24*hours
@@ -40,6 +37,14 @@ JANITOR_TASKS = {
 
 
 def load(bot):
+    def tell_event(event):
+        event['title'] = bot.text.bold(event['title'])
+        event['when'] = bot.naturaltime(from_now)
+        event['url'] = bot.text.blue(mkurl('/events/{}'.format(event['id'])))
+        fmt = "===RAPPEL=== {title} a lieu {when} {url}"
+        bot.say(fmt.format(**event))
+        bot.log.info("Reminding Ev#{id} {title}".format(**event))
+
     @protect
     def remind_events():
         """
@@ -53,13 +58,12 @@ def load(bot):
                 continue
             when = datetime.strptime(event['start'], '%Y-%m-%dT%H:%M:%SZ')
             from_now = when - now
+            bot.log.debug("{title} {start}".format(**event))
+
             for (days, periods) in REMINDERS:
                 smin, smax = periods*PERIOD, (periods + 1)*PERIOD
-                if from_now.days == days and smin < from_now.seconds < smax:
-                    event['when'] = bot.naturaltime(when)
-                    event['url'] = mkurl('/events/{}'.format(event['id']))
-                    bot.say("{title} a lieu {when} {url}".format(**event))
-                    bot.log.info("Reminding Ev#{id} {title}".format(**event))
+                if from_now.days == days and smin <= from_now.seconds <= smax:
+                    tell_event(event)
                     break
 
     @protect
