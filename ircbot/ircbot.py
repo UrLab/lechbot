@@ -63,8 +63,9 @@ class IRCBot:
     def run(self):
         self.connect()
         loop = asyncio.get_event_loop()
-        if not loop.is_running:
+        if not loop.is_running():
             loop.run_forever()
+            self.log.info("LechBot starts event loop !")
 
     def command(self, pattern):
         def wrapper(func):

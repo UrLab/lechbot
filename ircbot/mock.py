@@ -76,5 +76,6 @@ class CLIBot(IRCBot):
 
         asyncio.async(self.stdin_mainloop())
         loop = asyncio.get_event_loop()
-        if not loop.is_running:
+        if not loop.is_running():
             loop.run_forever()
+            self.log.info("LechBot starts event loop !")
