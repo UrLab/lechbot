@@ -86,8 +86,8 @@ def lechbot_event_consume(coroutine):
         yield from channel.basic_client_ack(envelope.delivery_tag)
         msg = json.loads(body.decode())
         now = datetime.now()
-        msgtime = datetime.strptime(
-            msg.get('time', now.strftime(TIMEFMT)), TIMEFMT)
+        msgtime = datetime
+        msgtime = parse_date(msg['time'])
         if (now - msgtime).total_seconds() < 120:
             yield from coroutine(msg['name'])
 

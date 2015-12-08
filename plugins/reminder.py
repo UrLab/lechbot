@@ -1,6 +1,7 @@
 import asyncio
 import random
 from ircbot.persist import Persistent
+from ircbot.text import parse_time
 from .helpers import public_api, spaceapi, mkurl, lechbot_notif, protect
 from datetime import datetime
 from time import time
@@ -56,7 +57,7 @@ def load(bot):
         for event in events['results']:
             if not event.get('start', None):
                 continue
-            when = datetime.strptime(event['start'], '%Y-%m-%dT%H:%M:%SZ')
+            when = parse_time(event['start'])
             from_now = when - now
             bot.log.debug("{title} {start}".format(**event))
 

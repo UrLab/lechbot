@@ -3,3 +3,4 @@ aiohttp
 aioamqp
 aioauth-client
 humanize
+python-dateutil

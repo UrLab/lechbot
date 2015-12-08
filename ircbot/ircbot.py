@@ -4,21 +4,7 @@ import asyncio
 import humanize
 from datetime import datetime, timedelta
 from asyncirc import irc
-from .text import IRCColors
-
-TIME_FORMATS = [
-    "%Y-%m-%dT%H:%M:%SZ",
-    "%Y-%m-%d %H:%M:%S",
-]
-
-
-def parse_time(timestr):
-    for fmt in TIME_FORMATS:
-        try:
-            return datetime.strptime(timestr, fmt)
-        except:
-            pass
-    raise ValueError("Cannot parse time " + timestr)
+from .text import IRCColors, parse_time
 
 
 class Message:
@@ -45,13 +31,9 @@ class IRCBot:
         self.log = logging.getLogger(__name__)
 
     def naturaltime(self, time):
-        if isinstance(time, float) or isinstance(time, int):
-            time = datetime.fromtimestamp(time)
-        elif isinstance(time, str):
-            time = parse_time(time)
-        elif isinstance(time, timedelta):
+        if isinstance(time, timedelta):
             return humanize.naturaldelta(time)
-        return humanize.naturaltime(time)
+        return humanize.naturaltime(parse_time(time))
 
     def spawn(self, maybe_coroutine):
         if asyncio.iscoroutine(maybe_coroutine):
