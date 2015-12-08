@@ -130,5 +130,5 @@ class IRCBot:
         for (pat, callb) in self.commands:
             if callb.__doc__:
                 pattern = ''.join(filter(lambda x: x != '\\', pat.pattern))
-                doc = "\x02%s\x02: %s" % (pattern, callb.__doc__.strip())
+                doc = "%s: %s" % (self.text.bold(pattern), callb.__doc__.strip())
                 msg.reply(doc, private=True)
