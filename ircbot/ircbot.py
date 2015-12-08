@@ -62,7 +62,9 @@ class IRCBot:
 
     def run(self):
         self.connect()
-        asyncio.get_event_loop().run_forever()
+        loop = asyncio.get_event_loop()
+        if not loop.is_running:
+            loop.run_forever()
 
     def command(self, pattern):
         def wrapper(func):

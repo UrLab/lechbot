@@ -73,4 +73,8 @@ class CLIBot(IRCBot):
         self._invoke_connect_callbacks()
         for chan in self.channels:
             self._invoke_join_callbacks(None, chan)
-        asyncio.get_event_loop().run_until_complete(self.stdin_mainloop())
+
+        asyncio.async(self.stdin_mainloop())
+        loop = asyncio.get_event_loop()
+        if not loop.is_running:
+            loop.run_forever()
