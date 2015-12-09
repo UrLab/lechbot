@@ -6,6 +6,7 @@ from os import path
 from datetime import datetime
 from logging import getLogger
 from aioauth_client import TwitterClient
+from ircbot.text import parse_time
 from config import (INCUBATOR, INCUBATOR_SECRET, SPACEAPI,
                     RMQ_HOST, RMQ_USER, RMQ_PASSWORD,
                     LECHBOT_EVENTS_QUEUE, LECHBOT_NOTIFS_QUEUE,
@@ -87,7 +88,7 @@ def lechbot_event_consume(coroutine):
         msg = json.loads(body.decode())
         now = datetime.now()
         msgtime = datetime
-        msgtime = parse_date(msg['time'])
+        msgtime = parse_time(msg['time'])
         if (now - msgtime).total_seconds() < 120:
             yield from coroutine(msg['name'])
 
