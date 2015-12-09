@@ -10,7 +10,7 @@ import asyncio
 from autobahn.asyncio.wamp import ApplicationSession, ApplicationRunner
 
 
-def main(loglevel, bot_class):
+def main(loglevel, bot):
     """
     Run LechBot in an Autobahn application
     """
@@ -22,17 +22,6 @@ def main(loglevel, bot_class):
     class Component(ApplicationSession):
         @asyncio.coroutine
         def onJoin(self, details):
-            bot = bot_class(NICKNAME, CHANS)
-
-            load_all_plugins(bot)
-            bot.command(r'\!help')(bot.help)
-
-            @bot.command(r'tg %s$' % NICKNAME)
-            def shut_up(msg):
-                """Je meurs"""
-                bot.log.info('Shutting down; asked by ' + msg.user.nick)
-                self.leave()
-
             def on_event(key, time, text):
                 time = parse_time(time)
                 # Ignore recent messages
@@ -43,7 +32,6 @@ def main(loglevel, bot_class):
                     }))
             yield from self.subscribe(on_event, u'incubator.actstream')
             yield from self.subscribe(on_event, u'hal.eventstream')
-            bot.run()
 
     runner = ApplicationRunner(WAMP_HOST, WAMP_REALM,
                                debug_wamp=False, debug=False)
@@ -72,4 +60,16 @@ if __name__ == "__main__":
         lvl = logging.DEBUG
     if options.online:
         klass = IRCBot
-    main(lvl, klass)
+
+    bot = klass(NICKNAME, CHANS)
+    load_all_plugins(bot)
+    bot.command(r'\!help')(bot.help)
+
+    @bot.command(r'tg %s$' % NICKNAME)
+    def shut_up(msg):
+        """Je meurs"""
+        bot.log.info('Shutting down; asked by ' + msg.user.nick)
+        exit()
+    bot.connect()
+
+    main(lvl, bot=bot)
