@@ -4,3 +4,4 @@ aioamqp
 aioauth-client
 humanize
 python-dateutil
+autobahn

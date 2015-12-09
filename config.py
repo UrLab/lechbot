@@ -7,11 +7,8 @@ INCUBATOR_SECRET = "Vairy sicret"
 INCUBATOR = "http://localhost:8000/"
 SPACEAPI = INCUBATOR + "spaceapi.json"
 
-RMQ_HOST = "localhost"
-RMQ_USER = "guest"
-RMQ_PASSWORD = "guest"
-LECHBOT_EVENTS_QUEUE = "test.hal.events"
-LECHBOT_NOTIFS_QUEUE = "test.hal.notifs"
+WAMP_HOST = "ws://127.0.0.1:8080/ws"
+WAMP_REALM = "urlab"
 
 TWITTER_CONSUMER_KEY = "consumer"
 TWITTER_CONSUMER_SECRET = "secret"

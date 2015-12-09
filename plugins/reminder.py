@@ -52,7 +52,7 @@ def load(bot):
         Rappelle les évènements proches
         """
         events = yield from public_api("/events/")
-        now = datetime.utcnow()
+        now = datetime.now()
 
         for event in events['results']:
             if not event.get('start', None):
