@@ -14,6 +14,7 @@ def twitter_status(msg):
 
 def load(bot):
     github_repo = r'.*https?://github\.com/([\w\d_\.-]+)/([\w\d_\.-]+)'
+    urlab_url = r'.*https?://urlab\.be'
 
     bot.command(r'.*https?://twitter.com/[^/]+/status/(\d+)')(twitter_status)
 
@@ -62,30 +63,13 @@ def load(bot):
         fmt = "{by}: «{title}» {url}"
         msg.reply(fmt.format(**post))
 
-    @bot.command(r'.*https?://urlab\.be(/projects/\d+)')
-    def urlab_project(msg):
-        proj = yield from public_api(msg.args[0])
-        if proj['status'] == 'f':    # Finished
-            color = bot.text.green
-        elif proj['status'] == "p":  # Proposition
-            color = bot.text.yellow
-        elif proj['status'] == "i":  # In progress
-            color = bot.text.blue
-        else:                        # Unknown status
-            color = bot.text.grey
-
-        proj['desc'] = color(proj['short_description'])
-        proj['title'] = bot.text.bold(proj['title'])
-        fmt = "{title}: {desc}"
-        msg.reply(fmt.format(**proj))
-
     PROJECT_STATUS = {
         'p': bot.text.yellow,  # Proposition
         'i': bot.text.blue,    # In progress
         'f': bot.text.green,   # Finished
     }
 
-    @bot.command(INCUBATOR + r'(projects/\d+)')
+    @bot.command(urlab_url + r'/(projects/\d+)')
     def urlab_project(msg):
         proj = yield from public_api(msg.args[0])
         color = PROJECT_STATUS.get(proj['status'], bot.text.grey)
@@ -99,10 +83,13 @@ def load(bot):
         'i': bot.text.yellow,
     }
 
-    @bot.command(INCUBATOR + r'(events/\d+)')
+    @bot.command(urlab_url + r'/(events/\d+)')
     def urlab_event(msg):
         evt = yield from public_api(msg.args[0])
-        evt['when'] = bot.text.yellow(bot.naturaltime(evt['start']))
+        if evt.get('start', None):
+            evt['when'] = bot.text.yellow(bot.naturaltime(evt['start']))
+        else:
+            evt['when'] = "pas de date"
         color = EVENT_STATUS.get(evt['status'], bot.text.grey)
         evt['title'] = color(evt['title'])
         evt['place'] = bot.text.purple(evt['place'])
