@@ -38,6 +38,18 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{author} {number}: «{title}» {labels}"
         msg.reply(fmt.format(**issue))
 
+    @BotPlugin.command(github_repo + r'/commit/([0-9a-fA-F]{,40})')
+    def github_commit(self, msg):
+        url = "https://api.github.com/repos/{}/{}/commits/{}".format(*msg.args)
+        commit = yield from public_api(url)
+        commit['author'] = self.bot.text.bold('@' + commit['author']['login'])
+        commit['title'] = commit['commit']['message']
+        additions = self.bot.text.green("%d+" % commit['stats']['additions'])
+        deletions = self.bot.text.red("%d-" % commit['stats']['deletions'])
+        files_changed = self.bot.text.yellow("%d files" % len(commit['files']))
+        commit['stats'] = " ".join([additions, deletions, files_changed])
+        msg.reply("{author} «{title}» ({stats})".format(**commit))
+
     @BotPlugin.command(r'.*https?://www\.reddit\.com/r/([\w\d_\.-]+)/comments/([\w\d_\.-]+)')
     def reddit(self, msg):
         url = "https://api.bot.text.reddit.com/r/{}/comments/{}".format(*msg.args[:2])
