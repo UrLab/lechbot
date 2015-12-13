@@ -8,7 +8,7 @@ import humanize
 import asyncio
 from autobahn.asyncio.wamp import ApplicationSession, ApplicationRunner
 
-from chanconfig import CHANS
+from chanconfig import CHANS, RATELIMIT
 
 
 def run_wamp(bot):
@@ -20,14 +20,27 @@ def run_wamp(bot):
         def onJoin(self, details):
             bot.log.info("Joined WAMP realm !")
 
+            last_seen_keys = {}
+
             def on_event(key, time, text):
+                now = datetime.now()
                 time = parse_time(time)
-                # Ignore recent messages
-                if (datetime.now() - time).total_seconds() < 120:
-                    bot.say(text, target=MAIN_CHAN)
-                    bot.log.debug("Got " + repr({
-                        'key': key, 'time': time, 'text': text
-                    }))
+
+                # Outdated message
+                if (now - time).total_seconds() > 120:
+                    return
+
+                # Rate limit
+                last_seen = last_seen_keys.get(key, datetime.fromtimestamp(0))
+                if (now - last_seen).total_seconds() < RATELIMIT.get(key, 0):
+                    return
+
+                bot.say(text, target=MAIN_CHAN)
+                bot.log.debug("Got " + repr({
+                    'key': key, 'time': time, 'text': text
+                }))
+
+                last_seen_keys[key] = now
             yield from self.subscribe(on_event, u'incubator.actstream')
             yield from self.subscribe(on_event, u'hal.eventstream')
 
