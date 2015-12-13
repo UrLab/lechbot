@@ -49,7 +49,7 @@ class UrlShow(TwitterBasePlugin):
         commit = yield from public_api(url)
         additions = self.bot.text.green("%d+" % commit['stats']['additions'])
         deletions = self.bot.text.red("%d-" % commit['stats']['deletions'])
-        files_changed = self.bot.text.yellow("%d files" % len(commit['files']))
+        files_changed = self.bot.text.yellow("%d fichiers" % len(commit['files']))
         f = {
             'author': self.bot.text.bold('@' + commit['author']['login']),
             'title': commit['commit']['message'],
