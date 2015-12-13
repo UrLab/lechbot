@@ -63,6 +63,7 @@ def main(loglevel, klass):
         bot.log.info('Shutting down; asked by ' + msg.user.nick)
         exit()
     bot.connect()
+    bot.log.info("Starting")
     run_wamp(bot)
 
 

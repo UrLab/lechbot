@@ -65,7 +65,7 @@ class IRCBot:
 
         @self.conn.on("join")
         def on_join(message, user, channel):
-            self._invoke_join_callbacks(user, channel)
+            self._invoke_join_callbacks(channel)
         self._invoke_connect_callbacks()
         self.conn.on("message")(self.dispatch_message)
 

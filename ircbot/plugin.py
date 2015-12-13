@@ -20,7 +20,7 @@ class BotPlugin:
             elif hasattr(member, '_botplugin_special_tag_onjoin'):
                 callbacks['on_join'].append(member)
             elif hasattr(member, '_botplugin_special_tag_onconnect'):
-                callbacks['on_join'].append(member)
+                callbacks['on_connect'].append(member)
         callbacks['commands'].sort(key=lambda P: P[1]._special_tag_id)
         return callbacks
 
@@ -61,7 +61,7 @@ class HelpPlugin(BotPlugin):
         """Raconte cette aide en conversation privée"""
         msg.reply("Je te réponds en privé ;)", hilight=True)
         commands = self.bot.channels.get(self.chan, {}).get('commands', [])
-        msg.reply("Aide pour " + self.chan, private=True)
+        msg.reply(self.bot.text.red("Aide pour " + self.chan), private=True)
         for (pattern, func) in commands:
             if func.__doc__:
                 doc = func.__doc__.strip()
