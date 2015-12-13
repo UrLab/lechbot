@@ -53,7 +53,7 @@ class IRCBot:
 
     def _invoke_join_callbacks(self, chan):
         callbacks = self.channels.get(chan, {})
-        for callback in callbacks.get('on_connect', []):
+        for callback in callbacks.get('on_join', []):
             self.spawn(callback())
 
     def connect(self):
