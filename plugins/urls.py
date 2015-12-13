@@ -4,6 +4,10 @@ from ircbot.plugin import BotPlugin
 
 
 class UrlShow(TwitterBasePlugin):
+    """
+    Post a preview for some well-known and frequent URLs
+    """
+
     github_repo = r'.*https?://github\.com/([\w\d_\.-]+)/([\w\d_\.-]+)'
     urlab_url = r'.*https?://urlab\.be'
 
@@ -29,26 +33,43 @@ class UrlShow(TwitterBasePlugin):
         args = user, repo, id
         url = "https://api.github.com/repos/{}/{}/issues/{}".format(*args)
         issue = yield from public_api(url)
+        issue['when'] = self.bot.text.grey(self.bot.naturaltime(issue['created_at']))
         issue['author'] = self.bot.text.bold('@' + issue['user']['login'])
         issue['labels'] = ' '.join(self.bot.text.grey('(%s)') % x['name'] for x in issue['labels'])
         if issue['state'] == 'open':
             issue['number'] = self.bot.text.green('[#', issue['number'], ' (open)]')
         elif issue['state'] == 'closed':
             issue['number'] = self.bot.text.red('[#', issue['number'], ' (closed)]')
-        fmt = "{author} {number}: «{title}» {labels}"
+        fmt = "{author} {when} {number}: «{title}» {labels}"
         msg.reply(fmt.format(**issue))
 
     @BotPlugin.command(github_repo + r'/commit/([0-9a-fA-F]{,40})')
     def github_commit(self, msg):
         url = "https://api.github.com/repos/{}/{}/commits/{}".format(*msg.args)
         commit = yield from public_api(url)
-        commit['author'] = self.bot.text.bold('@' + commit['author']['login'])
-        commit['title'] = commit['commit']['message']
         additions = self.bot.text.green("%d+" % commit['stats']['additions'])
         deletions = self.bot.text.red("%d-" % commit['stats']['deletions'])
         files_changed = self.bot.text.yellow("%d files" % len(commit['files']))
-        commit['stats'] = " ".join([additions, deletions, files_changed])
-        msg.reply("{author} «{title}» ({stats})".format(**commit))
+        f = {
+            'author': self.bot.text.bold('@' + commit['author']['login']),
+            'title': commit['commit']['message'],
+            'stats': " ".join([additions, deletions, files_changed]),
+            'when': self.bot.text.grey(self.bot.naturaltime(commit['commit']['author']['date'])),
+        }
+        msg.reply("{author} {when} «{title}» ({stats})".format(**f))
+
+    @BotPlugin.command(r'.*https?://gist\.github\.com/[^/]+/([0-9a-z]+)')
+    def gist(self, msg):
+        url = "https://api.github.com/gists/{}".format(msg.args[0])
+        gist = yield from public_api(url)
+        filelist = ', '.join(i['filename'] for i in gist['files'].values())
+        f = {
+            'author': self.bot.text.bold('@' + gist['owner']['login']),
+            'when': self.bot.text.grey(self.bot.naturaltime(gist['updated_at'])),
+            'title': gist['description'],
+            'files': self.bot.text.yellow(filelist),
+        }
+        msg.reply("{author} {when} «{title}» ({files})".format(**f))
 
     @BotPlugin.command(r'.*https?://www\.reddit\.com/r/([\w\d_\.-]+)/comments/([\w\d_\.-]+)')
     def reddit(self, msg):
