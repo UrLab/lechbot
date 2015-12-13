@@ -103,7 +103,8 @@ class IRCBot:
         Overwritten by other backends.
         """
         if getattr(self, 'conn', None):
-            self.conn.say(target, text)
+            for line in text.split('\n'):
+                self.conn.say(target, line)
         else:
             self.log.warning("%s << %s [NOT CONNECTED]" % (target, text))
 
