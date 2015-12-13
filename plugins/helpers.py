@@ -1,17 +1,8 @@
 import asyncio
 import aiohttp
-import aioamqp
-import json
 from os import path
-from datetime import datetime
 from logging import getLogger
-from aioauth_client import TwitterClient
-from ircbot.text import parse_time
-from config import (INCUBATOR, INCUBATOR_SECRET, SPACEAPI,
-                    RMQ_HOST, RMQ_USER, RMQ_PASSWORD,
-                    LECHBOT_EVENTS_QUEUE, LECHBOT_NOTIFS_QUEUE,
-                    TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET,
-                    TWITTER_OAUTH_TOKEN, TWITTER_OAUTH_SECRET)
+from config import INCUBATOR, INCUBATOR_SECRET, SPACEAPI
 
 logger = getLogger(__name__)
 TIMEFMT = "%Y-%m-%d %H:%M:%S"
@@ -65,62 +56,3 @@ def public_api(endpoint):
 @asyncio.coroutine
 def spaceapi():
     return public_api(SPACEAPI)
-
-
-@asyncio.coroutine
-def rmq_error_callback(exc):
-    logger.error("Error when connecting to RabbitMQ: " + str(exc))
-
-
-@asyncio.coroutine
-@protect
-def lechbot_event_consume(coroutine):
-    transport, protocol = yield from aioamqp.connect(
-        host=RMQ_HOST, login=RMQ_USER, password=RMQ_PASSWORD,
-        on_error=rmq_error_callback)
-    channel = yield from protocol.channel()
-    queue = yield from channel.queue_declare(LECHBOT_EVENTS_QUEUE)
-
-    @asyncio.coroutine
-    @protect
-    def consume(body, envelope, properties):
-        yield from channel.basic_client_ack(envelope.delivery_tag)
-        msg = json.loads(body.decode())
-        now = datetime.now()
-        msgtime = datetime
-        msgtime = parse_time(msg['time'])
-        if (now - msgtime).total_seconds() < 120:
-            yield from coroutine(msg['name'])
-
-    yield from channel.basic_consume(LECHBOT_EVENTS_QUEUE, callback=consume)
-
-
-@asyncio.coroutine
-@protect
-def lechbot_notif(notif_name):
-    transport, protocol = yield from aioamqp.connect(
-        host=RMQ_HOST, login=RMQ_USER, password=RMQ_PASSWORD,
-        on_error=rmq_error_callback)
-    channel = yield from protocol.channel()
-    yield from channel.queue_declare(LECHBOT_NOTIFS_QUEUE)
-    msg = {'time': datetime.now().strftime(TIMEFMT), 'name': notif_name}
-    yield from channel.publish(json.dumps(msg), '', LECHBOT_NOTIFS_QUEUE)
-    yield from protocol.close()
-    transport.close()
-
-
-class AsyncTwitter:
-    def __init__(self):
-        self.client = TwitterClient(
-            consumer_key=TWITTER_CONSUMER_KEY,
-            consumer_secret=TWITTER_CONSUMER_SECRET,
-            oauth_token=TWITTER_OAUTH_TOKEN,
-            oauth_token_secret=TWITTER_OAUTH_SECRET)
-
-    def request(self, *args, **kwargs):
-        response = yield from self.client.request(*args, **kwargs)
-        res = yield from response.json()
-        yield from response.release()
-        return res
-
-twitter = AsyncTwitter()

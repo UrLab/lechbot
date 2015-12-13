@@ -2,7 +2,8 @@ import asyncio
 import random
 from ircbot.persist import Persistent
 from ircbot.text import parse_time
-from .helpers import public_api, spaceapi, mkurl, lechbot_notif, protect
+from ircbot.plugin import BotPlugin
+from .helpers import public_api, spaceapi, mkurl, protect
 from datetime import datetime
 from time import time
 from operator import itemgetter
@@ -37,17 +38,17 @@ JANITOR_TASKS = {
 }
 
 
-def load(bot):
-    def tell_event(event):
-        event['title'] = bot.text.bold(event['title'])
-        event['when'] = bot.naturaltime(from_now)
-        event['url'] = bot.text.blue(mkurl('/events/{}'.format(event['id'])))
+class Reminder(BotPlugin):
+    def tell_event(self, event):
+        event['title'] = self.bot.text.bold(event['title'])
+        event['when'] = self.bot.naturaltime(event['start'])
+        event['url'] = self.bot.text.blue(mkurl('/events/{}'.format(event['id'])))
         fmt = "===RAPPEL=== {title} a lieu {when} {url}"
-        bot.say(fmt.format(**event))
-        bot.log.info("Reminding Ev#{id} {title}".format(**event))
+        self.bot.say(fmt.format(**event))
+        self.bot.log.info("Reminding Ev#{id} {title}".format(**event))
 
     @protect
-    def remind_events():
+    def remind_events(self):
         """
         Rappelle les évènements proches
         """
@@ -59,16 +60,16 @@ def load(bot):
                 continue
             when = parse_time(event['start'])
             from_now = when - now
-            bot.log.debug("{title} {start}".format(**event))
+            self.bot.log.debug("{title} {start}".format(**event))
 
             for (days, periods) in REMINDERS:
                 smin, smax = periods*PERIOD, (periods + 1)*PERIOD
                 if from_now.days == days and smin <= from_now.seconds <= smax:
-                    tell_event(event)
+                    self.tell_event(event)
                     break
 
     @protect
-    def janitor():
+    def janitor(self):
         """
         Désigne des gens pour faire les corvées de UrLab quand c'est ouvert
         """
@@ -93,18 +94,18 @@ def load(bot):
                         who = random.choice(people)
                         people.remove(who)
                         fmt = "Salut {who} ! Tu pourrais {action} stp ?"
-                        bot.say(fmt.format(who=who, action=task['action']))
+                        self.bot.say(fmt.format(who=who, action=task['action']))
 
                         # Envoi d'une notification sonore au hackerspace
-                        yield from lechbot_notif('trash')
+                        # yield from lechbot_notif('trash')
 
                         # On enregitre dans le cache
                         janitor[name] = {'time': now, 'who': who}
-                        bot.log.info("%s designated for %s" % (who, name))
+                        self.bot.log.info("%s designated for %s" % (who, name))
 
-    @bot.on_connect
-    def reminder():
+    @BotPlugin.on_connect
+    def reminder(self):
         while True:
             yield from asyncio.sleep(PERIOD)
-            yield from remind_events()
-            yield from janitor()
+            yield from self.remind_events()
+            yield from self.janitor()

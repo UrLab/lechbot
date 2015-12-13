@@ -1,97 +1,92 @@
-from .helpers import public_api, twitter
-from config import INCUBATOR
+from .helpers import public_api
+from .twitter import TwitterBasePlugin
+from ircbot.plugin import BotPlugin
 
 
-def twitter_status(msg):
-        url = 'statuses/show/{}.json'.format(msg.args[0])
-        tweet = yield from twitter.request('GET', url)
-        f = {
-            'name': msg.bot.text.bold('@', tweet['user']['screen_name']),
-            'text': tweet['text']
-        }
-        msg.reply("{name}: «{text}»".format(**f))
-
-
-def load(bot):
+class UrlShow(TwitterBasePlugin):
     github_repo = r'.*https?://github\.com/([\w\d_\.-]+)/([\w\d_\.-]+)'
     urlab_url = r'.*https?://urlab\.be'
 
-    bot.command(r'.*https?://twitter.com/[^/]+/status/(\d+)')(twitter_status)
+    @BotPlugin.command(r'.*https?://twitter.com/[^/]+/status/(\d+)')
+    def twitter_status(self, msg):
+        url = 'statuses/show/{}.json'.format(msg.args[0])
+        tweet = yield from self.twitter_request('GET', url)
+        msg.reply(self.format_tweet(tweet))
 
-    @bot.command(github_repo + r'/?(\s|$)')
-    def github(msg):
+    @BotPlugin.command(github_repo + r'/?(\s|$)')
+    def github(self, msg):
         url = "https://api.github.com/repos/{}/{}".format(*msg.args)
         repo = yield from public_api(url)
-        repo['name'] = bot.text.bold(repo['name'])
-        repo['language'] = bot.text.purple('[', repo['language'], ']')
-        repo['stars'] = bot.text.yellow('(', repo['stargazers_count'], '*)')
+        repo['name'] = self.bot.text.bold(repo['name'])
+        repo['language'] = self.bot.text.purple('[', repo['language'], ']')
+        repo['stars'] = self.bot.text.yellow('(', repo['stargazers_count'], '*)')
         fmt = "{name} {language} {stars}: «{description}»"
         msg.reply(fmt.format(**repo))
 
-    @bot.command(github_repo + r'/(issues|pull)/(\d+)')
-    def github_issue(msg):
+    @BotPlugin.command(github_repo + r'/(issues|pull)/(\d+)')
+    def github_issue(self, msg):
         user, repo, kind, id = msg.args
         args = user, repo, id
         url = "https://api.github.com/repos/{}/{}/issues/{}".format(*args)
         issue = yield from public_api(url)
-        issue['author'] = bot.text.bold('@' + issue['user']['login'])
-        issue['labels'] = ' '.join(bot.text.grey('(%s)') % x['name'] for x in issue['labels'])
+        issue['author'] = self.bot.text.bold('@' + issue['user']['login'])
+        issue['labels'] = ' '.join(self.bot.text.grey('(%s)') % x['name'] for x in issue['labels'])
         if issue['state'] == 'open':
-            issue['number'] = bot.text.green('[#', issue['number'], ' (open)]')
+            issue['number'] = self.bot.text.green('[#', issue['number'], ' (open)]')
         elif issue['state'] == 'closed':
-            issue['number'] = bot.text.red('[#', issue['number'], ' (closed)]')
+            issue['number'] = self.bot.text.red('[#', issue['number'], ' (closed)]')
         fmt = "{author} {number}: «{title}» {labels}"
         msg.reply(fmt.format(**issue))
 
-    @bot.command(r'.*https?://www\.reddit\.com/r/([\w\d_\.-]+)/comments/([\w\d_\.-]+)')
-    def reddit(msg):
+    @BotPlugin.command(r'.*https?://www\.reddit\.com/r/([\w\d_\.-]+)/comments/([\w\d_\.-]+)')
+    def reddit(self, msg):
         url = "https://api.bot.text.reddit.com/r/{}/comments/{}".format(*msg.args[:2])
         data = yield from public_api(url)
         post = data[0]['data']['children'][0]['data']
-        post['author'] = bot.text.bold('@' + post['author'])
-        post['upvote_ratio'] = bot.text.yellow('(', post['upvote_ratio'], '+)')
-        post['url'] = bot.text.blue(post['url'])
+        post['author'] = self.bot.text.bold('@' + post['author'])
+        post['upvote_ratio'] = self.bot.text.yellow('(', post['upvote_ratio'], '+)')
+        post['url'] = self.bot.text.blue(post['url'])
         fmt = "{author} {upvote_ratio}: «{title}» {url}"
         msg.reply(fmt.format(**post))
 
-    @bot.command(r'.*https?://news\.ycombinator\.com/item\?id=(\d+)')
-    def hackernews(msg):
+    @BotPlugin.command(r'.*https?://news\.ycombinator\.com/item\?id=(\d+)')
+    def hackernews(self, msg):
         url = "https://hacker-news.firebaseio.com/v0/item/"
         post = yield from public_api(url + "{}.json".format(msg.args[0]))
-        post['by'] = bot.text.bold('@', post['by'])
-        post['url'] = bot.text.blue(post['url'])
+        post['by'] = self.bot.text.bold('@', post['by'])
+        post['url'] = self.bot.text.blue(post['url'])
         fmt = "{by}: «{title}» {url}"
         msg.reply(fmt.format(**post))
 
-    PROJECT_STATUS = {
-        'p': bot.text.yellow,  # Proposition
-        'i': bot.text.blue,    # In progress
-        'f': bot.text.green,   # Finished
-    }
+    @BotPlugin.command(urlab_url + r'/(projects/\d+)')
+    def urlab_project(self, msg):
+        project_status = {
+            'p': self.bot.text.yellow,  # Proposition
+            'i': self.bot.text.blue,    # In progress
+            'f': self.bot.text.green,   # Finished
+        }
 
-    @bot.command(urlab_url + r'/(projects/\d+)')
-    def urlab_project(msg):
         proj = yield from public_api(msg.args[0])
-        color = PROJECT_STATUS.get(proj['status'], bot.text.grey)
+        color = project_status.get(proj['status'], self.bot.text.grey)
         proj['desc'] = color(proj['short_description'])
-        proj['title'] = bot.text.bold(proj['title'])
+        proj['title'] = self.bot.text.bold(proj['title'])
         fmt = "{title}: {desc}"
         msg.reply(fmt.format(**proj))
 
-    EVENT_STATUS = {
-        'r': bot.text.bold,
-        'i': bot.text.yellow,
-    }
+    @BotPlugin.command(urlab_url + r'/(events/\d+)')
+    def urlab_event(self, msg):
+        event_status = {
+            'r': self.bot.text.bold,    # Ready
+            'i': self.bot.text.yellow,  # Incubation
+        }
 
-    @bot.command(urlab_url + r'/(events/\d+)')
-    def urlab_event(msg):
         evt = yield from public_api(msg.args[0])
         if evt.get('start', None):
-            evt['when'] = bot.text.yellow(bot.naturaltime(evt['start']))
+            evt['when'] = self.bot.text.yellow(self.bot.naturaltime(evt['start']))
         else:
             evt['when'] = "pas de date"
-        color = EVENT_STATUS.get(evt['status'], bot.text.grey)
+        color = event_status.get(evt['status'], self.bot.text.grey)
         evt['title'] = color(evt['title'])
-        evt['place'] = bot.text.purple(evt['place'])
+        evt['place'] = self.bot.text.purple(evt['place'])
         fmt = "{title} ({when} :: {place})"
         msg.reply(fmt.format(**evt))

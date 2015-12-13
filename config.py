@@ -1,19 +1,33 @@
-DEBUG = True
-
+# Bot nickname
 NICKNAME = "DechBot"
-CHANS = ['#titoufaitdestests']
 
-INCUBATOR_SECRET = "Vairy sicret"
+# Main chan for this bot
+MAIN_CHAN = "#titoufaitdestests"
+
+# Url to Incubator
 INCUBATOR = "http://localhost:8000/"
+
+# Secret string to perform private API calls to incubator.
+# Go to [INCUBATOR]/admin/space/privateapikey/ to obtain one
+INCUBATOR_SECRET = "Vairy sicret"
+
+# SpaceAPI url
 SPACEAPI = INCUBATOR + "spaceapi.json"
 
+# URL of the Crossbar router (websocket endpoint)
 WAMP_HOST = "ws://127.0.0.1:8080/ws"
+
+# Crossbar realm to use
 WAMP_REALM = "urlab"
 
-TWITTER_CONSUMER_KEY = "consumer"
-TWITTER_CONSUMER_SECRET = "secret"
-TWITTER_OAUTH_TOKEN = "token"
-TWITTER_OAUTH_SECRET = "token-secret"
+# Twitter configuration. Obtain those values from
+# https://dev.twitter.com/oauth/overview/application-owner-access-tokens
+TWITTER_CONFIG = {
+    'consumer_key': 'consumer',
+    'consumer_secret': 'secret',
+    'oauth_token': 'token',
+    'oauth_token_secret': 'token secret'
+}
 
 try:
     from local_config import *  # pragma: no flakes

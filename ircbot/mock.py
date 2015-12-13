@@ -53,7 +53,7 @@ is_printable = lambda c: unicodedata.category(c) != 'Cc'
 class CLIBot(IRCBot):
     text = CLIColors
 
-    def _say(self, text, target=None):
+    def say(self, text, target):
         print("%s < \033[1;33m%s\033[0m> %s" % (target, self.nickname, text))
 
     def set_topic(self, text, target=None):
@@ -64,18 +64,15 @@ class CLIBot(IRCBot):
     def stdin_mainloop(self):
         print("\033[1;31m>>> RUNNING IN COMMAND LINE MODE ONLY <<<\033[0m")
         user = namedtuple('User', ['nick'])("cli")
+        chan = list(self.channels.keys())[0]
         while True:
             text = yield from async_input("")
-            print("%s < \033[1;34mcli\033[0m> %s" % (self.channels[0], text))
-            self.dispatch_message(None, user, self.channels[0], text)
+            print("%s < \033[1;34mcli\033[0m> %s" % (chan, text))
+            self.dispatch_message(None, user, chan, text)
 
-    def run(self):
+    def connect(self):
         self._invoke_connect_callbacks()
         for chan in self.channels:
-            self._invoke_join_callbacks(None, chan)
+            self._invoke_join_callbacks(chan)
 
         asyncio.async(self.stdin_mainloop())
-        loop = asyncio.get_event_loop()
-        if not loop.is_running():
-            loop.run_forever()
-            self.log.info("LechBot starts event loop !")

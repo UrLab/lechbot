@@ -24,8 +24,6 @@ def make_style(before, after='\x0F'):
 
     def inner(*args):
         text = ''.join(map(str, args))
-        if text[0].isdigit():
-            text = ' ' + text
         return '{}{}{}'.format(before, text, after)
     return inner
 
