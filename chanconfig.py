@@ -1,4 +1,4 @@
-from plugins import UrlShow, Twitter, Topic, Space, Reminder, TechWednesday
+from plugins import UrlShow, Twitter, Topic, Space, Reminder, TechWednesday, TwitterStream
 from ircbot.plugin import HelpPlugin
 from config import TWITTER_CONFIG
 
@@ -11,6 +11,7 @@ CHANS = {
         Reminder(),
         Twitter(TWITTER_CONFIG),
         UrlShow(TWITTER_CONFIG),
+        TwitterStream(TWITTER_CONFIG, 'TitouOnRails'),
         HelpPlugin(),
     ],
     'QUERY': [
