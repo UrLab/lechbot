@@ -39,6 +39,8 @@ RATELIMIT = {
     'Task.a ajouté la tâche': 3600,
     'Task.a fini la tâche': 3600,
     'Task.a ré-ajouté la tâche': 3600,
+
+    'wiki.revision': 300,
 }
 
 try:
