@@ -24,14 +24,17 @@ class TwitterBasePlugin(BotPlugin):
         return res
 
     def format_tweet(self, tweet):
+        urls = map(itemgetter('expanded_url'),
+                   tweet.get('entities', {}).get('urls', []))
+        url_lines = '\n'.join(' -> ' + self.bot.text.blue(u) for u in urls)
+        if url_lines:
+            url_lines = '\n' + url_lines
         f = {
             'name': self.bot.text.bold('@', tweet['user']['screen_name']),
-            'text': tweet['text']
+            'text': tweet['text'],
+            'urls': url_lines,
         }
-        urls = map(itemgetter('expanded_url'),
-                   tweet.get('entities', {}).get('url', []))
-        url_lines = [' -> ' + self.bot.text.blue(u) for u in urls]
-        return "{name}: «{text}»".format(**f) + '\n'.join(url_lines)
+        return "{name}: «{text}»{urls}".format(**f)
 
 
 class Twitter(TwitterBasePlugin):

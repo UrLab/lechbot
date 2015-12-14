@@ -104,7 +104,9 @@ class IRCBot:
         """
         if getattr(self, 'conn', None):
             for line in text.split('\n'):
-                self.conn.say(target, line)
+                line = line.strip()
+                if line:
+                    self.conn.say(target, line)
         else:
             self.log.warning("%s << %s [NOT CONNECTED]" % (target, text))
 
