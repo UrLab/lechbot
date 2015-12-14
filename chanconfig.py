@@ -1,4 +1,5 @@
-from plugins import UrlShow, Twitter, Topic, Space, Reminder, TechWednesday, TwitterStream
+from plugins import (UrlShow, Twitter, Topic, Space, Reminder, TechWednesday,
+                     TwitterStream, VUBMenu)
 from ircbot.plugin import HelpPlugin
 from config import TWITTER_CONFIG
 
@@ -12,10 +13,12 @@ CHANS = {
         Twitter(TWITTER_CONFIG),
         UrlShow(TWITTER_CONFIG),
         TwitterStream(TWITTER_CONFIG, 'TitouOnRails'),
+        VUBMenu(),
         HelpPlugin(),
     ],
     'QUERY': [
         TechWednesday(),
+        VUBMenu(),
         HelpPlugin(),
     ],
 }
