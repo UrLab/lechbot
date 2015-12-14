@@ -29,6 +29,7 @@ class IRCBot:
         self.nickname = nickname
         chans = {}
         for chan, plugins in channels.items():
+            chan = chan.lower()
             chans[chan] = {}
             for plugin in plugins:
                 callbacks = plugin.load(self, chan)
@@ -77,6 +78,7 @@ class IRCBot:
             self.log.info("LechBot starts event loop !")
 
     def dispatch_message(self, message, user, target, text):
+        target = target.lower()
         if target[0] == '#':
             commands = self.channels.get(target, {}).get('commands', [])
         else:
