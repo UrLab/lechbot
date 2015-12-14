@@ -56,15 +56,25 @@ class BotPlugin:
 
 
 class HelpPlugin(BotPlugin):
+    @BotPlugin.command(r'\!help +(#[^ ]+)')
+    def tell_help_for_chan(self, msg):
+        """Affiche la lite des commandes pour un chan"""
+        chan = msg.args[0]
+        if chan not in self.bot.channels:
+            msg.reply("Pas de commande sur le chan %s" % chan, hilight=True)
+        else:
+            msg.reply("Je te réponds en privé ;)", hilight=True)
+            commands = self.bot.channels.get(chan, {}).get('commands', [])
+            msg.reply(self.bot.text.red("Aide pour " + chan), private=True)
+            for (pattern, func) in commands:
+                if func.__doc__:
+                    doc = func.__doc__.strip()
+                    cmd = self.bot.text.bold(pattern.pattern.replace('\\', ''))
+                    if doc:
+                        msg.reply(cmd + ': ' + doc, private=True)
+
     @BotPlugin.command(r'\!help')
     def tell_help(self, msg):
         """Raconte cette aide en conversation privée"""
-        msg.reply("Je te réponds en privé ;)", hilight=True)
-        commands = self.bot.channels.get(self.chan, {}).get('commands', [])
-        msg.reply(self.bot.text.red("Aide pour " + self.chan), private=True)
-        for (pattern, func) in commands:
-            if func.__doc__:
-                doc = func.__doc__.strip()
-                cmd = self.bot.text.bold(pattern.pattern.replace('\\', ''))
-                if doc:
-                    msg.reply(cmd + ': ' + doc, private=True)
+        msg.args = [self.chan]
+        self.tell_help_for_chan(msg)
