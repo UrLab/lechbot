@@ -25,6 +25,6 @@ class TechWednesday(BotPlugin):
                 line = line.strip()
                 if line:
                     msg.reply(line)
-            msg.reply(self.bot.text.blue(mkurl("meetings/" + str(next_meeting['id']))))
+            msg.reply(self.bot.text.blue(mkurl("events/" + str(next_meeting['event']['id']))))
         except:
             msg.reply("Pas de prochain tw trouvé")

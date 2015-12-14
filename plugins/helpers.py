@@ -1,14 +1,13 @@
 import asyncio
 import aiohttp
-from os import path
 from logging import getLogger
-from config import INCUBATOR, INCUBATOR_SECRET, SPACEAPI
 
 logger = getLogger(__name__)
 TIMEFMT = "%Y-%m-%d %H:%M:%S"
 
 
 def protect(func):
+    """Catch and log exceptions that occurs in call to func"""
     def wrapper(*args, **kwargs):
         try:
             r = func(*args, **kwargs)
