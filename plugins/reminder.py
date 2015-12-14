@@ -44,7 +44,7 @@ class Reminder(BotPlugin):
         event['when'] = self.bot.naturaltime(event['start'])
         event['url'] = self.bot.text.blue(mkurl('/events/{}'.format(event['id'])))
         fmt = "===RAPPEL=== {title} a lieu {when} {url}"
-        self.bot.say(fmt.format(**event))
+        self.say(fmt.format(**event))
         self.bot.log.info("Reminding Ev#{id} {title}".format(**event))
 
     @protect
@@ -94,7 +94,7 @@ class Reminder(BotPlugin):
                         who = random.choice(people)
                         people.remove(who)
                         fmt = "Salut {who} ! Tu pourrais {action} stp ?"
-                        self.bot.say(fmt.format(who=who, action=task['action']))
+                        self.say(fmt.format(who=who, action=task['action']))
 
                         # Envoi d'une notification sonore au hackerspace
                         # yield from lechbot_notif('trash')
