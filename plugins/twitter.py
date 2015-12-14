@@ -2,6 +2,7 @@ import json
 import asyncio
 from aioauth_client import TwitterClient
 from ircbot.plugin import BotPlugin
+from operator import itemgetter
 
 
 class TwitterBasePlugin(BotPlugin):
@@ -27,7 +28,10 @@ class TwitterBasePlugin(BotPlugin):
             'name': self.bot.text.bold('@', tweet['user']['screen_name']),
             'text': tweet['text']
         }
-        return "{name}: «{text}»".format(**f)
+        urls = map(itemgetter('expanded_url'),
+                   tweet.get('entities', {}).get('url', []))
+        url_lines = [' -> ' + self.bot.text.blue(u) for u in urls]
+        return "{name}: «{text}»".format(**f) + '\n'.join(url_lines)
 
 
 class Twitter(TwitterBasePlugin):
