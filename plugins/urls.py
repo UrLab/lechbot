@@ -73,8 +73,8 @@ class UrlShow(TwitterBasePlugin):
 
     @BotPlugin.command(r'.*https?://www\.reddit\.com/r/([\w\d_\.-]+)/comments/([\w\d_\.-]+)')
     def reddit(self, msg):
-        url = "https://api.bot.text.reddit.com/r/{}/comments/{}".format(*msg.args[:2])
-        data = yield from public_api(url)
+        url = "https://api.reddit.com/r/{}/comments/{}".format(*msg.args[:2])
+        data = yield from public_api(url, verify_ssl=False)
         post = data[0]['data']['children'][0]['data']
         post['author'] = self.bot.text.bold('@' + post['author'])
         post['upvote_ratio'] = self.bot.text.yellow('(', post['upvote_ratio'], '+)')

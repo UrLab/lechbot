@@ -6,6 +6,7 @@ from config import INCUBATOR, INCUBATOR_SECRET, SPACEAPI
 
 logger = getLogger(__name__)
 TIMEFMT = "%Y-%m-%d %H:%M:%S"
+unsafe_conn = aiohttp.TCPConnector(verify_ssl=False)
 
 
 def protect(func):
@@ -39,7 +40,7 @@ def private_api(endpoint, data):
 
 
 @asyncio.coroutine
-def public_api(endpoint):
+def public_api(endpoint, verify_ssl=True):
     """Call UrLab incubator public API"""
     if not endpoint.startswith('http'):
         if endpoint[-1] != '/':
@@ -47,8 +48,11 @@ def public_api(endpoint):
         url = mkurl(path.join('api', endpoint.lstrip('/')))
     else:
         url = endpoint
-    headers = {'User-agent': "UrLab [LechBot]"}
-    response = yield from aiohttp.get(url, headers=headers)
+    args = {'headers': {'User-agent': "UrLab [LechBot]"}}
+    if not verify_ssl:
+        args['connector'] = unsafe_conn
+        logger.warning("Using unverified SSL for " + url)
+    response = yield from aiohttp.get(url, **args)
     res = yield from response.json()
     yield from response.release()
     return res
