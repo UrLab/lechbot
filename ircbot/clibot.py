@@ -53,25 +53,20 @@ is_printable = lambda c: unicodedata.category(c) != 'Cc'
 class CLIBot(IRCBot):
     text = CLIColors
 
-    def say(self, text, target):
-        print("%s < \033[1;33m%s\033[0m> %s" % (target, self.nickname, text))
-
-    def set_topic(self, text, target=None):
-        if target is None:
-            target = self.channels[0]
-        print("\033[1;36mSet topic of %s\033[0m %s" % (target, text))
-
     def stdin_mainloop(self):
         print("\033[1;31m>>> RUNNING IN COMMAND LINE MODE ONLY <<<\033[0m")
-        user = namedtuple('User', ['nick'])("cli")
+        user = "cli"
+        map(self.joined, self.chanlist)
         while True:
             text = yield from async_input("")
             print("%s < \033[1;34mcli\033[0m> %s" % (self.main_chan, text))
-            self.dispatch_message(None, user, self.main_chan, text)
+            self.feed(user, self.main_chan, text)
 
-    def connect(self):
-        self._invoke_connect_callbacks()
-        for chan in self.channels:
-            self._invoke_join_callbacks(chan)
+    def _say(self, target, text):
+        print("%s < \033[1;33m%s\033[0m> %s" % (target, self.nickname, text))
 
+    def _topic(self, target, text):
+        print("\033[1;36mSet topic of %s\033[0m %s" % (target, text))
+
+    def _connect(self, host, port):
         asyncio.async(self.stdin_mainloop())

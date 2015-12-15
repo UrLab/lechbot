@@ -62,7 +62,7 @@ def main(loglevel, klass):
         """Je meurs"""
         bot.log.info('Shutting down; asked by ' + msg.user.nick)
         exit()
-    bot.connect()
+    bot.connect("chat.freenode.org", 6697)
     bot.log.info("Starting")
     run_wamp(bot)
 
