@@ -24,8 +24,8 @@ class Message:
 class IRCBot:
     text = IRCColors
 
-    def __init__(self, nickname, channels={}):
-        self.commands, self.join_callbacks, self.connect_callbacks = [], [], []
+    def __init__(self, nickname, channels={}, main_chan=None):
+        self.main_chan = main_chan
         self.nickname = nickname
         chans = {}
         for chan, plugins in channels.items():

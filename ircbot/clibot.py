@@ -64,11 +64,10 @@ class CLIBot(IRCBot):
     def stdin_mainloop(self):
         print("\033[1;31m>>> RUNNING IN COMMAND LINE MODE ONLY <<<\033[0m")
         user = namedtuple('User', ['nick'])("cli")
-        chan = list(filter(lambda k: k != "QUERY", self.channels.keys()))[0]
         while True:
             text = yield from async_input("")
-            print("%s < \033[1;34mcli\033[0m> %s" % (chan, text))
-            self.dispatch_message(None, user, chan, text)
+            print("%s < \033[1;34mcli\033[0m> %s" % (self.main_chan, text))
+            self.dispatch_message(None, user, self.main_chan, text)
 
     def connect(self):
         self._invoke_connect_callbacks()

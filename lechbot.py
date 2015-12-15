@@ -55,7 +55,7 @@ def main(loglevel, klass):
         stream=stdout, level=loglevel,
         format="%(asctime)s %(levelname)7s: %(message)s")
 
-    bot = klass(NICKNAME, CHANS)
+    bot = klass(NICKNAME, CHANS, main_chan=MAIN_CHAN)
 
     @bot.command(r'tg %s$' % NICKNAME)
     def shut_up(msg):
