@@ -51,9 +51,10 @@ def run_wamp(bot):
 
 def main(loglevel, klass):
     humanize.i18n.activate('fr_FR')
+    fmt = "%(levelname)7s %(asctime)s | %(module)s:%(funcName)s | %(message)s"
     logging.basicConfig(
         stream=stdout, level=loglevel,
-        format="%(asctime)s %(levelname)7s: %(message)s")
+        format=fmt)
 
     bot = klass(NICKNAME, CHANS, main_chan=MAIN_CHAN)
 
@@ -62,7 +63,7 @@ def main(loglevel, klass):
         """Je meurs"""
         bot.log.info('Shutting down; asked by ' + msg.user.nick)
         exit()
-    bot.connect("chat.freenode.org", 6697)
+    bot.connect(host="chat.freenode.net", port=6697)
     bot.log.info("Starting")
     run_wamp(bot)
 

@@ -8,9 +8,8 @@ import sys
 import unicodedata
 
 from asyncio.streams import StreamWriter, FlowControlMixin
-from collections import namedtuple
-from .ircbot import IRCBot
-from .text import CLIColors
+from .abstractbot import AbstractBot
+from .text import make_style
 
 reader, writer = None, None
 
@@ -50,8 +49,16 @@ def async_input(message):
 is_printable = lambda c: unicodedata.category(c) != 'Cc'
 
 
-class CLIBot(IRCBot):
-    text = CLIColors
+class CLIBot(AbstractBot):
+    class text:
+        bold = staticmethod(make_style('\033[1m', '\033[0m'))
+        red = staticmethod(make_style('\033[31m', '\033[0m'))
+        green = staticmethod(make_style('\033[32m', '\033[0m'))
+        yellow = staticmethod(make_style('\033[33m', '\033[0m'))
+        blue = staticmethod(make_style('\033[34m', '\033[0m'))
+        purple = staticmethod(make_style('\033[35m', '\033[0m'))
+        cyan = staticmethod(make_style('\033[36m', '\033[0m'))
+        grey = staticmethod(make_style('\033[37m', '\033[0m'))
 
     def stdin_mainloop(self):
         print("\033[1;31m>>> RUNNING IN COMMAND LINE MODE ONLY <<<\033[0m")
@@ -68,5 +75,5 @@ class CLIBot(IRCBot):
     def _topic(self, target, text):
         print("\033[1;36mSet topic of %s\033[0m %s" % (target, text))
 
-    def _connect(self, host, port):
+    def _connect(self, **kwargs):
         asyncio.async(self.stdin_mainloop())

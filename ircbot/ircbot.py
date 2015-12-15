@@ -1,12 +1,19 @@
 from asyncirc import irc
-from .text import IRCColors
+from .text import make_style
 from .abstractbot import AbstractBot
 
 
 class IRCBot(AbstractBot):
-    text = IRCColors
+    class text:
+        bold = staticmethod(make_style('\x02', '\x02'))
+        red = staticmethod(make_style('\x035', '\x03'))
+        green = staticmethod(make_style('\x033', '\x03'))
+        yellow = staticmethod(make_style('\x037', '\x03'))
+        blue = staticmethod(make_style('\x032', '\x03'))
+        purple = staticmethod(make_style('\x036', '\x03'))
+        grey = staticmethod(make_style('\x0315', '\x03'))
 
-    def _connect(self, host, port):
+    def _connect(self, host, port, **kwargs):
         self.conn = irc.connect(host, port, use_ssl=True)\
                        .register(self.nickname, "ident", "LechBot")\
                        .join(self.chanlist)

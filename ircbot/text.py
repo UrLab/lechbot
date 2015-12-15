@@ -28,24 +28,3 @@ def make_style(before, after='\x0F'):
             text = " " + text
         return '{}{}{}'.format(before, text, after)
     return inner
-
-
-class IRCColors:
-    bold = staticmethod(make_style('\x02', '\x02'))
-    red = staticmethod(make_style('\x035', '\x03'))
-    green = staticmethod(make_style('\x033', '\x03'))
-    yellow = staticmethod(make_style('\x037', '\x03'))
-    blue = staticmethod(make_style('\x032', '\x03'))
-    purple = staticmethod(make_style('\x036', '\x03'))
-    grey = staticmethod(make_style('\x0315', '\x03'))
-
-
-class CLIColors:
-    bold = staticmethod(make_style('\033[1m', '\033[0m'))
-    red = staticmethod(make_style('\033[31m', '\033[0m'))
-    green = staticmethod(make_style('\033[32m', '\033[0m'))
-    yellow = staticmethod(make_style('\033[33m', '\033[0m'))
-    blue = staticmethod(make_style('\033[34m', '\033[0m'))
-    purple = staticmethod(make_style('\033[35m', '\033[0m'))
-    cyan = staticmethod(make_style('\033[36m', '\033[0m'))
-    grey = staticmethod(make_style('\033[37m', '\033[0m'))
