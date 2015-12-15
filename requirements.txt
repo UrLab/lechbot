@@ -1,4 +1,4 @@
-asyncio-irc
+git+https://github.com/titouanc/asyncirc
 aiohttp
 aioamqp
 aioauth-client
