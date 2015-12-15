@@ -58,7 +58,7 @@ class IRCBot:
             self.spawn(callback())
 
     def connect(self):
-        chans = list(filter(lambda k: k != "QUERY", self.channels.keys()))
+        chans = list(filter(lambda k: k != "query", self.channels.keys()))
         self.conn = irc.connect("chat.freenode.net", 6697, use_ssl=True)\
                        .register(self.nickname, "ident", "LechBot")\
                        .join(chans)
@@ -82,7 +82,7 @@ class IRCBot:
         if target[0] == '#':
             commands = self.channels.get(target, {}).get('commands', [])
         else:
-            commands = self.channels.get('QUERY', {}).get('commands', [])
+            commands = self.channels.get('query', {}).get('commands', [])
         for (pattern, callback) in commands:
             match = pattern.match(text)
             if match:
