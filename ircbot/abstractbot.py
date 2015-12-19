@@ -137,7 +137,7 @@ class AbstractBot:
         for (pattern, callback) in commands:
             match = pattern.match(text)
             if match:
-                evt = user, target, text, match.group(), match.groupdict()
+                evt = user, target, text, match.groups(), match.groupdict()
                 self.log.debug("Match for %s" % pattern)
                 self.spawn(callback(Message(self, *evt)))
                 break
