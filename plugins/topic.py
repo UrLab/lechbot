@@ -5,6 +5,8 @@ import re
 from .helpers import private_api
 from ircbot.plugin import BotPlugin
 
+# Thank you http://stackoverflow.com/users/1622925/bruno-de-lima for the Regex
+# http://stackoverflow.com/a/31711517 and https://regex101.com/r/pO4dS6/5#python
 youtube_matcher = re.compile(
     r'(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([-_\w]+)',
     re.IGNORECASE
