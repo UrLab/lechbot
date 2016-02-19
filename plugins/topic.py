@@ -1,8 +1,16 @@
 from ircbot.persist import Persistent
 from time import time
 from datetime import datetime
+import re
 from .helpers import private_api
 from ircbot.plugin import BotPlugin
+
+# Thank you http://stackoverflow.com/users/1622925/bruno-de-lima for the Regex
+# http://stackoverflow.com/a/31711517 and https://regex101.com/r/pO4dS6/5#python
+youtube_matcher = re.compile(
+    r'(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([-_\w]+)',
+    re.IGNORECASE
+)
 
 
 class Topic(BotPlugin):
@@ -30,13 +38,20 @@ class Topic(BotPlugin):
             msg.reply("La musique du jour a déjà été changée aujourd'hui",
                       hilight=True)
             return
+
+        music_url = msg.args[0]
+        match = re.match(youtube_matcher, music_url)
+        if match:
+            video_id = match.group(1)
+            music_url = "http://youtu.be/%s" % video_id
+
         try:
             yield from private_api('/space/change_motd', {
                 'nick': msg.user.nick,
-                'url': msg.args[0]
+                'url': music_url
             })
             self.bot.log.info("Music of the day changed by " + msg.user.nick)
-            self.make_topic(msg, new_music=msg.args[0])
+            self.make_topic(msg, new_music=music_url)
             msg.reply("tu viens de changer la musique du jour >>> d*-*b <<<",
                       hilight=True)
         except:
