@@ -22,3 +22,7 @@ In order to test the bot locally, you might be interested in runnning an instanc
 ### Connect to irc
 
 `$ python lechbot.py --irc [ --debug ]`
+
+### Write your own bot
+
+See the documentation's [quickstart](doc/source/index.rst)
