@@ -3,7 +3,7 @@ import asyncio
 from .abstractbot import AbstractBot
 
 
-class TestBot(AbstractBot):
+class RunTestBot(AbstractBot):
     """
     A backend that performs file-based functional test. "Connect" to input
     files, that look a bit like IRC logs. If the author of a message is not
