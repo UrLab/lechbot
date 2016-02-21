@@ -107,7 +107,7 @@ class TwitterStream(TwitterBasePlugin):
                 except:
                     self.bot.log.exception("Error when handling Twitter stream item")
 
-    @BotPlugin.on_connect
+    @BotPlugin.on_join
     def startup(self):
         while True:
             yield from self.read_stream(

@@ -59,7 +59,7 @@ class HelpPlugin(BotPlugin):
     @BotPlugin.command(r'\!help +(#[^ ]+)')
     def tell_help_for_chan(self, msg):
         """Affiche la liste des commandes pour un chan"""
-        chan = msg.args[0]
+        chan = msg.args[0].lower()
         if chan not in self.bot.channels:
             msg.reply("Pas de commande sur le chan %s" % chan, hilight=True)
         else:
