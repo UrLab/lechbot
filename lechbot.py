@@ -44,8 +44,7 @@ def run_wamp(bot):
             yield from self.subscribe(on_event, u'incubator.actstream')
             yield from self.subscribe(on_event, u'hal.eventstream')
 
-    runner = ApplicationRunner(WAMP_HOST, WAMP_REALM,
-                               debug_wamp=False, debug=False)
+    runner = ApplicationRunner(WAMP_HOST, WAMP_REALM)
     runner.run(Component)
 
 
