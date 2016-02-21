@@ -6,6 +6,9 @@ from operator import itemgetter
 
 
 class TwitterBasePlugin(BotPlugin):
+    """
+    Common base for Twitter plugins
+    """
     REQUIRED_CREDENTIALS = [
         'consumer_key', 'consumer_secret',
         'oauth_token', 'oauth_token_secret'
@@ -24,20 +27,24 @@ class TwitterBasePlugin(BotPlugin):
         return res
 
     def format_tweet(self, tweet):
-        urls = map(itemgetter('expanded_url'),
-                   tweet.get('entities', {}).get('urls', []))
+        urls = [x['expanded_url'] 
+                for x in tweet.get('entities', {}).get('urls', [])]
+        urls += [x['media_url']
+                 for x in tweet.get('entities', {}).get('media', [])]
         url_lines = '\n'.join(' -> ' + self.bot.text.blue(u) for u in urls)
-        if url_lines:
-            url_lines = '\n' + url_lines
         f = {
             'name': self.bot.text.bold('@', tweet['user']['screen_name']),
             'text': tweet['text'],
             'urls': url_lines,
         }
-        return "{name}: «{text}»{urls}".format(**f)
+        return "{name}: «{text}»\n{urls}".format(**f)
 
 
 class Twitter(TwitterBasePlugin):
+    """
+    Plugin to emit messages to Twitter
+    """
+
     @BotPlugin.command(r'\!twitter +([^ ].+)')
     def tweet_message(self, msg):
         """Tweete un message"""
@@ -59,6 +66,9 @@ class Twitter(TwitterBasePlugin):
 
 
 class TwitterStream(TwitterBasePlugin):
+    """
+    Twitter plugin to follow a Twitter livestream
+    """
     def __init__(self, credentials, follow_name):
         super(TwitterStream, self).__init__(credentials)
         self.follow_name = follow_name
