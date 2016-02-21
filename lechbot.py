@@ -64,7 +64,11 @@ def main(loglevel, klass):
         exit()
     bot.connect(host="chat.freenode.net", port=6697)
     bot.log.info("Starting")
-    run_wamp(bot)
+    try:
+        run_wamp(bot)
+    except:
+        bot.log.exception("WAMP not available !")
+        asyncio.get_event_loop().run_forever()
 
 
 if __name__ == "__main__":
