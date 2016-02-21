@@ -47,6 +47,6 @@ RATELIMIT = {
 }
 
 try:
-    from local_chanconfig import CHANS
+    from local_chanconfig import CHANS, RATELIMIT
 except ImportError:
     pass
