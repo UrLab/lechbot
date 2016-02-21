@@ -4,6 +4,7 @@ from datetime import datetime
 import re
 from .helpers import private_api
 from ircbot.plugin import BotPlugin
+import aiohttp
 
 # Thank you http://stackoverflow.com/users/1622925/bruno-de-lima for the Regex
 # http://stackoverflow.com/a/31711517 and https://regex101.com/r/pO4dS6/5#python
@@ -21,11 +22,24 @@ class Topic(BotPlugin):
                 oldval = current_topic.setdefault(key, dict(template))
                 if newval is not None:
                     oldval['last_changed'] = time()
-                    oldval['changed_by'] = msg.user.nick
+                    oldval['changed_by'] = msg.user
                     oldval['text'] = newval
             topic_string = ' :: '.join(
                 current_topic[x]['text'] for x in ('motd', 'topic'))
             self.bot.set_topic(topic_string, msg.chan)
+
+    def find_title(self, url):
+        r = yield from aiohttp.get(url)
+        page_bytes = yield from r.read()
+        r.release()
+        page = page_bytes.decode('utf-8')
+        title_start = page.find('<title>')
+        title_end = page.find('</title>')
+        if title_start > 0 and title_end > 0:
+            title_start += len('<title>')
+            return page[title_start:title_end]
+        else:
+            return ""
 
     @BotPlugin.command(r'\!motd +(https?://[^ ]+)')
     def music_of_the_day(self, msg):
@@ -47,14 +61,20 @@ class Topic(BotPlugin):
 
         try:
             yield from private_api('/space/change_motd', {
-                'nick': msg.user.nick,
+                'nick': msg.user,
                 'url': music_url
             })
-            self.bot.log.info("Music of the day changed by " + msg.user.nick)
+            self.bot.log.info("Music of the day changed by " + msg.user)
             self.make_topic(msg, new_music=music_url)
-            msg.reply("tu viens de changer la musique du jour >>> d*-*b <<<",
-                      hilight=True)
+            try:
+                title = yield from self.find_title(music_url)
+            except:
+                self.bot.log.exception("Fetch MotD title")
+                title = ""
+            fmt = "tu viens de changer la musique du jour >>> d*-*b <<< {}"
+            msg.reply(fmt.format(self.bot.text.bold(title)), hilight=True)
         except:
+            self.bot.log.exception("Change MotD")
             msg.reply("Impossible de changer la musique du jour !")
 
     @BotPlugin.command(r'\!topic prepend +([^ ].+)')
@@ -63,13 +83,13 @@ class Topic(BotPlugin):
         with Persistent('topic.json') as current_topic:
             topic = current_topic.get('topic', {}).get('text', '')
         self.make_topic(msg, new_topic=msg.args[0] + ' :: ' + topic)
-        self.bot.log.info("Topic changed by " + msg.user.nick)
+        self.bot.log.info("Topic changed by " + msg.user)
 
     @BotPlugin.command(r'\!topic +([^ ].+)')
     def topic(self, msg):
         """Change l'annonce du chat"""
         self.make_topic(msg, new_topic=msg.args[0])
-        self.bot.log.info("Topic changed by " + msg.user.nick)
+        self.bot.log.info("Topic changed by " + msg.user)
 
     @BotPlugin.command(r'\!(topic|motd)')
     def tell_topic(self, msg):
