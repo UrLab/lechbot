@@ -13,7 +13,7 @@
 
 Create a file called local_config.py (in the same directory as config.py), and edit config values as needed.
 In order to test the bot locally, you might be interested in runnning an instance of [UrLab's Incubator](https://github.com/UrLab/incubator) and a 
-[crossbar](https://crossbar.io) broker.
+[crossbar](http://crossbar.io) broker.
 
 ### Test in command line only
 
