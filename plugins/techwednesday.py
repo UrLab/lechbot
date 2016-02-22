@@ -7,12 +7,12 @@ class TechWednesday(BotPlugin):
     def add_to_next_tw(self, msg):
         """Ajoute un point à l'ordre du jour de la prochaine réunion"""
         yield from private_api("/events/add_point_to_next_meeting", {
-            'point': msg.args[0] + ' (' + msg.user.nick + ')'
+            'point': msg.args[0] + ' (' + msg.user + ')'
         })
         msg.reply(
             'Point "' + self.bot.text.bold(msg.args[0]) + '" ajouté à l\'ordre du jour',
             hilight=True)
-        self.bot.log.info('Add "' + msg.args[0] + '" to next tw by ' + msg.user.nick)
+        self.bot.log.info('Add "' + msg.args[0] + '" to next tw by ' + msg.user)
 
     @BotPlugin.command(r'\!tw')
     def next_tw(self, msg):

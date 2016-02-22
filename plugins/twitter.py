@@ -52,7 +52,7 @@ class Twitter(TwitterBasePlugin):
         yield from self.twitter_request('POST', 'statuses/update.json',
                                         params={'status': text})
         msg.reply("Pinky pinky !", hilight=True)
-        self.bot.log.info('Tweet "' + text + '" by ' + msg.user.nick)
+        self.bot.log.info('Tweet "' + text + '" by ' + msg.user)
 
     @BotPlugin.command(r'\!retweet https?://.*twitter.com/[^/]+/status/(\d+)')
     def retweet_message(self, msg):

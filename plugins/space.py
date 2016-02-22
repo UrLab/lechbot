@@ -10,7 +10,7 @@ class Space(BotPlugin):
     #     """Dit gentiment bonjour aux personnes présentes à UrLab"""
     #     yield from lechbot_notif('poke')
     #     msg.reply("Coucou HAL !!! /o/", hilight=True)
-    #     self.bot.log.info('Poke by ' + msg.user.nick)
+    #     self.bot.log.info('Poke by ' + msg.user)
 
     @BotPlugin.command(r'\!status')
     def spacestatus(self, msg):
@@ -31,4 +31,4 @@ class Space(BotPlugin):
             'open': 1 if status == "open" else 0
         })
         yield from self.spacestatus(msg)
-        self.bot.log.info(status + ' UrLab by ' + msg.user.nick)
+        self.bot.log.info(status + ' UrLab by ' + msg.user)
