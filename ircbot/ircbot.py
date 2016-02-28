@@ -42,5 +42,5 @@ class IRCBot(AbstractBot):
         self.last_say = now
         self.conn.say(target, text)
 
-    def _topic(self, topic, target):
-        self.conn.writeln('TOPIC %s : %s' % (target, topic))
+    def _topic(self, chan, topic):
+        self.conn.writeln('TOPIC %s : %s' % (chan, topic))
