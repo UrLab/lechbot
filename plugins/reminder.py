@@ -103,7 +103,7 @@ class Reminder(BotPlugin):
                         janitor[name] = {'time': now, 'who': who}
                         self.bot.log.info("%s designated for %s" % (who, name))
 
-    @BotPlugin.on_join
+    @BotPlugin.on_connect
     def reminder(self):
         while True:
             yield from asyncio.sleep(PERIOD)
