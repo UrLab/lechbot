@@ -130,7 +130,8 @@ class AbstractBot:
         :type text: str.
         """
         target = target.lower()
-        if target[0] == '#':
+        is_query = target[0] == '#'
+        if is_query:
             commands = self.channels.get(target, {}).get('commands', [])
         else:
             commands = self.channels.get('query', {}).get('commands', [])
@@ -138,6 +139,8 @@ class AbstractBot:
             match = pattern.match(text)
             if match:
                 evt = user, target, text, match.groups(), match.groupdict()
+                if is_query:
+                    target = self.nickname
                 self.log.debug("Match for %s" % pattern)
                 self.spawn(callback(Message(self, *evt)))
                 break
