@@ -26,7 +26,7 @@ class Message:
     @property
     def is_private(self):
         """True if the message was sent in a private conversation"""
-        return self.chan == self.bot.nickname
+        return self.chan == self.bot.nickname.lower()
 
     def reply(self, text, private=False, hilight=False):
         """
@@ -139,8 +139,6 @@ class AbstractBot:
             match = pattern.match(text)
             if match:
                 evt = user, target, text, match.groups(), match.groupdict()
-                if is_query:
-                    target = self.nickname
                 self.log.debug("Match for %s" % pattern)
                 self.spawn(callback(Message(self, *evt)))
                 break
