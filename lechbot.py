@@ -28,11 +28,17 @@ def run_wamp(bot):
 
                 # Outdated message
                 if (now - time).total_seconds() > 120:
+                    bot.log.info("Got outdated event " + repr({
+                        'key': key, 'time': time, 'text': text
+                    }))
                     return
 
                 # Rate limit
                 last_seen = last_seen_keys.get(key, datetime.fromtimestamp(0))
                 if (now - last_seen).total_seconds() < RATELIMIT.get(key, 0):
+                    bot.log.info("Got rate-limited event " + repr({
+                        'key': key, 'time': time, 'text': text
+                    }))
                     return
 
                 bot.say(text, target=MAIN_CHAN)
