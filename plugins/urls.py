@@ -10,6 +10,7 @@ class UrlShow(TwitterBasePlugin):
 
     github_repo = r'.*https?://github\.com/([\w\d_\.-]+)/([\w\d_\.-]+)'
     urlab_url = r'.*https?://urlab\.be'
+    end_url = r'(?:$|\s|\)|\]|\})'
 
     @BotPlugin.command(r'.*https?://twitter.com/[^/]+/status/(\d+)')
     def twitter_status(self, msg):
@@ -17,7 +18,7 @@ class UrlShow(TwitterBasePlugin):
         tweet = yield from self.twitter_request('GET', url)
         msg.reply(self.format_tweet(tweet))
 
-    @BotPlugin.command(github_repo + r'/?(\s|$)')
+    @BotPlugin.command(github_repo + r'/?(\s|$)' + end_url)
     def github(self, msg):
         url = "https://api.github.com/repos/{}/{}".format(*msg.args)
         repo = yield from public_api(url)
@@ -27,7 +28,7 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{name} {language} {stars}: «{description}»"
         msg.reply(fmt.format(**repo))
 
-    @BotPlugin.command(github_repo + r'/(issues|pull)/(\d+)')
+    @BotPlugin.command(github_repo + r'/(issues|pull)/(\d+)' + end_url)
     def github_issue(self, msg):
         user, repo, kind, id = msg.args
         args = user, repo, id
@@ -43,7 +44,7 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{author} {when} {number}: «{title}» {labels}"
         msg.reply(fmt.format(**issue))
 
-    @BotPlugin.command(github_repo + r'/commit/([0-9a-fA-F]{,40})')
+    @BotPlugin.command(github_repo + r'/commit/([0-9a-fA-F]{,40})' + end_url)
     def github_commit(self, msg):
         url = "https://api.github.com/repos/{}/{}/commits/{}".format(*msg.args)
         commit = yield from public_api(url)
@@ -58,7 +59,7 @@ class UrlShow(TwitterBasePlugin):
         }
         msg.reply("{author} {when} «{title}» ({stats})".format(**f))
 
-    @BotPlugin.command(r'.*https?://gist\.github\.com/[^/]+/([0-9a-z]+)')
+    @BotPlugin.command(r'.*https?://gist\.github\.com/[^/]+/([0-9a-z]+)' + end_url)
     def gist(self, msg):
         url = "https://api.github.com/gists/{}".format(msg.args[0])
         gist = yield from public_api(url)
@@ -71,7 +72,7 @@ class UrlShow(TwitterBasePlugin):
         }
         msg.reply("{author} {when} «{title}» ({files})".format(**f))
 
-    @BotPlugin.command(r'.*https?://www\.reddit\.com/r/([\w\d_\.-]+)/comments/([\w\d_\.-]+)')
+    @BotPlugin.command(r'.*https?://www\.reddit\.com/r/([\w\d_\.-]+)/comments/([\w\d_\.-]+)' + end_url)
     def reddit(self, msg):
         url = "https://api.reddit.com/r/{}/comments/{}".format(*msg.args[:2])
         data = yield from public_api(url, verify_ssl=False)
@@ -82,7 +83,7 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{author} {upvote_ratio}: «{title}» {url}"
         msg.reply(fmt.format(**post))
 
-    @BotPlugin.command(r'.*https?://news\.ycombinator\.com/item\?id=(\d+)')
+    @BotPlugin.command(r'.*https?://news\.ycombinator\.com/item\?id=(\d+)' + end_url)
     def hackernews(self, msg):
         url = "https://hacker-news.firebaseio.com/v0/item/"
         post = yield from public_api(url + "{}.json".format(msg.args[0]))
@@ -91,7 +92,7 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{by}: «{title}» {url}"
         msg.reply(fmt.format(**post))
 
-    @BotPlugin.command(urlab_url + r'/(projects/\d+)')
+    @BotPlugin.command(urlab_url + r'/(projects/\d+)' + end_url)
     def urlab_project(self, msg):
         project_status = {
             'p': self.bot.text.yellow,  # Proposition
@@ -106,7 +107,7 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{title}: {desc}"
         msg.reply(fmt.format(**proj))
 
-    @BotPlugin.command(urlab_url + r'/(events/\d+)')
+    @BotPlugin.command(urlab_url + r'/(events/\d+)' + end_url)
     def urlab_event(self, msg):
         event_status = {
             'r': self.bot.text.bold,    # Ready
