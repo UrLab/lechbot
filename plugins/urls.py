@@ -12,7 +12,7 @@ class UrlShow(TwitterBasePlugin):
     urlab_url = r'.*https?://urlab\.be'
     end_url = r'(?:$|\s|\)|\]|\})'
 
-    @BotPlugin.command(r'.*https?://twitter.com/[^/]+/status/(\d+)')
+    @BotPlugin.command(r'.*https?://(?:mobile\.)twitter.com/[^/]+/status/(\d+)')
     def twitter_status(self, msg):
         url = 'statuses/show/{}.json'.format(msg.args[0])
         tweet = yield from self.twitter_request('GET', url)

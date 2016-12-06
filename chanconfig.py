@@ -1,11 +1,12 @@
 from plugins import (UrlShow, Twitter, Topic, Space, Reminder, TechWednesday,
-                     TwitterStream, VUBMenu)
+                     TwitterStream, VUBMenu, Ascii)
 from ircbot.plugin import HelpPlugin
 from config import TWITTER_CONFIG
 
 
 CHANS = {
     '#titoufaitdestests': [
+        Ascii(),
         Topic(),
         Space(),
         TechWednesday(),
