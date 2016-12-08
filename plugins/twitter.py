@@ -27,10 +27,9 @@ class TwitterBasePlugin(BotPlugin):
         return res
 
     def format_tweet(self, tweet):
-        urls = [x['expanded_url'] 
-                for x in tweet.get('entities', {}).get('urls', [])]
-        urls += [x['media_url']
-                 for x in tweet.get('entities', {}).get('media', [])]
+        entities = tweet.get('entities', {}).get('urls', [])
+        entities += tweet.get('entities', {}).get('media', [])
+        urls = [x['expanded_url'] for x in entities]
         url_lines = '\n'.join(' -> ' + self.bot.text.blue(u) for u in urls)
         f = {
             'name': self.bot.text.bold('@', tweet['user']['screen_name']),
