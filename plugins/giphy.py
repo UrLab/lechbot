@@ -18,7 +18,8 @@ class Giphy(BotPlugin):
     def gif(self, msg):
         """Cherche un gif et le poste sur un autre chan"""
         gif = yield from self.search_gif(msg.args[1])
-        self.bot.say(gif, target=msg.args[0])
+        reply = "{}: {}".format(msg.user, gif)
+        self.bot.say(reply, target=msg.args[0])
 
     @BotPlugin.command(r'\!gif (.+)')
     def gif_here(self, msg):
