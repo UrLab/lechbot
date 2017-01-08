@@ -1,7 +1,7 @@
 from plugins import (UrlShow, Twitter, Topic, Space, Reminder, TechWednesday,
-                     TwitterStream, VUBMenu, Ascii)
+                     TwitterStream, VUBMenu, Ascii, Giphy)
 from ircbot.plugin import HelpPlugin
-from config import TWITTER_CONFIG
+from config import TWITTER_CONFIG, GIPHY_KEY
 
 
 CHANS = {
@@ -15,6 +15,7 @@ CHANS = {
         UrlShow(TWITTER_CONFIG),
         TwitterStream(TWITTER_CONFIG, 'TitouOnRails'),
         VUBMenu(),
+        Giphy(GIPHY_KEY),
         HelpPlugin(),
     ],
     'QUERY': [

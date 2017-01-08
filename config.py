@@ -29,6 +29,8 @@ TWITTER_CONFIG = {
     'oauth_token_secret': 'token secret'
 }
 
+GIPHY_KEY = "secret"
+
 try:
     from local_config import *  # pragma: no flakes
 except ImportError:
