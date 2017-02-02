@@ -5,13 +5,17 @@ import random
 n = 3
 
 
+def compute_cumsum(xs):
+    cur = 0
+    ret = []
+    for x in xs:
+        ret.append(cur + x)
+        cur += x
+    return ret
+
+
 def random_choice(choices, probas):
-    cumsum = []
-    for p in probas:
-        try:
-            cumsum.append(cumsum[-1] + p)
-        except IndexError:
-            cumsum.append(p)
+    cumsum = compute_cumsum(probas)
     r = random.random()
     probas_f = [r >= x for x in cumsum]
     choice = 0
