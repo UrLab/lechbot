@@ -1,9 +1,25 @@
 from ircbot.plugin import BotPlugin
 import json
 import random
-import numpy as np
 
 n = 3
+
+
+def random_choice(choices, probas):
+    cumsum = []
+    for p in probas:
+        try:
+            cumsum.append(cumsum[-1] + p)
+        except IndexError:
+            cumsum.append(p)
+    r = random.random()
+    probas_f = [r >= x for x in cumsum]
+    choice = 0
+    for i, p in enumerate(probas_f):
+        if not p:
+            choice = i
+            break
+    return choices[choice]
 
 
 def generate_sentence(probas):
@@ -14,7 +30,7 @@ def generate_sentence(probas):
         if w == "POINT":
             break
         x = probas[tuple(prev)]
-        w = np.random.choice(list(x.keys()), p=list(x.values()))
+        w = random_choice(list(x.keys()), list(x.values()))
         if w in ["POINT", "VIRGULE", "P-V", "EXCLAMATION"]:
             s += " " + w + " "
         elif w == "$NUMBER":
