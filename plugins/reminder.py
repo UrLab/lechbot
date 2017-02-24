@@ -24,18 +24,24 @@ REMINDERS = [
 # Liste des corvées de UrLab
 JANITOR_TASKS = {
     'white_trash': {
-        'timeout': 5*days,
+        'timeout': 3.5*days,
         'action': 'vider la poubelle non triée'
     },
+    'white_trash_second': {
+        'timeout': 3.5*days,
+        'action': 'vider la poubelle du salon'
+    },
     'blue_trash': {
-        'timeout': 5*days,
+        'timeout': 7*days,
         'action': 'vider la poubelle PMC'
     },
     'clean': {
-        'timeout': 10*days,
-        'action': 'passer un coup de balais dans le hackerspace'
+        'timeout': 3.5*days,
+        'action': 'ranger les vidanges/cables et jeter les crasses'
     }
 }
+
+JANITOR_MINIMAL_PEOPLE = 4
 
 
 class Reminder(BotPlugin):
@@ -76,7 +82,7 @@ class Reminder(BotPlugin):
         # Récupération de l'état actuel du HS
         space = yield from spaceapi()
         people = set(space['sensors']['people_now_present'][0]['names'])
-        if space['state']['open']:
+        if space['state']['open'] and len(people) >= JANITOR_MINIMAL_PEOPLE:
             now = time()
             # Récupération du cache
             with Persistent('janitor.json') as janitor:
