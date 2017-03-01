@@ -93,7 +93,7 @@ class Ascii(BotPlugin):
     def key(self, msg):
         msg.reply("    .--.\n"
                   "   /.-. '----------.\n"
-                  "   \'-' .--"--""-"-'\n"
+                  "   \'-' .--\"--\"\"-\"-'\n"
                   "jgs '--'\n")
 
     @BotPlugin.command(r'\!letsplaychess')
