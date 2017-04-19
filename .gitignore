@@ -2,3 +2,7 @@
 __pycache__
 ve*
 local_config.py
+janitor.json
+topic.json
+local_chanconfig.py
+
