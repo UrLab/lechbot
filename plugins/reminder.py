@@ -12,7 +12,7 @@ minutes = 60
 hours = 60 * minutes
 days = 24 * hours
 
-PERIOD = 0.1 * minutes
+PERIOD = 15 * minutes
 REMINDERS = [
     (7, 0),
     (3, 0),
