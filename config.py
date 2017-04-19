@@ -14,6 +14,9 @@ INCUBATOR_SECRET = "Vairy sicret"
 # SpaceAPI url
 SPACEAPI = INCUBATOR + "spaceapi.json"
 
+# Full pamela url
+FULL_PAMELA = INCUBATOR + "space/private_pamela.json"
+
 # URL of the Crossbar router (websocket endpoint)
 WAMP_HOST = "ws://127.0.0.1:8080/ws"
 
@@ -32,7 +35,7 @@ TWITTER_CONFIG = {
 GIPHY_KEY = "secret"
 
 try:
-    from local_config import *  # pragma: no flakes
+    from local_config import *  # pragma: no flakes # NOQA
 except ImportError:
     print("Cannot load local config; using gitted config")
     pass

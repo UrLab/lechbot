@@ -2,7 +2,7 @@ import asyncio
 import aiohttp
 from os import path
 from logging import getLogger
-from config import INCUBATOR, INCUBATOR_SECRET, SPACEAPI
+from config import INCUBATOR, INCUBATOR_SECRET, SPACEAPI, FULL_PAMELA
 
 logger = getLogger(__name__)
 TIMEFMT = "%Y-%m-%d %H:%M:%S"
@@ -23,6 +23,8 @@ def protect(func):
 
 
 def mkurl(endpoint, host=INCUBATOR):
+    if endpoint.startswith("http"):
+        return endpoint
     url = str(host)
     if url[-1] != '/':
         url += '/'
@@ -34,9 +36,11 @@ def private_api(endpoint, data):
     """Call UrLab incubator private API"""
     data['secret'] = INCUBATOR_SECRET
     response = yield from aiohttp.post(mkurl(endpoint), data=data)
+    res = yield from response.json()
     status_code = response.status
     yield from response.release()
     assert status_code == 200
+    return res
 
 
 @asyncio.coroutine
@@ -61,3 +65,8 @@ def public_api(endpoint, verify_ssl=True):
 @asyncio.coroutine
 def spaceapi():
     return public_api(SPACEAPI)
+
+
+@asyncio.coroutine
+def full_pamela():
+    return private_api(FULL_PAMELA, {})

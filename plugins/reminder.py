@@ -3,16 +3,16 @@ import random
 from ircbot.persist import Persistent
 from ircbot.text import parse_time
 from ircbot.plugin import BotPlugin
-from .helpers import public_api, spaceapi, mkurl, protect
+from .helpers import public_api, mkurl, protect, full_pamela, spaceapi
 from datetime import datetime
 from time import time
 from operator import itemgetter
 
 minutes = 60
-hours = 60*minutes
-days = 24*hours
+hours = 60 * minutes
+days = 24 * hours
 
-PERIOD = 15 * minutes
+PERIOD = 0.1 * minutes
 REMINDERS = [
     (7, 0),
     (3, 0),
@@ -24,19 +24,19 @@ REMINDERS = [
 # Liste des corvées de UrLab
 JANITOR_TASKS = {
     'white_trash': {
-        'timeout': 3.5*days,
+        'timeout': 3.5 * days,
         'action': 'vider la poubelle non triée'
     },
     'white_trash_second': {
-        'timeout': 3.5*days,
+        'timeout': 3.5 * days,
         'action': 'vider la poubelle du salon'
     },
     'blue_trash': {
-        'timeout': 7*days,
+        'timeout': 7 * days,
         'action': 'vider la poubelle PMC'
     },
     'clean': {
-        'timeout': 3.5*days,
+        'timeout': 3.5 * days,
         'action': 'ranger les vidanges/cables et jeter les crasses'
     }
 }
@@ -69,7 +69,7 @@ class Reminder(BotPlugin):
             self.bot.log.debug("{title} {start}".format(**event))
 
             for (days, periods) in REMINDERS:
-                smin, smax = periods*PERIOD, (periods + 1)*PERIOD
+                smin, smax = periods * PERIOD, (periods + 1) * PERIOD
                 if from_now.days == days and smin <= from_now.seconds <= smax:
                     self.tell_event(event)
                     break
@@ -80,8 +80,9 @@ class Reminder(BotPlugin):
         Désigne des gens pour faire les corvées de UrLab quand c'est ouvert
         """
         # Récupération de l'état actuel du HS
+        data = yield from full_pamela()
         space = yield from spaceapi()
-        people = set(space['sensors']['people_now_present'][0]['names'])
+        people = set(data)
         if space['state']['open'] and len(people) >= JANITOR_MINIMAL_PEOPLE:
             now = time()
             # Récupération du cache
@@ -89,16 +90,16 @@ class Reminder(BotPlugin):
                 # On ne prend que les personnes qui n'étaient pas choisies
                 # précédemment
                 already_choosed = set(map(itemgetter('who'), janitor.values()))
-                people = list(people - already_choosed)
+                eligible_people = list(people - already_choosed)
 
                 # Pour chaque tâche, si elle n'a pas été faite depuis assez
                 # longtemps, on sélectionne qqun au hasard pour la faire
                 for name, task in JANITOR_TASKS.items():
                     cache = janitor.setdefault(name, {'time': 0, 'who': None})
                     last = cache['time']
-                    if now - last > task['timeout'] and people:
-                        who = random.choice(people)
-                        people.remove(who)
+                    if now - last > task['timeout'] and eligible_people:
+                        who = random.choice(eligible_people)
+                        eligible_people.remove(who)
                         fmt = "Salut {who} ! Tu pourrais {action} stp ?"
                         self.say(fmt.format(who=who, action=task['action']))
 
