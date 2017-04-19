@@ -22,18 +22,24 @@ class Poll(BotPlugin):
 
         return "New poll created:\n" + self.print_poll()
 
-    def clean_vote(self):
+    def end_poll(self, msg):
+        msg.reply("Poll has ended\n" + self.print_poll())
         self.votes = []
 
-    @BotPlugin.command(r'\!poll (.+)')
+    @BotPlugin.command(r'\!poll (.+) (\d+)')
     def poll(self, msg):
-        poll = self.create_poll(msg.args[0].split(" "))
+        args = msg.args[0].split(" ")
+        poll = self.create_poll(args)
+        loop = asyncio.get_event_loop()
+        loop.call_later(int(msg.args[1]), self.end_poll, msg)
         msg.reply(poll)
 
     @BotPlugin.command(r'\!vote (\d+)')
     def vote(self, msg):
         index = int(msg.args[0])
-        if not (0 <= index < len(self.votes)):
+        if not len(self.votes):
+            return msg.reply("No poll currently")
+        elif not 0 <= index < len(self.votes):
             return msg.reply("Invalid poll response.")
 
         self.votes[index]["count"] += 1
