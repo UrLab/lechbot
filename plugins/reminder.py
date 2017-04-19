@@ -113,6 +113,7 @@ class Reminder(BotPlugin):
     @BotPlugin.on_connect
     def reminder(self):
         while True:
-            yield from asyncio.sleep(PERIOD)
-            yield from self.remind_events()
             yield from self.janitor()
+            yield from asyncio.sleep(PERIOD / 2)
+            yield from self.remind_events()
+            yield from asyncio.sleep(PERIOD / 2)
