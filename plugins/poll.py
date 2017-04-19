@@ -28,14 +28,25 @@ class Poll(BotPlugin):
 
     @BotPlugin.command(r'\!poll (.+) (\d+)')
     def poll(self, msg):
+        """
+        Crée un sondage pour lequel les gens peuvent voter.
+
+        @param Une liste de nom à ajouter au sondage.
+        @param Le temps en minute avant de cloturer le sondage.
+        """
         args = msg.args[0].split(" ")
         poll = self.create_poll(args)
         loop = asyncio.get_event_loop()
-        loop.call_later(int(msg.args[1]), self.end_poll, msg)
+        loop.call_later(60 * int(msg.args[1]), self.end_poll, msg)
         msg.reply(poll)
 
     @BotPlugin.command(r'\!vote (\d+)')
     def vote(self, msg):
+        """
+        Voter pour le sondage.
+
+        @param L'index de l'élement pour lequel on veut voter.
+        """
         index = int(msg.args[0])
         if not len(self.votes):
             return msg.reply("No poll currently")
