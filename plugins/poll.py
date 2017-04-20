@@ -8,7 +8,7 @@ class Poll(BotPlugin):
         self.votes = [] # OrderedDict()
 
     def print_poll(self):
-        return "\n".join("%i) %s -- %i" % (i, vote["name"], vote["count"]) for i, vote in enumerate(self.votes))
+        return "\n".join("%i) %s -- %s" % (i, vote["name"], str(vote["voters"])) for i, vote in enumerate(self.votes))
 
     def create_poll(self, args):
         if len(args) < 2:
@@ -17,7 +17,7 @@ class Poll(BotPlugin):
         for arg in args:#[:-1]:
             self.votes.append({
                 "name": arg,
-                "count": 0,
+                "voters": [],
             })
 
         return "New poll created:\n" + self.print_poll()
@@ -53,6 +53,9 @@ class Poll(BotPlugin):
         elif not 0 <= index < len(self.votes):
             return msg.reply("Invalid poll response.")
 
-        self.votes[index]["count"] += 1
+        if msg.user not in self.votes[index]["voters"]:
+            self.votes[index]["voters"].append(msg.user)
+        else:
+            return msg.reply("Already voted")
 
         msg.reply(self.print_poll())
