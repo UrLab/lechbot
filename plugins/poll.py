@@ -2,6 +2,10 @@ from ircbot.plugin import BotPlugin
 import asyncio
 
 
+TIME_MIN = 1
+TIME_MAX = 60
+
+
 class Poll(BotPlugin):
     def __init__(self):
         self.loop = asyncio.get_event_loop()
@@ -18,6 +22,12 @@ class Poll(BotPlugin):
     def create_poll(self, args, msg, time=10):
         if len(self.votes):
             return "Il y a déjà un sondage en cours"
+
+        if time < TIME_MIN:
+            return "Temps minimum pour un sondage : {}".format(TIME_MIN)
+
+        if time > TIME_MAX:
+            return "Temps maximum pour un sondage : {}".format(TIME_MAX)
 
         loop = asyncio.get_event_loop()
         loop.call_later(60 * time, self.end_poll, msg)
