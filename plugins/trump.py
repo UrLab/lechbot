@@ -50,19 +50,17 @@ def generate_sentence(probas):
 
 
 def read_json():
-    with open("data/trump_data.json", "r") as f:
-        probas = json.load(f)
-    probas = {tuple([x.strip()[1:][:-1] for x in k[1:][:-1].split(",")]): v for k, v in probas.items()}
-    return probas
+    try:
+        with open("data/trump_data.json", "r") as f:
+            probas = json.load(f)
+        probas = {tuple([x.strip()[1:][:-1] for x in k[1:][:-1].split(",")]): v for k, v in probas.items()}
+        return probas
+    except FileNotFoundError:
+        return False
 
 
 class Trump(BotPlugin):
-    def __init__(self):
-        super()
-        try:
-            self.probas = read_json()
-        except FileNotFoundError:
-            self.probas = False
+    probas = read_json()
 
     @BotPlugin.command(r'\!trump$')
     def train(self, msg):
