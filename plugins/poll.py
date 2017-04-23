@@ -88,4 +88,4 @@ class Poll(BotPlugin):
         else:
             return msg.reply("Tu as déjà voté", hilight=True)
 
-        msg.reply(self.print_poll())
+        msg.reply("{}: tu as voté pour {}".format(msg.user, self.votes[index]['name']))
