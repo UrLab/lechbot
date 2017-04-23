@@ -5,14 +5,20 @@ import asyncio
 class Poll(BotPlugin):
     def __init__(self):
         self.loop = asyncio.get_event_loop()
-        self.votes = [] # OrderedDict()
+        self.votes = []
 
     def print_poll(self):
         return "\n".join("%i) %s -- %s" % (i, vote["name"], str(vote["voters"])) for i, vote in enumerate(self.votes))
 
-    def create_poll(self, args):
+    def create_poll(self, args, msg, time=10):
+        if len(self.votes):
+            return "There is already a poll running."
+
+        loop = asyncio.get_event_loop()
+        loop.call_later(60 * time, self.end_poll, msg)
+
         if len(args) < 2:
-            return "More args: " + str(args)
+            return "More args needed: " + str(args)
 
         for arg in args:#[:-1]:
             self.votes.append({
@@ -26,19 +32,31 @@ class Poll(BotPlugin):
         msg.reply("Poll has ended\n" + self.print_poll())
         self.votes = []
 
-    @BotPlugin.command(r'\!poll (.+) (\d+)')
-    def poll(self, msg):
+    @BotPlugin.command(r'\!poll (.+) (time=\d+)')
+    def poll_with_time(self, msg):
         """
         Crée un sondage pour lequel les gens peuvent voter.
 
         @param Une liste de nom à ajouter au sondage.
         @param Le temps en minute avant de cloturer le sondage.
         """
-        args = msg.args[0].split(" ")
-        poll = self.create_poll(args)
-        loop = asyncio.get_event_loop()
-        loop.call_later(60 * int(msg.args[1]), self.end_poll, msg)
-        msg.reply(poll)
+        msg.reply(self.create_poll(msg.args[0].split(" "), msg, int(msg.args[1].replace("time=", ""))))
+
+    @BotPlugin.command(r'\!poll (.+)')
+    def poll(self, msg):
+        """
+        Crée un sondage pour lequel les gens peuvent voter.
+
+        @param Une liste de nom à ajouter au sondage.
+        """
+        msg.reply(self.create_poll(msg.args[0].split(" "), msg))
+
+    @BotPlugin.command(r'\!poll')
+    def show_poll(self, msg):
+        """
+        Montre le sondage en cours.
+        """
+        msg.reply(self.print_poll())
 
     @BotPlugin.command(r'\!vote (\d+)')
     def vote(self, msg):
