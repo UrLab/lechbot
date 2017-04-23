@@ -9,7 +9,6 @@ class Poll(BotPlugin):
 
     def print_poll(self):
         t = self.bot.text
-        c = lambda x: self.bot.text.blue(self.bot.text.bold(x))
         return "\n".join(
             "%s) %s -- %s" % (t.bold(i), t.blue(t.bold(vote["name"])),
                               ", ".join(vote["voters"]))
