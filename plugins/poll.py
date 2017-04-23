@@ -3,7 +3,7 @@ import asyncio
 
 
 TIME_MIN = 1
-TIME_MAX = 60
+TIME_MAX = 24 * 60
 
 
 class Poll(BotPlugin):
