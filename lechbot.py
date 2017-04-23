@@ -38,7 +38,7 @@ def run_wamp(bot):
                 if (now - last_seen).total_seconds() < RATELIMIT.get(key, 0):
                     bot.log.info("Got rate-limited event " + repr({
                         'key': key, 'time': time, 'text': text
-                    }))
+                    }) + " / Last seen: " + repr(last_seen))
                     return
 
                 bot.say(text, target=MAIN_CHAN)

@@ -8,3 +8,4 @@ from .vubmenu import VUBMenu
 from .ascii import Ascii
 from .giphy import Giphy
 from .trump import Trump
+from .poll import Poll
