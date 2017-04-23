@@ -54,3 +54,6 @@ class IRCBot(AbstractBot):
 
     def _topic(self, chan, topic):
         self.conn.writeln('TOPIC %s : %s' % (chan, topic))
+
+    def _nick(self, nick):
+        self.conn.writeln('NICK %s' % nick)
