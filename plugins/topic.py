@@ -2,7 +2,7 @@ from ircbot.persist import Persistent
 from time import time
 from datetime import datetime
 import re
-from .helpers import private_api
+from .helpers import private_api, ApiError
 from ircbot.plugin import BotPlugin
 import aiohttp
 
@@ -73,9 +73,13 @@ class Topic(BotPlugin):
                 title = ""
             fmt = "tu viens de changer la musique du jour >>> d*-*b <<< {}"
             msg.reply(fmt.format(self.bot.text.bold(title)), hilight=True)
-        except:
-            self.bot.log.exception("Change MotD")
-            msg.reply("Impossible de changer la musique du jour !")
+        except ApiError as e:
+            if e.error_type == "TRY_AGAIN_TOMORROW":
+                msg.reply("La musique du jour a déjà été changée aujourd'hui !")
+            else:
+                self.bot.log.exception("Change MotD")
+                self.bot.log.info("Error while updating the MotD: %s" % repr(e))
+                msg.reply("Erreur lors du changement de musique du jour !")
 
     @BotPlugin.command(r'\!topic prepend +([^ ].+)')
     def prepend_topic(self, msg):
