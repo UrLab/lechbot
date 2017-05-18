@@ -118,6 +118,8 @@ class TwitterStream(TwitterBasePlugin):
 
     @BotPlugin.on_connect
     def startup(self):
+        if self.bot.local_only:
+            return
         while True:
             yield from self.read_stream(
                 'https://userstream.twitter.com/1.1/user.json',

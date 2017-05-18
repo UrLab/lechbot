@@ -65,7 +65,7 @@ class AbstractBot:
         purple = staticmethod(make_style('<purple>', '</purple>'))
         grey = staticmethod(make_style('<grey>', '</grey>'))
 
-    def __init__(self, nickname, channels={}, main_chan=None):
+    def __init__(self, nickname, channels={}, main_chan=None, local_only=False):
         """
         Create a new bot.
 
@@ -82,6 +82,7 @@ class AbstractBot:
         """
         self.main_chan = main_chan
         self.nickname = nickname
+        self.local_only = local_only
         self.connected = False
         chans = {}
         # {chan: [Plugin]} ->

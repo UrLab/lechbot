@@ -112,6 +112,8 @@ class Reminder(BotPlugin):
 
     @BotPlugin.on_connect
     def reminder(self):
+        if self.bot.local_only:
+            return
         # Sleep 30 to be sure that we are connected to IRC.
         yield from asyncio.sleep(30)
 
