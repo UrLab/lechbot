@@ -76,6 +76,9 @@ class AbstractBot:
         :param main_chan: The main channel of this bot. If None, use the first
                           found key of channels.
         :type main_chan: str.
+        :param local_only: If the plugins should try or not to poll distant APIs
+                           (usefull for local dev without any setup)
+        :type local_only: bool
 
         :example:
             >>> Bot("Bot", {'#chan': AwesomePlugin()})
