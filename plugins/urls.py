@@ -1,6 +1,7 @@
 from .helpers import public_api
 from .twitter import TwitterBasePlugin
 from ircbot.plugin import BotPlugin
+from datetime import datetime
 
 
 class UrlShow(TwitterBasePlugin):
@@ -11,6 +12,10 @@ class UrlShow(TwitterBasePlugin):
     github_repo = r'.*https?://github\.com/([\w\d_\.-]+)/([\w\d_\.-]+)'
     urlab_url = r'.*https?://urlab\.be'
     end_url = r'(?:$|\s|\)|\]|\})'
+
+    def check_mark(self, ok=True):
+        res = self.bot.text.green('✓') if ok else self.bot.text.red('✗')
+        return self.bot.text.bold(res)
 
     @BotPlugin.command(r'.*https?://(?:mobile\.)?twitter.com/[^/]+/status/(\d+)')
     def twitter_status(self, msg):
@@ -91,6 +96,33 @@ class UrlShow(TwitterBasePlugin):
         post['url'] = self.bot.text.blue(post['url'])
         fmt = "{by}: «{title}» {url}"
         msg.reply(fmt.format(**post))
+
+    def generic_stackexchange(self, msg, q_id, site='stackoverflow'):
+        url = "https://api.stackexchange.com/2.2/questions/{}?&site={}"
+        post = yield from public_api(url.format(q_id, site))
+        for q in post.get('items', []):
+            if q['score'] >= 0:
+                score = self.bot.text.green('+%d' % q['score'])
+            else:
+                score = self.bot.text.red('%d' % q['score'])
+            ctx = {
+                'date': self.bot.naturaltime(datetime.fromtimestamp(q['creation_date'])),
+                'title': self.bot.text.bold(q['title']),
+                'tags': " ".join(self.bot.text.purple("(" + t + ")") for t in q['tags']),
+                'url': self.bot.text.blue(q['link']),
+                'solved': self.check_mark(q['is_answered']),
+                'score': score,
+            }
+            fmt = "«{title}» [{solved} {score}] ({date}) {tags}\n -> {url}"
+            msg.reply(fmt.format(**ctx))
+
+    @BotPlugin.command(r'.*https?://stackoverflow\.com\/questions\/(\d+)\/[^ /]+' + end_url)
+    def stackoverflow(self, msg):
+        yield from self.generic_stackexchange(msg, q_id=msg.args[0])
+
+    @BotPlugin.command(r'.*https?://([^\.]+)\.stackexchange\.com\/questions\/(\d+)\/[^ /]+' + end_url)
+    def stackexchange(self, msg):
+        yield from self.generic_stackexchange(msg, q_id=msg.args[1], site=msg.args[0])
 
     @BotPlugin.command(urlab_url + r'/(projects/\d+)' + end_url)
     def urlab_project(self, msg):
