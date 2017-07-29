@@ -1,4 +1,4 @@
-from plugins import (UrlShow, Twitter, Topic, Space, Reminder, TechWednesday,
+from plugins import (UrlShow, Twitter, Topic, Space, Reminder, TechWednesday, React,
                      TwitterStream, VUBMenu, Ascii, Giphy, Poll)
 from ircbot.plugin import HelpPlugin
 from config import TWITTER_CONFIG, GIPHY_KEY
@@ -9,6 +9,7 @@ CHANS = {
         Ascii(),
         Topic(),
         Space(),
+        React(),
         TechWednesday(),
         Reminder(),
         Twitter(TWITTER_CONFIG),
