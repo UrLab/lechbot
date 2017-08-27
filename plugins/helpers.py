@@ -9,6 +9,26 @@ TIMEFMT = "%Y-%m-%d %H:%M:%S"
 unsafe_conn = aiohttp.TCPConnector(verify_ssl=False)
 
 
+class ApiError(Exception):
+    def __init__(self, response, code):
+        self.response = response
+        self.code = code
+
+    @property
+    def error(self):
+        return self.response.get("error")
+
+    @property
+    def error_type(self):
+        return self.response.get("type")
+
+    def __repr__(self):
+        if self.error_type:
+            return "<ApiError(%i type:%s): %s>" % (self.code, self.error_type, self.response)
+        else:
+            return "<ApiError(%i): %s>" % (self.code, self.response)
+
+
 def protect(func):
     """Catch and log exceptions that occurs in call to func"""
     def wrapper(*args, **kwargs):
@@ -39,7 +59,8 @@ def private_api(endpoint, data):
     res = yield from response.json()
     status_code = response.status
     yield from response.release()
-    assert status_code == 200
+    if status_code != 200:
+        raise ApiError(response=res, code=status_code)
     return res
 
 
