@@ -1,7 +1,9 @@
 from asyncirc import irc
+from asyncirc.plugins import sasl
 from .text import make_style
 from .abstractbot import AbstractBot
 from time import time
+import config
 
 
 class IRCBot(AbstractBot):
@@ -24,9 +26,17 @@ class IRCBot(AbstractBot):
 
     def _connect(self, host, port, **kwargs):
         self.last_say = time()
-        self.conn = irc.connect(host, port, use_ssl=True)\
-                       .register(self.nickname, "ident", "LechBot")\
-                       .join(self.chanlist)
+
+        self.conn = irc.connect(host, port, use_ssl=True)
+
+        if hasattr(config, "IRC_PASSWORD"):
+            self.log.info("Logging with SASL and username {}".format(self.nickname))
+            sasl.auth(self.conn, self.nickname, config.IRC_PASSWORD)
+            self.conn = self.conn.register(self.nickname, "ident", "LechBot", config.IRC_PASSWORD)
+        else:
+            self.conn = self.conn.register(self.nickname, "ident", "LechBot")
+
+        self.conn = self.conn.join(self.chanlist)
         self.conn.queue_timer = self.TIMER
         self.conn.on('message')(self._on_irc_message)
         self.conn.on('join')(self._on_irc_join)
@@ -44,3 +54,6 @@ class IRCBot(AbstractBot):
 
     def _topic(self, chan, topic):
         self.conn.writeln('TOPIC %s : %s' % (chan, topic))
+
+    def _nick(self, nick):
+        self.conn.writeln('NICK %s' % nick)
