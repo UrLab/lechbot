@@ -65,7 +65,7 @@ class AbstractBot:
         purple = staticmethod(make_style('<purple>', '</purple>'))
         grey = staticmethod(make_style('<grey>', '</grey>'))
 
-    def __init__(self, nickname, channels={}, main_chan=None):
+    def __init__(self, nickname, channels={}, main_chan=None, local_only=False):
         """
         Create a new bot.
 
@@ -76,12 +76,16 @@ class AbstractBot:
         :param main_chan: The main channel of this bot. If None, use the first
                           found key of channels.
         :type main_chan: str.
+        :param local_only: If the plugins should try or not to poll distant APIs
+                           (usefull for local dev without any setup)
+        :type local_only: bool
 
         :example:
             >>> Bot("Bot", {'#chan': AwesomePlugin()})
         """
         self.main_chan = main_chan
         self.nickname = nickname
+        self.local_only = local_only
         self.connected = False
         chans = {}
         # {chan: [Plugin]} ->

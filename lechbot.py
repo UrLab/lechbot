@@ -17,7 +17,7 @@ def run_wamp(bot):
     """
     class Component(ApplicationSession):
         @asyncio.coroutine
-        def onJoin(self, details):
+        def onJoin(self, details): # NOQA
             bot.log.info("Joined WAMP realm !")
 
             last_seen_keys = {}
@@ -54,14 +54,14 @@ def run_wamp(bot):
     runner.run(Component)
 
 
-def main(loglevel, klass):
+def main(loglevel, klass, options):
     humanize.i18n.activate('fr_FR')
     fmt = "%(levelname)7s %(asctime)s | %(module)s:%(funcName)s | %(message)s"
     logging.basicConfig(
         stream=stdout, level=loglevel,
         format=fmt)
 
-    bot = klass(NICKNAME, CHANS, main_chan=MAIN_CHAN)
+    bot = klass(NICKNAME, CHANS, main_chan=MAIN_CHAN, local_only=options.local)
 
     @bot.command(r'tg %s$' % NICKNAME)
     def shut_up(msg):
@@ -70,11 +70,19 @@ def main(loglevel, klass):
         exit()
     bot.connect(host="chat.freenode.net", port=6697)
     bot.log.info("Starting")
-    try:
-        run_wamp(bot)
-    except:
-        bot.log.exception("WAMP not available !")
+
+    if bot.local_only:
+        bot.log.info(
+            "You are in local mode, we will not try to poll from"
+            " crossbar, twitter, the incubator or any other distant api."
+        )
         asyncio.get_event_loop().run_forever()
+    else:
+        try:
+            run_wamp(bot)
+        except:
+            bot.log.exception("WAMP not available !")
+            asyncio.get_event_loop().run_forever()
 
 
 if __name__ == "__main__":
@@ -90,8 +98,13 @@ if __name__ == "__main__":
         "--debug", "-d", action='store_true',
         dest='debug', default=False,
         help="Also output debug informations")
+    optparser.add_argument(
+        "--local", "-l", action='store_true',
+        dest='local', default=False,
+        help="Don't try to connect to crossbar or Twitter")
+
     options = optparser.parse_args()
 
     lvl = logging.DEBUG if options.debug else logging.INFO
     klass = IRCBot if options.online else CLIBot
-    main(lvl, klass)
+    main(lvl, klass, options)
