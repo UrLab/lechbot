@@ -19,13 +19,12 @@ CHANS = {
         Giphy(GIPHY_KEY),
         HelpPlugin(),
         Poll(),
-        StationMaster()
+        StationMaster(),
     ],
     'QUERY': [
         TechWednesday(),
         VUBMenu(),
         HelpPlugin(),
-        StationMaster()
     ],
 }
 
