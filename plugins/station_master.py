@@ -29,6 +29,9 @@ RULES = {
     # ],
     "im_a_test": [
         {"hour": range(24), "minute": range(60), "weekday": range(7)}
+    ],
+    "other_test": [
+        {"hour": range(24), "minute": range(60), "weekday": range(7)}
     ]
 }
 
@@ -79,6 +82,9 @@ class StationMaster(BotPlugin):
         train = "S11780"
         a = yield from self.get_delay(train, station)
         print(a)
+
+    def run_other_test(self):
+        print("Inside other test")
 
     def get_delay(self, train_id, station):
         url = "https://api.irail.be/vehicle/?id=BE.NMBS.%s&format=json" % train_id
