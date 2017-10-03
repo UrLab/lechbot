@@ -20,21 +20,21 @@ TRAIN_TIMES = [
 ]
 
 RULES = {
-    # 'train_morning': [
-    #     {"hour": [9], "minute": [40], "weekday": [1, 2, 3, 4, 5]},
-    # ],
-    # 'train_evening': [
-    #     {"hour": [17], "minute": [40], "weekday": [1, 2, 3, 4, 5]},
-    # ],
+    'train_morning': [
+        {"hour": [9], "minute": [40], "weekday": [1, 2, 3, 4, 5]},
+    ],
+    'train_evening': [
+        {"hour": [17], "minute": [40], "weekday": [1, 2, 3, 4, 5]},
+    ],
     # 'metro': [
     #     {"hour": [9], "minute": [15], "weekday": [1, 2, 3, 4, 5]},
     # ],
-    # "pair": [
-    #     {"hour": range(24), "minute": range(0, 60, 2), "weekday": range(7)}
-    # ],
-    # "impair": [
-    #     {"hour": range(24), "minute": range(1, 60, 2), "weekday": range(7)}
-    # ],
+    "train_morning": [
+        {"hour": range(24), "minute": range(0, 60, 2), "weekday": range(7)}
+    ],
+    "train_evening": [
+        {"hour": range(24), "minute": range(1, 60, 2), "weekday": range(7)}
+    ],
     # "im_a_test": [
     #     {"hour": range(24), "minute": range(60), "weekday": range(7)}
     # ],
@@ -67,33 +67,25 @@ class StationMaster(BotPlugin):
         days = [next_day(*rule) for rule in expanded_rules]
         return min(days)
 
-    # @asyncio.coroutine
     def event(self, event_type):
-        print("Calling %s" % event_type)
         self.set_next_call(event_type)
         fun = getattr(self, "run_%s" % event_type)
-        # yield from fun()
-        print("%s called" % event_type)
+        assert asyncio.iscoroutinefunction(fun)
+        asyncio.ensure_future(fun())
 
-    def run_pair(self):
-        print("Ceci est une minute paire")
-
-    def run_impair(self):
-        print("Ceci est une minute impaire")
-
+    @asyncio.coroutine
     def run_train_morning(self):
         station = "Brussels-Central"
         train = "S11780"
+        data = yield from self.get_delay(train, station)
+        self.say(self.format_train(train, data))
 
-    def run_im_a_test(self):
-        print("Inside i'm a test")
-        station = "Brussels-Central"
-        train = "S11780"
-        a = yield from self.get_delay(train, station)
-        print(a)
-
-    def run_other_test(self):
-        print("Inside other test")
+    @asyncio.coroutine
+    def run_train_evening(self):
+        station = "Brussels-Chapelle/Brussels-Kapellekerk"
+        train = "S11767"
+        data = yield from self.get_delay(train, station)
+        self.say(self.format_train(train, data))
 
     def get_delay(self, train_id, station):
         url = "https://api.irail.be/vehicle/?id=BE.NMBS.%s&format=json" % train_id
@@ -104,7 +96,6 @@ class StationMaster(BotPlugin):
         if len(stops) != 1:
             raise Exception("More than one %s stop" % station)
         stop = stops[0]
-        print(stop)
         departure = datetime.fromtimestamp(int(stop['scheduledDepartureTime']))
         return {
             "canceled": stop["departureCanceled"] != "0",
@@ -122,13 +113,26 @@ class StationMaster(BotPlugin):
             self.loop.time() + dt,
             functools.partial(self.event, event_type)
         )
-        print("timer set in %s for %s" % (dt, event_type))
 
     @BotPlugin.on_connect
     def boot(self):
-        print("booting")
         for event_type in RULES.keys():
             self.set_next_call(event_type)
+
+    def format_train(self, train, data):
+        if data['canceled']:
+            txt = "is canceled"
+        elif data['delay'] > 0:
+            txt = 'has a delay of %s min' % data['delay']
+        else:
+            txt = 'is on time'
+
+        return "Train %s (%s) %s, platform %s" % (
+            train,
+            data['scheduled_departure'].strftime("%H:%M"),
+            txt,
+            data['platform']
+        )
 
     @BotPlugin.command(r'\!teleport')
     def teleport(self, msg):
@@ -137,20 +141,7 @@ class StationMaster(BotPlugin):
             if start < datetime.now().time() < stop:
                 has_ran = True
                 data = yield from self.get_delay(train, station)
-
-                if data['canceled']:
-                    txt = "is canceled"
-                elif data['delay'] > 0:
-                    txt = 'has a delay of %s min' % data['delay']
-                else:
-                    txt = 'is on time'
-
-                msg.reply("Train %s (%s) %s, platform %s" % (
-                    train,
-                    data['scheduled_departure'].strftime("%H:%M"),
-                    txt,
-                    data['platform']
-                ))
+                msg.reply(self.format_train(train, data))
 
         if not has_ran:
             msg.reply("No teleporter available for now...")
