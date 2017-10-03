@@ -10,6 +10,14 @@ from operator import itemgetter
 from time import mktime
 import itertools
 import functools
+import aiohttp
+
+TRAIN_TIMES = [
+    (dtime(7, 0), dtime(9, 15), "Brussels-Central", "S11779"),
+    (dtime(9, 15), dtime(10, 15), "Brussels-Central", "S11780"),
+    (dtime(16, 0), dtime(17, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11766"),
+    (dtime(17, 15), dtime(18, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11767"),
+]
 
 RULES = {
     # 'train_morning': [
@@ -27,12 +35,12 @@ RULES = {
     # "impair": [
     #     {"hour": range(24), "minute": range(1, 60, 2), "weekday": range(7)}
     # ],
-    "im_a_test": [
-        {"hour": range(24), "minute": range(60), "weekday": range(7)}
-    ],
-    "other_test": [
-        {"hour": range(24), "minute": range(60), "weekday": range(7)}
-    ]
+    # "im_a_test": [
+    #     {"hour": range(24), "minute": range(60), "weekday": range(7)}
+    # ],
+    # "other_test": [
+    #     {"hour": range(24), "minute": range(60), "weekday": range(7)}
+    # ]
 }
 
 
@@ -59,11 +67,12 @@ class StationMaster(BotPlugin):
         days = [next_day(*rule) for rule in expanded_rules]
         return min(days)
 
+    # @asyncio.coroutine
     def event(self, event_type):
         print("Calling %s" % event_type)
         self.set_next_call(event_type)
         fun = getattr(self, "run_%s" % event_type)
-        fun()
+        # yield from fun()
         print("%s called" % event_type)
 
     def run_pair(self):
@@ -91,15 +100,17 @@ class StationMaster(BotPlugin):
 
         response = yield from aiohttp.get(url)
         data = yield from response.json()
-
-        stops = [s for s in data["stops"]["stop"] if s["station"] == "Brussels-Central"]
-        if len(stops) != 0:
-            raise Exception()
+        stops = [s for s in data["stops"]["stop"] if s["station"] == station]
+        if len(stops) != 1:
+            raise Exception("More than one %s stop" % station)
         stop = stops[0]
+        print(stop)
+        departure = datetime.fromtimestamp(int(stop['scheduledDepartureTime']))
         return {
             "canceled": stop["departureCanceled"] != "0",
             "delay": int(stop["departureDelay"]),
             "platform": stop['platform'],
+            "scheduled_departure": departure,
         }
 
     def set_next_call(self, event_type):
@@ -107,7 +118,10 @@ class StationMaster(BotPlugin):
         dt = (at - datetime.now()).total_seconds()
         dt /= 20
         dt = max(dt, 2)
-        self.loop.call_at(self.loop.time() + dt, lambda: self.event(event_type))
+        self.loop.call_at(
+            self.loop.time() + dt,
+            functools.partial(self.event, event_type)
+        )
         print("timer set in %s for %s" % (dt, event_type))
 
     @BotPlugin.on_connect
@@ -115,3 +129,28 @@ class StationMaster(BotPlugin):
         print("booting")
         for event_type in RULES.keys():
             self.set_next_call(event_type)
+
+    @BotPlugin.command(r'\!teleport')
+    def teleport(self, msg):
+        has_ran = False
+        for start, stop, station, train in TRAIN_TIMES:
+            if start < datetime.now().time() < stop:
+                has_ran = True
+                data = yield from self.get_delay(train, station)
+
+                if data['canceled']:
+                    txt = "is canceled"
+                elif data['delay'] > 0:
+                    txt = 'has a delay of %s min' % data['delay']
+                else:
+                    txt = 'is on time'
+
+                msg.reply("Train %s (%s) %s, platform %s" % (
+                    train,
+                    data['scheduled_departure'].strftime("%H:%M"),
+                    txt,
+                    data['platform']
+                ))
+
+        if not has_ran:
+            msg.reply("No teleporter available for now...")
