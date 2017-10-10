@@ -89,7 +89,8 @@ class StationMaster(BotPlugin):
     def set_next_call(self, event_type):
         at = self.get_next_instant(event_type)
         dt = (at - datetime.now()).total_seconds()
-        dt = max(dt, 2)
+        # TODO remove me
+        dt = min(dt, 2)
         self.loop.call_at(
             self.loop.time() + dt,
             functools.partial(self.event, event_type)
@@ -102,11 +103,11 @@ class StationMaster(BotPlugin):
 
     def format_train(self, train, data):
         if data['canceled']:
-            txt = "is canceled"
+            txt = "is " + self.bot.text.red("canceled")
         elif data['delay'] > 0:
-            txt = 'has a delay of %s min' % data['delay']
+            txt = 'has a ' + self.bot.text.orange('delay of %s min' % data['delay'])
         else:
-            txt = 'is on time'
+            txt = 'is ' + self.bot.text.green('on time')
 
         return "Train %s (%s) %s, platform %s" % (
             train,
