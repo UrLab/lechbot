@@ -103,13 +103,13 @@ class StationMaster(BotPlugin):
 
     def format_train(self, train, data):
         if data['canceled']:
-            txt = "is " + self.bot.text.red("canceled")
+            txt = "est " + self.bot.text.red("annulé")
         elif data['delay'] > 0:
-            txt = 'has a ' + self.bot.text.orange('delay of %s min' % data['delay'])
+            txt = 'a un ' + self.bot.text.orange('retard de %s min' % data['delay'])
         else:
-            txt = 'is ' + self.bot.text.green('on time')
+            txt = 'est ' + self.bot.text.green('à temps')
 
-        return "Train %s (%s) %s, platform %s" % (
+        return "Le train %s (%s) %s, quai %s." % (
             train,
             data['scheduled_departure'].strftime("%H:%M"),
             txt,
@@ -126,4 +126,4 @@ class StationMaster(BotPlugin):
                 msg.reply(self.format_train(train, data))
 
         if not has_ran:
-            msg.reply("No teleporter available for now...")
+            msg.reply("Aucun téléporteur n'est disponible pour l'instant...")
