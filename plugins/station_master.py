@@ -89,8 +89,6 @@ class StationMaster(BotPlugin):
     def set_next_call(self, event_type):
         at = self.get_next_instant(event_type)
         dt = (at - datetime.now()).total_seconds()
-        # TODO remove me
-        dt = min(dt, 2)
         self.loop.call_at(
             self.loop.time() + dt,
             functools.partial(self.event, event_type)
