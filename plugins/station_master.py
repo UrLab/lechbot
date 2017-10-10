@@ -1,13 +1,7 @@
 import asyncio
-import random
-from ircbot.persist import Persistent
-from ircbot.text import parse_time
 from ircbot.plugin import BotPlugin
-from .helpers import public_api, mkurl, protect, full_pamela, spaceapi
 from datetime import datetime, timedelta
 from datetime import time as dtime
-from operator import itemgetter
-from time import mktime
 import itertools
 import functools
 import aiohttp
@@ -21,26 +15,14 @@ TRAIN_TIMES = [
 
 RULES = {
     'train_morning': [
-        {"hour": [9], "minute": [40], "weekday": [1, 2, 3, 4, 5]},
+        {"hour": [9], "minute": [40, 50], "weekday": [1, 2, 3, 4, 5]},
     ],
     'train_evening': [
-        {"hour": [17], "minute": [40], "weekday": [1, 2, 3, 4, 5]},
+        {"hour": [17], "minute": [49, 59], "weekday": [1, 2, 3, 4, 5]},
     ],
     # 'metro': [
     #     {"hour": [9], "minute": [15], "weekday": [1, 2, 3, 4, 5]},
     # ],
-    "train_morning": [
-        {"hour": range(24), "minute": range(0, 60, 2), "weekday": range(7)}
-    ],
-    "train_evening": [
-        {"hour": range(24), "minute": range(1, 60, 2), "weekday": range(7)}
-    ],
-    # "im_a_test": [
-    #     {"hour": range(24), "minute": range(60), "weekday": range(7)}
-    # ],
-    # "other_test": [
-    #     {"hour": range(24), "minute": range(60), "weekday": range(7)}
-    # ]
 }
 
 
@@ -107,7 +89,6 @@ class StationMaster(BotPlugin):
     def set_next_call(self, event_type):
         at = self.get_next_instant(event_type)
         dt = (at - datetime.now()).total_seconds()
-        dt /= 20
         dt = max(dt, 2)
         self.loop.call_at(
             self.loop.time() + dt,
