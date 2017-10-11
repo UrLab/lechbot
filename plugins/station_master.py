@@ -81,7 +81,7 @@ class StationMaster(BotPlugin):
         departure = datetime.fromtimestamp(int(stop['scheduledDepartureTime']))
         return {
             "canceled": stop["departureCanceled"] != "0",
-            "delay": int(stop["departureDelay"]),
+            "delay": round(int(stop["departureDelay"]) / 60),
             "platform": stop['platform'],
             "scheduled_departure": departure,
         }
@@ -103,7 +103,7 @@ class StationMaster(BotPlugin):
         if data['canceled']:
             txt = "est " + self.bot.text.red("annulé")
         elif data['delay'] > 0:
-            txt = 'a un ' + self.bot.text.orange('retard de %s min' % data['delay'])
+            txt = 'a un ' + self.bot.text.purple('retard de %s min' % data['delay'])
         else:
             txt = 'est ' + self.bot.text.green('à temps')
 
