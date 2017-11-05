@@ -29,7 +29,19 @@ class IRCBot(AbstractBot):
 
         self.conn = irc.connect(host, port, use_ssl=True)
 
-        if hasattr(config, "IRC_PASSWORD"):
+        @self.conn.on("nickserv-auth-success")
+        def auth_success(message_text):
+            self.log.info("Auth success (%s)", message_text)
+
+        @self.conn.on("nickserv-auth-fail")
+        def auth_fail(message_text):
+            self.log.info("Auth failed (%s)", message_text)
+
+        if hasattr(config, "IRC_PASSWORD") and config.IRC_PASSWORD:
+            @self.conn.on("sasl-auth-complete")
+            def sasl_auth_complete(message):
+                self.log.info("Logged with SASL (%s)", message)
+
             self.log.info("Logging with SASL and username {}".format(self.nickname))
             sasl.auth(self.conn, self.nickname, config.IRC_PASSWORD)
             self.conn = self.conn.register(self.nickname, "ident", "LechBot", config.IRC_PASSWORD)
