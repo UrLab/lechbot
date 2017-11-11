@@ -20,7 +20,7 @@ class UrlShow(TwitterBasePlugin):
     @BotPlugin.command(r'.*https?://(?:mobile\.)?twitter.com/[^/]+/status/(\d+)')
     def twitter_status(self, msg):
         url = 'statuses/show/{}.json'.format(msg.args[0])
-        tweet = yield from self.twitter_request('GET', url)
+        tweet = yield from self.twitter_request('GET', url, params={'tweet_mode': 'extended'})
         msg.reply(self.format_tweet(tweet))
 
     @BotPlugin.command(github_repo + r'/?(\s|$)' + end_url)
