@@ -2,7 +2,7 @@ from asyncirc import irc
 from asyncirc.plugins import sasl
 from .text import make_style
 from .abstractbot import AbstractBot
-from time import time
+from time import time, sleep
 import config
 
 
@@ -28,6 +28,7 @@ class IRCBot(AbstractBot):
         self.last_say = time()
 
         self.conn = irc.connect(host, port, use_ssl=True)
+        sleep(4)
 
         @self.conn.on("nickserv-auth-success")
         def auth_success(message_text):
