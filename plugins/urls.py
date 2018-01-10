@@ -93,7 +93,7 @@ class UrlShow(TwitterBasePlugin):
         url = "https://hacker-news.firebaseio.com/v0/item/"
         post = yield from public_api(url + "{}.json".format(msg.args[0]))
         post['by'] = self.bot.text.bold('@', post['by'])
-        post['url'] = self.bot.text.blue(post['url'])
+        post['url'] = self.bot.text.blue(post.get('url', ''))
         fmt = "{by}: «{title}» {url}"
         msg.reply(fmt.format(**post))
 
