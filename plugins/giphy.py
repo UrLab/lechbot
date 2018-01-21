@@ -1,18 +1,25 @@
 from .helpers import public_api
 from ircbot.plugin import BotPlugin
 import random
+import re
 
 
 class Giphy(BotPlugin):
     def __init__(self, giphy_key):
         self.giphy_key = giphy_key
 
+    def clean_url(self, url):
+        m = re.match(r'^(https://.+/giphy\.gif).*', url)
+        if m:
+            return m.group(1)
+        return url
+
     def search_gif(self, query):
         url = "http://api.giphy.com/v1/gifs/search?api_key={}&q={}"
         q = query.replace(' ', '+')
         r = yield from public_api(url.format(self.giphy_key, q))
         choosed = random.choice(r['data'])
-        return choosed['images']['original']['url']
+        return self.clean_url(choosed['images']['original']['url'])
 
     @BotPlugin.command(r'\!gif (#[\w\d_-]+) (.+)')
     def gif(self, msg):
