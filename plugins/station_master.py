@@ -89,7 +89,7 @@ class StationMaster(BotPlugin):
             "canceled": stop["departureCanceled"] != "0",
             "delay": round(int(stop["departureDelay"]) / 60),
             "platform": stop['platform'],
-            "is_normal_platform": stop['platform_info']['normal'] == "1",
+            "is_normal_platform": stop['platforminfo']['normal'] == "1",
             "scheduled_departure": departure,
         }
 
@@ -108,16 +108,16 @@ class StationMaster(BotPlugin):
 
     def format_train(self, train, data):
         if data['canceled']:
-            status_txt = "est " + self.bot.text.red("annulé")
+            status_txt = "est " + self.bot.text.bold(self.bot.text.red("annulé ❌"))
         elif data['delay'] > 0:
-            status_txt = 'a un ' + self.bot.text.purple('retard de %s min' % data['delay'])
+            status_txt = 'a un ' + self.bot.text.red('retard de %s min' % data['delay'])
         else:
             status_txt = 'est ' + self.bot.text.green('à temps')
 
-        if is_normal_platform:
+        if data["is_normal_platform"]:
             platform_txt = ""
         else:
-            platform_txt = self.bot.text.red("⚠️ Changement de quai : quai %s." % data['platform'])
+            platform_txt = self.bot.text.red("🚉 Changement de quai : quai %s." % data['platform'])
 
         return "Le %s de %s %s. %s" % (
             train[:2],
