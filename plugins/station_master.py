@@ -6,17 +6,20 @@ import itertools
 import functools
 import aiohttp
 
-TRAIN_TIMES = [
-    (dtime( 7, 15), dtime( 8, 15), "Brussels-Central", "S11778"),  # 07:51
-    (dtime( 8, 15), dtime( 9, 15), "Brussels-Central", "S11779"),  # 08:51
-    (dtime( 9, 15), dtime(10, 15), "Brussels-Central", "S11780"),  # 09:52
-    (dtime(10, 15), dtime(11, 15), "Brussels-Central", "S11781"),  # 10:52
-    (dtime(11, 15), dtime(12, 15), "Brussels-Central", "S11782"),  # 11:52
+CENTRAL = "Brussels-Central"
+CHAPELLE = "Brussels-Chapelle/Brussels-Kapellekerk"
 
-    (dtime(15, 15), dtime(16, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11765"),  # 16:06
-    (dtime(16, 15), dtime(17, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11766"),  # 17:06
-    (dtime(17, 15), dtime(18, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11767"),  # 18:05
-    (dtime(18, 15), dtime(19, 20), "Brussels-Chapelle/Brussels-Kapellekerk", "S11768"),  # 19:05
+TRAIN_TIMES = [
+    (dtime( 7, 15), dtime( 8, 15), CENTRAL, "S11778"),  # 07:51
+    (dtime( 8, 15), dtime( 9, 15), CENTRAL, "S11779"),  # 08:51
+    (dtime( 9, 15), dtime(10, 15), CENTRAL, "S11780"),  # 09:52
+    (dtime(10, 15), dtime(11, 15), CENTRAL, "S11781"),  # 10:52
+    (dtime(11, 15), dtime(12, 15), CENTRAL, "S11782"),  # 11:52
+
+    (dtime(15, 15), dtime(16, 15), CHAPELLE, "S11765"),  # 16:06
+    (dtime(16, 15), dtime(17, 15), CHAPELLE, "S11766"),  # 17:06
+    (dtime(17, 15), dtime(18, 15), CHAPELLE, "S11767"),  # 18:05
+    (dtime(18, 15), dtime(19, 20), CHAPELLE, "S11768"),  # 19:05
 ]
 
 RULES = {
