@@ -13,7 +13,7 @@ TRAIN_TIMES = [
     (dtime(10, 15), dtime(11, 15), "Brussels-Central", "S11781"),  # 10:52
     (dtime(11, 15), dtime(12, 15), "Brussels-Central", "S11782"),  # 11:52
 
-    (dtime(16, 15), dtime(16, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11765"),  # 16:06
+    (dtime(15, 15), dtime(16, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11765"),  # 16:06
     (dtime(16, 15), dtime(17, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11766"),  # 17:06
     (dtime(17, 15), dtime(18, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11767"),  # 18:05
     (dtime(18, 15), dtime(19, 20), "Brussels-Chapelle/Brussels-Kapellekerk", "S11768"),  # 19:05
