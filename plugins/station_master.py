@@ -6,19 +6,28 @@ import itertools
 import functools
 import aiohttp
 
+CENTRAL = "Brussels-Central"
+CHAPELLE = "Brussels-Chapelle/Brussels-Kapellekerk"
+
 TRAIN_TIMES = [
-    (dtime(7, 0), dtime(9, 15), "Brussels-Central", "S11779"),
-    (dtime(9, 15), dtime(10, 15), "Brussels-Central", "S11780"),
-    (dtime(16, 0), dtime(17, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11766"),
-    (dtime(17, 15), dtime(18, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11767"),
+    (dtime( 7, 15), dtime( 8, 15), CENTRAL, "S11778"),  # 07:51
+    (dtime( 8, 15), dtime( 9, 15), CENTRAL, "S11779"),  # 08:51
+    (dtime( 9, 15), dtime(10, 15), CENTRAL, "S11780"),  # 09:52
+    (dtime(10, 15), dtime(11, 15), CENTRAL, "S11781"),  # 10:52
+    (dtime(11, 15), dtime(12, 15), CENTRAL, "S11782"),  # 11:52
+
+    (dtime(15, 15), dtime(16, 15), CHAPELLE, "S11765"),  # 16:06
+    (dtime(16, 15), dtime(17, 15), CHAPELLE, "S11766"),  # 17:06
+    (dtime(17, 15), dtime(18, 15), CHAPELLE, "S11767"),  # 18:05
+    (dtime(18, 15), dtime(19, 20), CHAPELLE, "S11768"),  # 19:05
 ]
 
 RULES = {
     'train_morning': [
-        {"hour": [9], "minute": [40, 50], "weekday": [1, 2, 3, 4, 5]},
+        {"hour": [9], "minute": [40, 50], "weekday": [0, 1, 2, 3, 4]},
     ],
     'train_evening': [
-        {"hour": [17], "minute": [49, 59], "weekday": [1, 2, 3, 4, 5]},
+        {"hour": [17], "minute": [49, 59], "weekday": [0, 1, 2, 3, 4]},
     ],
     # 'metro': [
     #     {"hour": [9], "minute": [15], "weekday": [1, 2, 3, 4, 5]},
@@ -83,6 +92,7 @@ class StationMaster(BotPlugin):
             "canceled": stop["departureCanceled"] != "0",
             "delay": round(int(stop["departureDelay"]) / 60),
             "platform": stop['platform'],
+            "is_normal_platform": stop['platforminfo']['normal'] == "1",
             "scheduled_departure": departure,
         }
 
@@ -101,17 +111,22 @@ class StationMaster(BotPlugin):
 
     def format_train(self, train, data):
         if data['canceled']:
-            txt = "est " + self.bot.text.red("annulé")
+            status_txt = "est " + self.bot.text.bold(self.bot.text.red("annulé ❌"))
         elif data['delay'] > 0:
-            txt = 'a un ' + self.bot.text.purple('retard de %s min' % data['delay'])
+            status_txt = 'a un ' + self.bot.text.yellow('retard de %s min' % data['delay'])
         else:
-            txt = 'est ' + self.bot.text.green('à temps')
+            status_txt = 'est ' + self.bot.text.green('à temps')
 
-        return "Le train %s (%s) %s, quai %s." % (
-            train,
+        if data["is_normal_platform"]:
+            platform_txt = ""
+        else:
+            platform_txt = self.bot.text.red("🚉 Changement de quai : quai %s." % data['platform'])
+
+        return "Le %s de %s %s. %s" % (
+            train[:2],
             data['scheduled_departure'].strftime("%H:%M"),
-            txt,
-            data['platform']
+            status_txt,
+            platform_txt
         )
 
     @BotPlugin.command(r'\!teleport')
