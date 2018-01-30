@@ -110,7 +110,7 @@ class StationMaster(BotPlugin):
         if data['canceled']:
             status_txt = "est " + self.bot.text.bold(self.bot.text.red("annulé ❌"))
         elif data['delay'] > 0:
-            status_txt = 'a un ' + self.bot.text.red('retard de %s min' % data['delay'])
+            status_txt = 'a un ' + self.bot.text.yellow('retard de %s min' % data['delay'])
         else:
             status_txt = 'est ' + self.bot.text.green('à temps')
 
