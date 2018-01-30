@@ -89,6 +89,7 @@ class StationMaster(BotPlugin):
             "canceled": stop["departureCanceled"] != "0",
             "delay": round(int(stop["departureDelay"]) / 60),
             "platform": stop['platform'],
+            "is_normal_platform": stop['platform_info']['normal'] == "1",
             "scheduled_departure": departure,
         }
 
@@ -107,17 +108,22 @@ class StationMaster(BotPlugin):
 
     def format_train(self, train, data):
         if data['canceled']:
-            txt = "est " + self.bot.text.red("annulé")
+            status_txt = "est " + self.bot.text.red("annulé")
         elif data['delay'] > 0:
-            txt = 'a un ' + self.bot.text.purple('retard de %s min' % data['delay'])
+            status_txt = 'a un ' + self.bot.text.purple('retard de %s min' % data['delay'])
         else:
-            txt = 'est ' + self.bot.text.green('à temps')
+            status_txt = 'est ' + self.bot.text.green('à temps')
 
-        return "Le %s de %s %s. (quai %s)" % (
+        if is_normal_platform:
+            platform_txt = ""
+        else:
+            platform_txt = self.bot.text.red("⚠️ Changement de quai : quai %s." % data['platform'])
+
+        return "Le %s de %s %s. %s" % (
             train[:2],
             data['scheduled_departure'].strftime("%H:%M"),
-            txt,
-            data['platform']
+            status_txt,
+            platform_txt
         )
 
     @BotPlugin.command(r'\!teleport')
