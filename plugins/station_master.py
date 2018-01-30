@@ -7,18 +7,24 @@ import functools
 import aiohttp
 
 TRAIN_TIMES = [
-    (dtime(7, 0), dtime(9, 15), "Brussels-Central", "S11779"),
-    (dtime(9, 15), dtime(10, 15), "Brussels-Central", "S11780"),
-    (dtime(16, 0), dtime(17, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11766"),
-    (dtime(17, 15), dtime(18, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11767"),
+    (dtime( 7, 15), dtime( 8, 15), "Brussels-Central", "S11778"),  # 07:51
+    (dtime( 8, 15), dtime( 9, 15), "Brussels-Central", "S11779"),  # 08:51
+    (dtime( 9, 15), dtime(10, 15), "Brussels-Central", "S11780"),  # 09:52
+    (dtime(10, 15), dtime(11, 15), "Brussels-Central", "S11781"),  # 10:52
+    (dtime(11, 15), dtime(12, 15), "Brussels-Central", "S11782"),  # 11:52
+
+    (dtime(16, 15), dtime(16, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11765"),  # 16:06
+    (dtime(16, 15), dtime(17, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11766"),  # 17:06
+    (dtime(17, 15), dtime(18, 15), "Brussels-Chapelle/Brussels-Kapellekerk", "S11767"),  # 18:05
+    (dtime(18, 15), dtime(19, 20), "Brussels-Chapelle/Brussels-Kapellekerk", "S11768"),  # 19:05
 ]
 
 RULES = {
     'train_morning': [
-        {"hour": [9], "minute": [40, 50], "weekday": [1, 2, 3, 4, 5]},
+        {"hour": [9], "minute": [40, 50], "weekday": [0, 1, 2, 3, 4]},
     ],
     'train_evening': [
-        {"hour": [17], "minute": [49, 59], "weekday": [1, 2, 3, 4, 5]},
+        {"hour": [17], "minute": [49, 59], "weekday": [0, 1, 2, 3, 4]},
     ],
     # 'metro': [
     #     {"hour": [9], "minute": [15], "weekday": [1, 2, 3, 4, 5]},
@@ -107,8 +113,8 @@ class StationMaster(BotPlugin):
         else:
             txt = 'est ' + self.bot.text.green('à temps')
 
-        return "Le train %s (%s) %s, quai %s." % (
-            train,
+        return "Le %s de %s %s. (quai %s)" % (
+            train[:2],
             data['scheduled_departure'].strftime("%H:%M"),
             txt,
             data['platform']
