@@ -76,7 +76,9 @@ class StationMaster(BotPlugin):
         station = "Brussels-Chapelle/Brussels-Kapellekerk"
         train = "S11767"
         data = yield from self.get_delay(train, station)
-        self.say(self.format_train(train, data))
+        if data['delay'] < 5 or (data['scheduled_departure'] - datetime.now()) < timedelta(minutes=10):
+            # Skip noise if no or little delay and depature is in the "far" future
+            self.say(self.format_train(train, data))
 
     def get_delay(self, train_id, station):
         url = "https://api.irail.be/vehicle/?id=BE.NMBS.%s&format=json" % train_id
