@@ -30,5 +30,5 @@ class Space(BotPlugin):
         yield from private_api('/space/change_status', {
             'open': 1 if status == "open" else 0
         })
-        yield from self.spacestatus(msg)
+        msg.reply("sudo request sent !")
         self.bot.log.info(status + ' UrLab by ' + msg.user)
