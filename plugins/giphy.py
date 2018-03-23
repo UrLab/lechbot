@@ -18,7 +18,7 @@ class Giphy(BotPlugin):
         url = "http://api.giphy.com/v1/gifs/search?api_key={}&q={}"
         q = query.replace(' ', '+')
         r = yield from public_api(url.format(self.giphy_key, q))
-        choosed = random.choice(r['data'])
+        choochoosed = random.choice(r['data'])
         return self.clean_url(choosed['images']['original']['url'])
 
     @BotPlugin.command(r'\!gif (#[\w\d_-]+) (.+)')
