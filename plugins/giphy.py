@@ -18,8 +18,8 @@ class Giphy(BotPlugin):
         url = "http://api.giphy.com/v1/gifs/search?api_key={}&q={}"
         q = query.replace(' ', '+')
         r = yield from public_api(url.format(self.giphy_key, q))
-        choochoosed = random.choice(r['data'])
-        return self.clean_url(choosed['images']['original']['url'])
+        chosen = random.choice(r['data'])
+        return self.clean_url(chosen['images']['original']['url'])
 
     @BotPlugin.command(r'\!gif (#[\w\d_-]+) (.+)')
     def gif(self, msg):

@@ -89,8 +89,8 @@ class Reminder(BotPlugin):
             with Persistent('janitor.json') as janitor:
                 # On ne prend que les personnes qui n'étaient pas choisies
                 # précédemment
-                already_choosed = set(map(itemgetter('who'), janitor.values()))
-                eligible_people = list(people - already_choosed)
+                already_chosen = set(map(itemgetter('who'), janitor.values()))
+                eligible_people = list(people - already_chosen)
 
                 # Pour chaque tâche, si elle n'a pas été faite depuis assez
                 # longtemps, on sélectionne qqun au hasard pour la faire

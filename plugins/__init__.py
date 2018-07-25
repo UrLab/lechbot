@@ -11,3 +11,4 @@ from .trump import Trump
 from .poll import Poll
 from .react import React
 from .station_master import StationMaster
+from .les_republicains import LesRepublicains
