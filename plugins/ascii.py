@@ -103,6 +103,17 @@ class Ascii(BotPlugin):
                   "… … … … … … … …\n"
                   "♙ ♙ ♙ ♙ ♙ ♙ ♙ ♙\n"
                   "♖ ♘ ♗ ♕ ♔ ♗ ♘ ♖\n")
+        
+    @BotPlugin.command(r'\!notebook')
+    def train(self, msg):
+        msg.reply("  _.._..,_,_\n"
+                  " (          )\n"
+                  "  ]~,\"-.-~~[\n"
+                  ".=])' (;  ([\n"
+                  "| ]:: '    [\n"
+                  "'=]): .)  ([\n"
+                  "  |:: '    |\n"
+                  "   ~~----~~\n")
 
     @BotPlugin.command(r'\!throwdice')
     def throwdice(self, msg):
