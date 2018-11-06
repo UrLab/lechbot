@@ -28,7 +28,7 @@ class Message:
         """True if the message was sent in a private conversation"""
         return self.chan == self.bot.nickname.lower()
 
-    def reply(self, text, private=False, hilight=False):
+    def reply(self, text, private=False, hilight=False, strip_text=True):
         """
         Reply to a message
 
@@ -38,12 +38,14 @@ class Message:
         :type private: bool.
         :param hilight: If true, prefix the message with the name of the sender.
         :type hilight: bool.
+        :param strip_text: If true, strip  left and right padding characters
+        :type strip_text: bool
         :returns:  None.
         """
         target = self.user if private or self.is_private else self.chan
         if hilight:
             text = self.user + ': ' + text
-        self.bot.say(text, target=target)
+        self.bot.say(text, target=target, strip_text=strip_text)
 
 
 class AbstractBot:
@@ -159,7 +161,7 @@ class AbstractBot:
         for callback in callbacks.get('on_join', []):
             self.spawn(callback())
 
-    def say(self, text, target=None):
+    def say(self, text, target=None, strip_text=True):
         """
         Emit a message
 
@@ -168,6 +170,8 @@ class AbstractBot:
         :param target: The channels to which the message belongs. If None,
                        use self.main_chan.
         :type target: str.
+        :param strip_text: If true, strip  left and right padding characters
+        :type strip_text: bool
         """
         if target is None:
             target = self.main_chan
@@ -175,7 +179,8 @@ class AbstractBot:
             self.log.warning("OFFLINE :: {} << {}".format(target, text))
         else:
             for line in text.split('\n'):
-                line = line.strip()
+                if strip_text:
+                    line = line.strip()
                 if line:
                     self._say(target, line)
 
