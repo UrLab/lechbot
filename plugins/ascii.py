@@ -137,5 +137,5 @@ class Ascii(BotPlugin):
     @BotPlugin.command(r'\!throwdice')
     def throwdice(self, msg):
         dices = "⚀⚁⚂⚃⚄⚅"
-        msg.reply("%s\n" % choice(dices),
+        msg.reply("%s\n" % choice(dices),
                   strip_text=False)
