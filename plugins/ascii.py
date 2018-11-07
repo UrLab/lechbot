@@ -4,7 +4,7 @@ from random import choice
 class Ascii(BotPlugin):
     @BotPlugin.command(r'\!penisbird')
     def penisbird(self, msg):
-        msg.reply(" < )\n ( \\\n  X\n8====D",
+        msg.reply(" < )\n ( \\\n  X\n8====D",
                   strip_text=False)
 
 
@@ -17,10 +17,10 @@ class Ascii(BotPlugin):
 
     @BotPlugin.command(r'\!whoIsGod')
     def whoIsGod(self, msg):
-        msg.reply("  _ _____ _ _            \n"
-                  " (_)_   _(_) |_ ___ _  _ \n"
-                  " | | | | | |  _/ _ \ || |\n"
-                  " |_| |_| |_|\__\___/\_,_|\n",
+        msg.reply("  _ _____ _ _            \n"
+                  " (_)_   _(_) |_ ___ _  _ \n"
+                  " | | | | | |  _/ _ \ || |\n"
+                  " |_| |_| |_|\__\___/\_,_|\n",
                   strip_text=False)
 
     @BotPlugin.command(r'\!shutup')
@@ -72,44 +72,44 @@ class Ascii(BotPlugin):
 
     @BotPlugin.command(r'\!dragons')
     def dragons(self, msg):
-        msg.reply(" /\_./o__        __o\._/\\n"
+        msg.reply(" /\_./o__        __o\._/\\n"
                   "(/^/(_^^'        '^^_)\^\)\n"
                   "_.(_.)_            _(._)._.\n",
                   strip_text=False)
 
     @BotPlugin.command(r'\!thisslowos')
     def thisslowos(self, msg):
-        msg.reply("             _.-;;-._\n"
-                  "      '-..-'|   ||   |\n"
-                  "      '-..-'|_.-;;-._|\n"
-                  "      '-..-'|   ||   |\n"
+        msg.reply("             _.-;;-._\n"
+                  "      '-..-'|   ||   |\n"
+                  "      '-..-'|_.-;;-._|\n"
+                  "      '-..-'|   ||   |\n"
                   "jgs   '-..-'|_.-''-._|\n",
                   strip_text=False)
 
     @BotPlugin.command(r'\!beer')
     def beer(self, msg):
-        msg.reply("   oOOOOOo\n"
-                  "  ,|    oO\n"
-                  " //|     |\n"
-                  " \\\\|     |\n"
-                  "   `-----`\n",
+        msg.reply("   oOOOOOo\n"
+                  "  ,|    oO\n"
+                  " //|     |\n"
+                  " \\\\|     |\n"
+                  "   `-----`\n",
                   strip_text=False)
 
     @BotPlugin.command(r'\!drink')
     def drink(self, msg):
-        msg.reply("     _*\n"
+        msg.reply("     _*\n"
                   ".---/ `\\\n"
                   "|~~~~|`'\n"
-                  " \  /\n"
-                  "  )(\n"
-                  " /__\\n",
+                  " \  /\n"
+                  "  )(\n"
+                  " /__\\n",
                   strip_text=False)
 
     @BotPlugin.command(r'\!key')
     def key(self, msg):
-        msg.reply("    .--.\n"
-                  "   /.-. '----------.\n"
-                  "   \'-' .--\"--\"\"-\"-'\n"
+        msg.reply("    .--.\n"
+                  "   /.-. '----------.\n"
+                  "   \'-' .--\"--\"\"-\"-'\n"
                   "jgs '--'\n",
                   strip_text=False)
 
@@ -123,15 +123,15 @@ class Ascii(BotPlugin):
                   strip_text=False)
         
     @BotPlugin.command(r'\!notebook')
-    def train(self, msg):
-        msg.reply("  _.._..,_,_\n"
-                  " (          )\n"
-                  "  ]~,\"-.-~~[\n"
+    def notebook(self, msg):
+        msg.reply("  _.._..,_,_\n"
+                  " (          )\n"
+                  "  ]~,\"-.-~~[\n"
                   ".=])' (;  ([\n"
                   "| ]:: '    [\n"
                   "'=]): .)  ([\n"
-                  "  |:: '    |\n"
-                  "   ~~----~~\n",
+                  "  |:: '    |\n"
+                  "   ~~----~~\n",
                   strip_text=False)
 
     @BotPlugin.command(r'\!throwdice')
