@@ -1,0 +1,65 @@
+# Bot nickname
+nick: DechBot
+# Real name
+real_name: Hey this is crazy
+
+# Create groups of plugins to include at once in chans
+groups:
+
+  # Basic things; safe to be included everywhere
+  basic:
+    # Show summary of URLs from well-known websites
+    UrlShow:
+    # ASCII art and more
+    Ascii:
+    # Handy reaction gifs
+    Giphy:
+      api_key: lolilol
+    # LechBot can talk like Trump
+    Trump:
+    # We all have that friend who loves reactive systems
+    React:
+    # Le caaaaaalendrier. En Fraanncais
+    LesRepublicains:
+    # Voting application
+    Poll:
+
+# Chans to connect to
+chans:
+
+  ci:
+    groups:
+      - basic
+
+  stackmorelayers:
+    groups:
+      - basic
+
+  train:
+    plugins:
+      # RT train traffic infos for a handful of geeks somewhere in bxl
+      StationMaster:
+
+  urlab:
+    groups:
+      - basic
+    plugins:
+      # Manage channel topic / music of the day
+      Topic:
+      # Reminders from UrLab (events, cleanup room, etc...)
+      Reminder:
+      # Interact with the UrLab meeting planning
+      TechWednesday:
+        api_key: lolilol
+      # Interaction with the Hackerspace room
+      Space:
+        api_key: lolilol
+      # What's on the VUB cafetaria menu today ?
+      VUBMenu:
+      # Post to Twitter
+      Twitter:
+        username: urlabbxl
+        consumer_key: consumer
+        consumer_secret: secret
+        oauth_token: token
+        oauth_token_secret: token secret
