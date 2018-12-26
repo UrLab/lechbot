@@ -4,6 +4,7 @@ from ircbot.plugin import BotPlugin
 from datetime import datetime, timedelta
 import pytz
 import dateutil
+from collections import Counter
 
 
 class CCC35(BotPlugin):
@@ -60,7 +61,7 @@ class CCC35(BotPlugin):
         for event in events:
             if dateutil.parser.parse(event['start_time']) < now < dateutil.parser.parse(event['end_time']):
                 now_events.append(event)
-            elif now < dateutil.parser.parse(event['start_time']) < (now + timedelta(hours=20)):
+            elif now < dateutil.parser.parse(event['start_time']) < (now + timedelta(hours=3)):
                 next_events.append(event)
 
         if now_events:
@@ -85,3 +86,31 @@ class CCC35(BotPlugin):
         msg.reply("Starting update...")
         fahrplan = yield from self.get_fahrplan(force=True)
         msg.reply("Updated Fahrplan")
+
+    @BotPlugin.command(r'\!room (\w+)$')
+    def room(self, msg):
+        fahrplan = yield from self.get_fahrplan()
+        events = fahrplan['conference_events']['events']
+        events = sorted(events, key=lambda x: (dateutil.parser.parse(x['start_time']), dateutil.parser.parse(x['end_time'])))
+
+        now = datetime.now(self.TZ)
+        kept = []
+        for event in events:
+            if dateutil.parser.parse(event['end_time']) > now and event["room"]["name"].lower() == msg.args[0].lower():
+                kept.append(event)
+
+        if kept:
+            for event in kept[:5]:
+                msg.reply(self.format_talk(event))
+        else:
+            msg.reply("Room not found")
+
+    @BotPlugin.command(r'\!rooms$')
+    def rooms(self, msg):
+        fahrplan = yield from self.get_fahrplan()
+        events = fahrplan['conference_events']['events']
+
+        counter = Counter([e['room']['name'] for e in events])
+
+        important_rooms = [name for name, count in counter.most_common(10) if count > 5]
+        msg.reply("Rooms: " + ", ".join(important_rooms))
