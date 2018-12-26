@@ -1,5 +1,5 @@
 from plugins import (UrlShow, Twitter, Topic, Space, Reminder, TechWednesday, React,
-                     TwitterStream, VUBMenu, Ascii, Giphy, Poll, StationMaster, LesRepublicains)
+                     TwitterStream, VUBMenu, Ascii, Giphy, Poll, StationMaster, LesRepublicains, CCC35)
 from ircbot.plugin import HelpPlugin
 from config import TWITTER_CONFIG, GIPHY_KEY
 
@@ -21,6 +21,7 @@ CHANS = {
         Poll(),
         StationMaster(),
         LesRepublicains(),
+        CCC35(),
     ],
     'QUERY': [
         TechWednesday(),

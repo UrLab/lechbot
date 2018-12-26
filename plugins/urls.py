@@ -97,6 +97,11 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{by}: «{title}» {url}"
         msg.reply(fmt.format(**post))
 
+    # @BotPlugin.command(r'.*https?://(www\.)?youtube\.com/watch\?v=(\w+)' + end_url)
+    # def youtube(self, msg):
+    #     # Not available atm because of API restrictions
+    #     pass
+
     def generic_stackexchange(self, msg, q_id, site='stackoverflow'):
         url = "https://api.stackexchange.com/2.2/questions/{}?&site={}"
         post = yield from public_api(url.format(q_id, site))
