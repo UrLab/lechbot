@@ -24,8 +24,8 @@ class BotPlugin:
         callbacks['commands'].sort(key=lambda P: P[1]._special_tag_id)
         return callbacks
 
-    def say(self, text):
-        self.bot.say(text, target=self.chan)
+    def say(self, text, strip_text=False):
+        self.bot.say(text, target=self.chan, strip_text=strip_text)
 
     def set_topic(self, text):
         self.bot.set_topic(text, target=self.chan)

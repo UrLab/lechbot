@@ -13,12 +13,24 @@ class CCC35(BotPlugin):
     DAY0 = datetime(2018, 12, 26, tzinfo=TZ)
     FAHRPLAN_CACHE = None
 
-    def format_talk(self, talk):
+    def show_talk(self, talk, url=False, prefix=""):
         talk['start_time_dt'] = dateutil.parser.parse(talk['start_time'])
         talk['end_time_dt'] = dateutil.parser.parse(talk['end_time'])
         talk['relative_day'] = self.get_day(talk['start_time_dt'])
-        fmt = "«{title}» [Day {relative_day}, {start_time_dt:%H:%M}] dans {room[name]}"
-        return fmt.format(**talk)
+
+        # Format
+        talk['title'] = self.bot.text.bold(talk['title'])
+        talk['room_name'] = self.bot.text.purple(talk['room']['name'])
+
+        fmt = prefix + "«{title}» [Day{relative_day}, {start_time_dt:%H:%M}], {room_name}"
+
+        self.say(fmt.format(**talk), strip_text=False)
+        if url:
+            fmt_url = " " * len(prefix) + "https://fahrplan.events.ccc.de/congress/2018/Fahrplan/events/{id}.html"
+            self.say(
+                self.bot.text.blue(fmt_url.format(**talk)),
+                strip_text=False
+            )
 
     def get_day(self, dt=None):
         if dt is None:
@@ -40,7 +52,7 @@ class CCC35(BotPlugin):
         event_id = int(msg.args[0])
         for event in events:
             if event['id'] == event_id:
-                msg.reply(self.format_talk(event))
+                self.show_talk(event)
                 break
 
     @BotPlugin.command(r'\!day$')
@@ -69,12 +81,12 @@ class CCC35(BotPlugin):
         if now_events:
             msg.reply("Talks en cours :")
             for event in now_events:
-                msg.reply(" * " + self.format_talk(event), strip_text=False)
+                self.show_talk(event, url=True, prefix=" * ")
 
         if next_events:
             msg.reply("Prochains talks :")
             for event in next_events[:5]:
-                msg.reply(" * " + self.format_talk(event), strip_text=False)
+                self.show_talk(event, url=True, prefix=" * ")
 
     @BotPlugin.command(r'\!fahrplan$')
     def last_update(self, msg):
@@ -93,7 +105,7 @@ class CCC35(BotPlugin):
 
     @BotPlugin.command(r'\!salle (\w+)$')
     def room(self, msg):
-        """Liste les 5 prochains talks de la salle passée en paramètre
+        """Liste les 2 prochains talks de la salle passée en paramètre
         (voir !salles pour une liste des salles)"""
         fahrplan = yield from self.get_fahrplan()
         events = fahrplan['conference_events']['events']
@@ -106,8 +118,8 @@ class CCC35(BotPlugin):
                 kept.append(event)
 
         if kept:
-            for event in kept[:5]:
-                msg.reply(self.format_talk(event))
+            for event in kept[:2]:
+                self.show_talk(event, prefix=" * ", url=True)
         else:
             msg.reply("Salle introuvable")
 
