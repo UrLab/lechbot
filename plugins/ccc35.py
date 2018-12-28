@@ -121,3 +121,33 @@ class CCC35(BotPlugin):
 
         important_rooms = [name for name, count in counter.most_common(10) if count > 5]
         msg.reply("Salles : " + ", ".join(important_rooms))
+
+    @BotPlugin.command(r'\!35c3music$')
+    def music(self, msg):
+        """ Liste les artistes dans chaque salle """
+        schedule = yield from public_api("https://fahrplan.events.ccc.de/congress/2018/Lineup/schedule.json")
+        all_performances = {}
+
+        for day in schedule['schedule']['conference']['days']:
+            for room, performances in day['rooms'].items():
+                if room not in all_performances:
+                    all_performances[room] = []
+                all_performances[room].extend(performances)
+
+        all_performances = {
+            room: sorted(performances, key=lambda x: x['date'])
+            for room, performances in all_performances.items()
+        }
+
+        TZ = pytz.timezone('Europe/Berlin')
+        now = datetime.now().replace(tzinfo=TZ)
+
+        for room, performances in all_performances.items():
+            current = None
+            for perf in performances:
+                date = dateutil.parser.parse(perf['date']).astimezone(TZ)
+                if date > now:
+                    break
+                current = perf
+            if current is not None:
+                msg.reply("%s: %s à %s pendant %s" % (room, current['title'], current['start'], current['duration']))
