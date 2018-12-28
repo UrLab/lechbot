@@ -150,4 +150,4 @@ class CCC35(BotPlugin):
                     break
                 current = perf
             if current is not None:
-                msg.reply("%s: %s à %s pendant %s" % (room, current['title'], current['start'], current['duration']))
+                msg.reply("%s: %s (%s) à %s pendant %s" % (room, current['title'], current['subtitle'], current['start'], current['duration']))
