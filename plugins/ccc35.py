@@ -125,7 +125,10 @@ class CCC35(BotPlugin):
     @BotPlugin.command(r'\!35c3music$')
     def music(self, msg):
         """ Liste les artistes dans chaque salle """
+        # API for music events
         schedule = yield from public_api("https://fahrplan.events.ccc.de/congress/2018/Lineup/schedule.json")
+
+        # 1) Group performances by room and sort by date
         all_performances = {}
 
         for day in schedule['schedule']['conference']['days']:
@@ -144,10 +147,16 @@ class CCC35(BotPlugin):
 
         for room, performances in all_performances.items():
             current = None
+            # 2) Find the last performance before now
             for perf in performances:
                 date = dateutil.parser.parse(perf['date']).astimezone(TZ)
                 if date > now:
                     break
                 current = perf
+            # 3) If we found one, check that it's not over
             if current is not None:
-                msg.reply("%s: %s (%s) à %s pendant %s" % (room, current['title'], current['subtitle'], current['start'], current['duration']))
+                hour, minute = current['duration'].split(':')
+                duration = timedelta(hours=int(hour), minutes=int(minute))
+                date = dateutil.parser.parse(current['date'])
+                if date + duration > now:
+                    msg.reply("%s: %s (%s) à %s pendant %s" % (room, current['title'], current['subtitle'], current['start'], current['duration']))
