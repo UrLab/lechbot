@@ -4,6 +4,16 @@ from ircbot.plugin import BotPlugin
 from datetime import datetime
 
 
+def human_format(num):
+    """https://stackoverflow.com/a/45846841"""
+    num = float('{:.3g}'.format(num))
+    magnitude = 0
+    while abs(num) >= 1000:
+        magnitude += 1
+        num /= 1000.0
+    return '{}{}'.format('{:f}'.format(num).rstrip('0').rstrip('.'), ['', 'K', 'M', 'B', 'T'][magnitude])
+
+
 class UrlShow(TwitterBasePlugin):
     """
     Post a preview for some well-known and frequent URLs
@@ -97,10 +107,22 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{by}: «{title}» {url}"
         msg.reply(fmt.format(**post))
 
-    # @BotPlugin.command(r'.*https?://(www\.)?youtube\.com/watch\?v=(\w+)' + end_url)
-    # def youtube(self, msg):
-    #     # Not available atm because of API restrictions
-    #     pass
+    @BotPlugin.command(r'.*https?://(www\.)?youtube\.com/watch\?v=(\w+)' + end_url)
+    def youtube(self, msg):
+        ytid = msg.args[1]
+        print(ytid)
+        url = "https://www.googleapis.com/youtube/v3/videos?part=snippet%2Cstatistics&id={id}&key={key}"
+        data = yield from public_api(url.format(id=ytid, key="ZIZI"))
+
+        video = data['items'][0]
+        title = video['snippet']['title']
+        views = human_format(int(video['statistics']['viewCount']))
+        is_music = video['snippet']['categoryId'] == '10'  # https://stackoverflow.com/a/35877512
+
+        fmt = "«{title}» {views} views"
+        if is_music:
+            fmt = "🎵 " + fmt + " 🎶"
+        msg.reply(fmt.format(title=title, views=views))
 
     def generic_stackexchange(self, msg, q_id, site='stackoverflow'):
         url = "https://api.stackexchange.com/2.2/questions/{}?&site={}"
