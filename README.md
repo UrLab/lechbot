@@ -7,7 +7,7 @@
     $ cd lechbot
     $ virtualenv -p python3.4 ve3
     $ source ve3/bin/activate
-    $ pip install -r requirements.txt
+    $ pip install -r requirements-frozen.txt
 
 ## Configuration && run
 
