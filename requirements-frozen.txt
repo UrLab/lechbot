@@ -12,3 +12,4 @@ pytz==2016.2
 six==1.10.0
 txaio==2.2.2
 roman==2.0.0
+paho-mqtt==1.4.0

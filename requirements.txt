@@ -8,3 +8,4 @@ autobahn
 beautifulsoup4
 pytz
 roman
+paho-mqtt

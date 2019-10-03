@@ -34,6 +34,13 @@ TWITTER_CONFIG = {
 
 GIPHY_KEY = "secret"
 
+# MQTT configuration
+MQTT_HOST = "hal.lan"
+MQTT_TOPICS = [
+    "incubator/actstream",
+    "hal/eventstream",
+]
+
 try:
     from local_config import *  # pragma: no flakes # NOQA
 except ImportError:
