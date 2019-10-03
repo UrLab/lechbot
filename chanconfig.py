@@ -19,7 +19,6 @@ CHANS = {
         Giphy(GIPHY_KEY),
         HelpPlugin(),
         Poll(),
-        StationMaster(),
         LesRepublicains(),
         CCC35(),
     ],
