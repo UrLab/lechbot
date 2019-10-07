@@ -29,7 +29,7 @@ class MQTTPlugin(BotPlugin):
         try:
             data = json.loads(payload)
         except Exception as e:
-            self.bot.log.info("Got incorrect message: " + str(payload) + " (%s)" % e)
+            self.bot.log.info("Got incorrect message: '%s' (%s)", str(payload), e)
             return
 
         key = data.get("key")
