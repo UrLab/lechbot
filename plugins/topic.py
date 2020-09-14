@@ -59,14 +59,14 @@ class Topic(BotPlugin):
             video_id = match.group(1)
             music_url = "http://youtu.be/%s" % video_id
 
-        try:
-            yield from private_api('/space/change_motd', {
-                'nick': msg.user,
-                'url': music_url
-            })
-        except ApiError as e:
-            if e.error_type == "TRY_AGAIN_TOMORROW":
-                msg.reply("La musique du jour a déjà été changée aujourd'hui !")
+        # try:
+        #     yield from private_api('/space/change_motd', {
+        #         'nick': msg.user,
+        #         'url': music_url
+        #     })
+        # except ApiError as e:
+        #     if e.error_type == "TRY_AGAIN_TOMORROW":
+        #         msg.reply("La musique du jour a déjà été changée aujourd'hui !")
 
         self.bot.log.info("Music of the day changed by " + msg.user)
         self.make_topic(msg, new_music=music_url)
