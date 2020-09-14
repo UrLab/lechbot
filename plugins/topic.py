@@ -64,22 +64,19 @@ class Topic(BotPlugin):
                 'nick': msg.user,
                 'url': music_url
             })
-            self.bot.log.info("Music of the day changed by " + msg.user)
-            self.make_topic(msg, new_music=music_url)
-            try:
-                title = yield from self.find_title(music_url)
-            except:
-                self.bot.log.exception("Fetch MotD title")
-                title = ""
-            fmt = "tu viens de changer la musique du jour >>> d*-*b <<< {}"
-            msg.reply(fmt.format(self.bot.text.bold(title)), hilight=True)
         except ApiError as e:
             if e.error_type == "TRY_AGAIN_TOMORROW":
                 msg.reply("La musique du jour a déjà été changée aujourd'hui !")
-            else:
-                self.bot.log.exception("Change MotD")
-                self.bot.log.info("Error while updating the MotD: %s" % repr(e))
-                msg.reply("Erreur lors du changement de musique du jour !")
+
+        self.bot.log.info("Music of the day changed by " + msg.user)
+        self.make_topic(msg, new_music=music_url)
+        try:
+            title = yield from self.find_title(music_url)
+        except:
+            self.bot.log.exception("Fetch MotD title")
+            title = ""
+        fmt = "tu viens de changer la musique du jour >>> d*-*b <<< {}"
+        msg.reply(fmt.format(self.bot.text.bold(title)), hilight=True)
 
     @BotPlugin.command(r'\!topic prepend +([^ ].+)')
     def prepend_topic(self, msg):
