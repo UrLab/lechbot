@@ -1,34 +1,8 @@
 from plugins import (UrlShow, Twitter, Topic, Space, Reminder, TechWednesday, React,
-                     TwitterStream, VUBMenu, Ascii, Giphy, Poll, StationMaster, LesRepublicains, CCC35)
+                     TwitterStream, VUBMenu, Ascii, Giphy, Poll, StationMaster, LesRepublicains, CCC35,
+                     MQTTPlugin)
 from ircbot.plugin import HelpPlugin
-from config import TWITTER_CONFIG, GIPHY_KEY
-
-
-CHANS = {
-    '#titoufaitdestests': [
-        Ascii(),
-        Topic(),
-        Space(),
-        React(),
-        TechWednesday(),
-        Reminder(),
-        Twitter(TWITTER_CONFIG),
-        UrlShow(TWITTER_CONFIG),
-        TwitterStream(TWITTER_CONFIG, 'TitouOnRails'),
-        VUBMenu(),
-        Giphy(GIPHY_KEY),
-        HelpPlugin(),
-        Poll(),
-        StationMaster(),
-        LesRepublicains(),
-        CCC35(),
-    ],
-    'QUERY': [
-        TechWednesday(),
-        VUBMenu(),
-        HelpPlugin(),
-    ],
-}
+from config import TWITTER_CONFIG, GIPHY_KEY, MQTT_HOST, MQTT_TOPICS
 
 # Rate limit for incoming UrLab notifications in seconds
 RATELIMIT = {
@@ -52,6 +26,35 @@ RATELIMIT = {
 
     'wiki.revision': 300,
 }
+
+
+CHANS = {
+    '#titoufaitdestests': [
+        Ascii(),
+        Topic(),
+        Space(),
+        React(),
+        TechWednesday(),
+        Reminder(),
+        Twitter(TWITTER_CONFIG),
+        UrlShow(TWITTER_CONFIG),
+        TwitterStream(TWITTER_CONFIG, 'TitouOnRails'),
+        VUBMenu(),
+        Giphy(GIPHY_KEY),
+        HelpPlugin(),
+        Poll(),
+        StationMaster(),
+        LesRepublicains(),
+        CCC35(),
+        MQTTPlugin(MQTT_HOST, MQTT_TOPICS, RATELIMIT),
+    ],
+    'QUERY': [
+        TechWednesday(),
+        VUBMenu(),
+        HelpPlugin(),
+    ],
+}
+
 
 try:
     from local_chanconfig import CHANS, RATELIMIT
