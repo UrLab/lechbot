@@ -1,5 +1,6 @@
 import json
 import random
+from datetime import date
 
 from ircbot.plugin import BotPlugin
 
@@ -69,11 +70,15 @@ class Trump(BotPlugin):
     @BotPlugin.command(r"\!trump$")
     def train(self, msg):
         if date.today().day == 7 and date.today().month == 11:
-            msg.reply(random.choice([
-                "I WON THIS ELECTION, BY A LOT!",
-                "THE OBSERVERS WERE NOT ALLOWED INTO THE COUNTING ROOMS. I WON THE ELECTION, GOT 71,000,000 LEGAL VOTES. BAD THINGS HAPPENED WHICH OUR OBSERVERS WERE NOT ALLOWED TO SEE. NEVER HAPPENED BEFORE. MILLIONS OF MAIL-IN BALLOTS WERE SENT TO PEOPLE WHO NEVER ASKED FOR THEM!",
-                "71,000,000 Legal Votes. The most EVER for a sitting President!"
-            ]))
+            msg.reply(
+                random.choice(
+                    [
+                        "I WON THIS ELECTION, BY A LOT!",
+                        "THE OBSERVERS WERE NOT ALLOWED INTO THE COUNTING ROOMS. I WON THE ELECTION, GOT 71,000,000 LEGAL VOTES. BAD THINGS HAPPENED WHICH OUR OBSERVERS WERE NOT ALLOWED TO SEE. NEVER HAPPENED BEFORE. MILLIONS OF MAIL-IN BALLOTS WERE SENT TO PEOPLE WHO NEVER ASKED FOR THEM!",
+                        "71,000,000 Legal Votes. The most EVER for a sitting President!",
+                    ]
+                )
+            )
         elif self.probas:
             try:
                 s = generate_sentence(self.probas)
