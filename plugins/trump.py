@@ -1,4 +1,5 @@
 from ircbot.plugin import BotPlugin
+from datetime import date
 import json
 import random
 
