@@ -1,7 +1,3 @@
-import asyncio
-import json
-from operator import itemgetter
-
 from aioauth_client import TwitterClient
 
 from ircbot.plugin import BotPlugin
