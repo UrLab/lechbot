@@ -38,11 +38,11 @@ class UrlShow(TwitterBasePlugin):
         msg.reply(fmt.format(**repo))
 
     @BotPlugin.command(github_repo + r"/(issues|pull)/(\d+)" + end_url)
-    def github_issue(self, msg):
+    async def github_issue(self, msg):
         user, repo, kind, id = msg.args
         args = user, repo, id
         url = "https://api.github.com/repos/{}/{}/issues/{}".format(*args)
-        issue = yield from public_api(url)
+        issue = await public_api(url)
         issue["when"] = self.bot.text.grey(self.bot.naturaltime(issue["created_at"]))
         issue["author"] = self.bot.text.bold("@" + issue["user"]["login"])
         issue["labels"] = " ".join(
@@ -56,9 +56,9 @@ class UrlShow(TwitterBasePlugin):
         msg.reply(fmt.format(**issue))
 
     @BotPlugin.command(github_repo + r"/commit/([0-9a-fA-F]{,40})" + end_url)
-    def github_commit(self, msg):
+    async def github_commit(self, msg):
         url = "https://api.github.com/repos/{}/{}/commits/{}".format(*msg.args)
-        commit = yield from public_api(url)
+        commit = await public_api(url)
         additions = self.bot.text.green("%d+" % commit["stats"]["additions"])
         deletions = self.bot.text.red("%d-" % commit["stats"]["deletions"])
         files_changed = self.bot.text.yellow("%d fichiers" % len(commit["files"]))
@@ -73,9 +73,9 @@ class UrlShow(TwitterBasePlugin):
         msg.reply("{author} {when} «{title}» ({stats})".format(**f))
 
     @BotPlugin.command(r".*https?://gist\.github\.com/[^/]+/([0-9a-z]+)" + end_url)
-    def gist(self, msg):
+    async def gist(self, msg):
         url = "https://api.github.com/gists/{}".format(msg.args[0])
-        gist = yield from public_api(url)
+        gist = await public_api(url)
         filelist = ", ".join(i["filename"] for i in gist["files"].values())
         f = {
             "author": self.bot.text.bold("@" + gist["owner"]["login"]),
@@ -88,9 +88,9 @@ class UrlShow(TwitterBasePlugin):
     @BotPlugin.command(
         r".*https?://www\.reddit\.com/r/([\w\d_\.-]+)/comments/([\w\d_\.-]+)" + end_url
     )
-    def reddit(self, msg):
+    async def reddit(self, msg):
         url = "https://api.reddit.com/r/{}/comments/{}".format(*msg.args[:2])
-        data = yield from public_api(url, verify_ssl=False)
+        data = await public_api(url, verify_ssl=False)
         post = data[0]["data"]["children"][0]["data"]
         post["author"] = self.bot.text.bold("@" + post["author"])
         post["upvote_ratio"] = self.bot.text.yellow("(", post["upvote_ratio"], "+)")
@@ -99,9 +99,9 @@ class UrlShow(TwitterBasePlugin):
         msg.reply(fmt.format(**post))
 
     @BotPlugin.command(r".*https?://news\.ycombinator\.com/item\?id=(\d+)" + end_url)
-    def hackernews(self, msg):
+    async def hackernews(self, msg):
         url = "https://hacker-news.firebaseio.com/v0/item/"
-        post = yield from public_api(url + "{}.json".format(msg.args[0]))
+        post = await public_api(url + "{}.json".format(msg.args[0]))
         post["by"] = self.bot.text.bold("@", post["by"])
         post["url"] = self.bot.text.blue(post.get("url", ""))
         fmt = "{by}: «{title}» {url}"
@@ -112,9 +112,9 @@ class UrlShow(TwitterBasePlugin):
     #     # Not available atm because of API restrictions
     #     pass
 
-    def generic_stackexchange(self, msg, q_id, site="stackoverflow"):
+    async def generic_stackexchange(self, msg, q_id, site="stackoverflow"):
         url = "https://api.stackexchange.com/2.2/questions/{}?&site={}"
-        post = yield from public_api(url.format(q_id, site))
+        post = await public_api(url.format(q_id, site))
         for q in post.get("items", []):
             if q["score"] >= 0:
                 score = self.bot.text.green("+%d" % q["score"])
@@ -138,24 +138,24 @@ class UrlShow(TwitterBasePlugin):
     @BotPlugin.command(
         r".*https?://stackoverflow\.com\/questions\/(\d+)\/[^ /]+" + end_url
     )
-    def stackoverflow(self, msg):
-        yield from self.generic_stackexchange(msg, q_id=msg.args[0])
+    async def stackoverflow(self, msg):
+        await self.generic_stackexchange(msg, q_id=msg.args[0])
 
     @BotPlugin.command(
         r".*https?://([^\.]+)\.stackexchange\.com\/questions\/(\d+)\/[^ /]+" + end_url
     )
-    def stackexchange(self, msg):
-        yield from self.generic_stackexchange(msg, q_id=msg.args[1], site=msg.args[0])
+    async def stackexchange(self, msg):
+        await self.generic_stackexchange(msg, q_id=msg.args[1], site=msg.args[0])
 
     @BotPlugin.command(urlab_url + r"/(projects/\d+)" + end_url)
-    def urlab_project(self, msg):
+    async def urlab_project(self, msg):
         project_status = {
             "p": self.bot.text.yellow,  # Proposition
             "i": self.bot.text.blue,  # In progress
             "f": self.bot.text.green,  # Finished
         }
 
-        proj = yield from public_api(msg.args[0])
+        proj = await public_api(msg.args[0])
         color = project_status.get(proj["status"], self.bot.text.grey)
         proj["desc"] = color(proj["short_description"])
         proj["title"] = self.bot.text.bold(proj["title"])
@@ -163,13 +163,13 @@ class UrlShow(TwitterBasePlugin):
         msg.reply(fmt.format(**proj))
 
     @BotPlugin.command(urlab_url + r"/(events/\d+)" + end_url)
-    def urlab_event(self, msg):
+    async def urlab_event(self, msg):
         event_status = {
             "r": self.bot.text.bold,  # Ready
             "i": self.bot.text.yellow,  # Incubation
         }
 
-        evt = yield from public_api(msg.args[0])
+        evt = await public_api(msg.args[0])
         if evt.get("start", None):
             evt["when"] = self.bot.text.yellow(self.bot.naturaltime(evt["start"]))
         else:
