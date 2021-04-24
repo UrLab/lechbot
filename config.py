@@ -17,11 +17,6 @@ SPACEAPI = INCUBATOR + "spaceapi.json"
 # Full pamela url
 FULL_PAMELA = INCUBATOR + "space/private_pamela.json"
 
-# URL of the Crossbar router (websocket endpoint)
-WAMP_HOST = "ws://127.0.0.1:8080/ws"
-
-# Crossbar realm to use
-WAMP_REALM = "urlab"
 
 # Twitter configuration. Obtain those values from
 # https://dev.twitter.com/oauth/overview/application-owner-access-tokens
