@@ -59,21 +59,19 @@ def mkurl(endpoint, host=INCUBATOR):
     return url + endpoint.lstrip("/")
 
 
-@asyncio.coroutine
-def private_api(endpoint, data):
+async def private_api(endpoint, data):
     """Call UrLab incubator private API"""
     data["secret"] = INCUBATOR_SECRET
-    response = yield from aiohttp.post(mkurl(endpoint), data=data)
-    res = yield from response.json()
+    response = await aiohttp.post(mkurl(endpoint), data=data)
+    res = await response.json()
     status_code = response.status
-    yield from response.release()
+    await response.release()
     if status_code != 200:
         raise ApiError(response=res, code=status_code)
     return res
 
 
-@asyncio.coroutine
-def public_api(endpoint, verify_ssl=True):
+async def public_api(endpoint, verify_ssl=True):
     """Call UrLab incubator public API"""
     if not endpoint.startswith("http"):
         if endpoint[-1] != "/":
@@ -85,9 +83,9 @@ def public_api(endpoint, verify_ssl=True):
     if not verify_ssl:
         args["connector"] = unsafe_conn
         logger.warning("Using unverified SSL for " + url)
-    response = yield from aiohttp.get(url, **args)
-    res = yield from response.json()
-    yield from response.release()
+    response = await aiohttp.get(url, **args)
+    res = await response.json()
+    await response.release()
     return res
 
 

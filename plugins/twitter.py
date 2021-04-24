@@ -25,10 +25,10 @@ class TwitterBasePlugin(BotPlugin):
                 raise ValueError("Twitter {key} is mandatory".format(key=key))
         self.twitter = TwitterClient(**credentials)
 
-    def twitter_request(self, *args, **kwargs):
-        response = yield from self.twitter.request(*args, **kwargs)
-        res = yield from response.json()
-        yield from response.release()
+    async def twitter_request(self, *args, **kwargs):
+        response = await self.twitter.request(*args, **kwargs)
+        res = await response.json()
+        await response.release()
         return res
 
     def format_tweet(self, tweet):
