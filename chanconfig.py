@@ -1,5 +1,5 @@
 from plugins import (UrlShow, Twitter, Topic, Space, Reminder, TechWednesday, React,
-                     VUBMenu, Ascii, Giphy, Poll, StationMaster, LesRepublicains, CCC35)
+                     VUBMenu, Ascii, Giphy, Poll, LesRepublicains, CCC35)
 from ircbot.plugin import HelpPlugin
 from config import TWITTER_CONFIG, GIPHY_KEY
 
