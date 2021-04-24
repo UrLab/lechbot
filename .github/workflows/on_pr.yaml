@@ -8,7 +8,7 @@ on:
       - "master"
 
 jobs:
-  linting:
+  tests:
     runs-on: ubuntu-latest
 
     env:
@@ -30,3 +30,12 @@ jobs:
       run: |
         black --check --diff ${{ env.testdirs }}
         isort --profile black --check-only --diff  ${{ env.testdirs }}
+
+  docker:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build docker image
+        run: docker build -t urlab/lechbot .
