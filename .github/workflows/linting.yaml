@@ -11,6 +11,10 @@ jobs:
   linting:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        pyversion: [3.9]
+
     env:
       testdirs: ircbot plugins
 
@@ -21,10 +25,13 @@ jobs:
     - name: Set up Python 3.9
       uses: actions/setup-python@v1
       with:
-        python-version: 3.9
+        python-version: ${{ matrix.pyversion }}
+
+    - name: Install Linting dependencies
+      run: pip install isort black
 
     - name: Install Python dependencies
-      run: pip install isort black
+      run: pip install -r requirements.txt
 
     - name: Check code formatting
       run: |
