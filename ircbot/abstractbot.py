@@ -298,3 +298,9 @@ class AbstractBot:
         if time.tzinfo:
             time = time.replace(tzinfo=None)
         return humanize.naturaltime(time)
+
+    def naturalunits(self, number, base=1000, units=("", "k", "M", "G", "T", "P")):
+        for unit in units:
+            if number < base:
+                return f"{round(number, 2)}{unit}"
+            number /= base

@@ -11,6 +11,8 @@ class UrlShow(TwitterBasePlugin):
     Post a preview for some well-known and frequent URLs
     """
 
+    komoot_url = r".*https?://www.komoot\.(?:fr|de)"
+    komoot_api = "https://www.komoot.fr/api/v007"
     github_repo = r".*https?://github\.com/([\w\d_\.-]+)/([\w\d_\.-]+)"
     urlab_url = r".*https?://urlab\.be"
     end_url = r"(?:$|\s|\)|\]|\})"
@@ -180,3 +182,31 @@ class UrlShow(TwitterBasePlugin):
         evt["place"] = self.bot.text.purple(evt["place"])
         fmt = "{title} ({when} :: {place})"
         msg.reply(fmt.format(**evt))
+
+    @BotPlugin.command(komoot_url + r"/highlight/(\d+)")
+    async def komoot_highlight(self, msg):
+        # Examples:
+        # https://www.komoot.fr/highlight/753971
+        # https://www.komoot.fr/highlight/2032270
+        hl_id = msg.args[0]
+        res = await public_api(f"{self.komoot_api}/highlights/{hl_id}")
+
+        if res["score"] < 0.3:
+            score_color = self.bot.text.red
+        elif res["score"] < 0.7:
+            score_color = self.bot.text.yellow
+        else:
+            score_color = self.bot.text.green
+        score = score_color(f"{round(100 * res['score'])}%")
+        name = self.bot.text.bold(res["name"])
+        sport = self.bot.text.grey(f"({res['sport']})")
+
+        text = f"{name} {sport} {score}"
+
+        if res["type"] == "highlight_segment":
+            text += self.bot.text.cyan(
+                f"{self.bot.naturalunits(res['distance'])}m "
+                f"[⇗ {res['elevation_up']}m ⇘ {res['elevation_down']}m]"
+            )
+
+        msg.reply(text)
