@@ -26,10 +26,10 @@ WAMP_REALM = "urlab"
 # Twitter configuration. Obtain those values from
 # https://dev.twitter.com/oauth/overview/application-owner-access-tokens
 TWITTER_CONFIG = {
-    'consumer_key': 'consumer',
-    'consumer_secret': 'secret',
-    'oauth_token': 'token',
-    'oauth_token_secret': 'token secret'
+    "consumer_key": "consumer",
+    "consumer_secret": "secret",
+    "oauth_token": "token",
+    "oauth_token_secret": "token secret",
 }
 
 GIPHY_KEY = "secret"

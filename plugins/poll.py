@@ -1,6 +1,6 @@
-from ircbot.plugin import BotPlugin
 import asyncio
 
+from ircbot.plugin import BotPlugin
 
 TIME_MIN = 1
 TIME_MAX = 24 * 60
@@ -14,8 +14,8 @@ class Poll(BotPlugin):
     def print_poll(self):
         t = self.bot.text
         return "\n".join(
-            "%s) %s -- %s" % (t.bold(i), t.blue(t.bold(vote["name"])),
-                              ", ".join(vote["voters"]))
+            "%s) %s -- %s"
+            % (t.bold(i), t.blue(t.bold(vote["name"])), ", ".join(vote["voters"]))
             for i, vote in enumerate(self.votes)
         )
 
@@ -36,23 +36,27 @@ class Poll(BotPlugin):
             return "Il manque des arguments: " + str(args)
 
         for arg in args:  # [:-1]:
-            self.votes.append({
-                "name": arg,
-                "voters": [],
-            })
+            self.votes.append(
+                {
+                    "name": arg,
+                    "voters": [],
+                }
+            )
 
-        return "\n".join([
-            "Nouveau sondage:\n",
-            self.print_poll(),
-            "Votez avec " + self.bot.text.bold("!vote <numero du choix>"),
-            self.bot.text.yellow("(fin dans %d minutes)") % time
-        ])
+        return "\n".join(
+            [
+                "Nouveau sondage:\n",
+                self.print_poll(),
+                "Votez avec " + self.bot.text.bold("!vote <numero du choix>"),
+                self.bot.text.yellow("(fin dans %d minutes)") % time,
+            ]
+        )
 
     def end_poll(self, msg):
         msg.reply("Le sondage est terminé\n" + self.print_poll())
         self.votes = []
 
-    @BotPlugin.command(r'\!poll (.+) (time=\d+)')
+    @BotPlugin.command(r"\!poll (.+) (time=\d+)")
     def poll_with_time(self, msg):
         """
         Crée un sondage pour lequel les gens peuvent voter.
@@ -60,11 +64,13 @@ class Poll(BotPlugin):
         @param Une liste de nom à ajouter au sondage.
         @param Le temps en minute avant de cloturer le sondage.
         """
-        msg.reply(self.create_poll(msg.args[0].split(" "),
-                                   msg,
-                                   int(msg.args[1].replace("time=", ""))))
+        msg.reply(
+            self.create_poll(
+                msg.args[0].split(" "), msg, int(msg.args[1].replace("time=", ""))
+            )
+        )
 
-    @BotPlugin.command(r'\!poll (.+)')
+    @BotPlugin.command(r"\!poll (.+)")
     def poll(self, msg):
         """
         Crée un sondage pour lequel les gens peuvent voter.
@@ -73,14 +79,14 @@ class Poll(BotPlugin):
         """
         msg.reply(self.create_poll(msg.args[0].split(" "), msg))
 
-    @BotPlugin.command(r'\!poll')
+    @BotPlugin.command(r"\!poll")
     def show_poll(self, msg):
         """
         Montre le sondage en cours.
         """
         msg.reply(self.print_poll())
 
-    @BotPlugin.command(r'\!vote (\d+)')
+    @BotPlugin.command(r"\!vote (\d+)")
     def vote(self, msg):
         """
         Voter pour le sondage.
@@ -98,4 +104,4 @@ class Poll(BotPlugin):
         else:
             return msg.reply("Tu as déjà voté", hilight=True)
 
-        msg.reply("Tu as voté pour {}".format(self.votes[index]['name']), hilight=True)
+        msg.reply("Tu as voté pour {}".format(self.votes[index]["name"]), hilight=True)

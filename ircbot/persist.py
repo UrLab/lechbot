@@ -1,7 +1,7 @@
 import json
 import logging
-from fcntl import flock, LOCK_UN, LOCK_EX
 from copy import deepcopy
+from fcntl import LOCK_EX, LOCK_UN, flock
 
 logger = logging.getLogger()
 
@@ -12,9 +12,9 @@ class Persistent:
 
     def __enter__(self):
         try:
-            self.fd = open(self.file, 'r+')
+            self.fd = open(self.file, "r+")
         except:
-            self.fd = open(self.file, 'w+')
+            self.fd = open(self.file, "w+")
         flock(self.fd, LOCK_EX)
         try:
             self.db = json.load(self.fd)

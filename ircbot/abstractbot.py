@@ -1,15 +1,19 @@
-import re
 import asyncio
 import logging
-import humanize
+import re
 from datetime import timedelta
-from .text import parse_time, make_style
+
+import humanize
+
+from .text import make_style, parse_time
 
 
 def require_subclass(func):
     def wrapper(self, *args, **kwargs):
         raise NotImplementedError(
-            "This method should be implemented by a concrete bot backend")
+            "This method should be implemented by a concrete bot backend"
+        )
+
     return wrapper
 
 
@@ -19,6 +23,7 @@ class Message:
     The message also has args and kwargs, captured from a pattern match
     against the message text.
     """
+
     def __init__(self, bot, user, chan, text, args, kwargs):
         self.bot, self.user, self.chan, self.text = bot, user, chan, text
         self.args, self.kwargs = args, kwargs
@@ -44,7 +49,7 @@ class Message:
         """
         target = self.user if private or self.is_private else self.chan
         if hilight:
-            text = self.user + ': ' + text
+            text = self.user + ": " + text
         self.bot.say(text, target=target, strip_text=strip_text)
 
 
@@ -59,13 +64,14 @@ class AbstractBot:
         """
         Text formatter for a specific backend, override if necessary
         """
-        bold = staticmethod(make_style('<bold>', '</bold>'))
-        red = staticmethod(make_style('<red>', '</red>'))
-        green = staticmethod(make_style('<green>', '</green>'))
-        yellow = staticmethod(make_style('<yellow>', '</yellow>'))
-        blue = staticmethod(make_style('<blue>', '</blue>'))
-        purple = staticmethod(make_style('<purple>', '</purple>'))
-        grey = staticmethod(make_style('<grey>', '</grey>'))
+
+        bold = staticmethod(make_style("<bold>", "</bold>"))
+        red = staticmethod(make_style("<red>", "</red>"))
+        green = staticmethod(make_style("<green>", "</green>"))
+        yellow = staticmethod(make_style("<yellow>", "</yellow>"))
+        blue = staticmethod(make_style("<blue>", "</blue>"))
+        purple = staticmethod(make_style("<purple>", "</purple>"))
+        grey = staticmethod(make_style("<grey>", "</grey>"))
 
     def __init__(self, nickname, channels={}, main_chan=None, local_only=False):
         """
@@ -120,7 +126,7 @@ class AbstractBot:
         self.connected = True
         self.log.info("Connected !")
         for chan, callbacks in self.channels.items():
-            for callback in callbacks.get('on_connect', []):
+            for callback in callbacks.get("on_connect", []):
                 self.spawn(callback())
         return self
 
@@ -136,11 +142,11 @@ class AbstractBot:
         :type text: str.
         """
         target = target.lower()
-        is_query = target[0] == '#'
+        is_query = target[0] == "#"
         if is_query:
-            commands = self.channels.get(target, {}).get('commands', [])
+            commands = self.channels.get(target, {}).get("commands", [])
         else:
-            commands = self.channels.get('query', {}).get('commands', [])
+            commands = self.channels.get("query", {}).get("commands", [])
         for (pattern, callback) in commands:
             match = pattern.match(text)
             if match:
@@ -158,7 +164,7 @@ class AbstractBot:
         :type chan: str.
         """
         callbacks = self.channels.get(chan, {})
-        for callback in callbacks.get('on_join', []):
+        for callback in callbacks.get("on_join", []):
             self.spawn(callback())
 
     def say(self, text, target=None, strip_text=True):
@@ -178,7 +184,7 @@ class AbstractBot:
         if not self.connected:
             self.log.warning("OFFLINE :: {} << {}".format(target, text))
         else:
-            for line in text.split('\n'):
+            for line in text.split("\n"):
                 if strip_text:
                     line = line.strip()
                 if line:
@@ -209,11 +215,13 @@ class AbstractBot:
         :type pattern: re.
         :note: The command will be added to the end of self's commands.
         """
+
         def wrapper(func):
             new = (re.compile(pattern), func)
             for (chan, callbacks) in self.channels.items():
-                callbacks['commands'] = callbacks.get('commands', []) + [new]
+                callbacks["commands"] = callbacks.get("commands", []) + [new]
             return func
+
         return wrapper
 
     def run(self, loop=None):
@@ -233,7 +241,7 @@ class AbstractBot:
         """
         The list of channel names for this bot
         """
-        return [x for x in self.channels.keys() if x.startswith('#')]
+        return [x for x in self.channels.keys() if x.startswith("#")]
 
     @require_subclass
     def _connect(self, **kwargs):
