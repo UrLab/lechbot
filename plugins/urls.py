@@ -28,9 +28,9 @@ class UrlShow(TwitterBasePlugin):
         msg.reply(self.format_tweet(tweet))
 
     @BotPlugin.command(github_repo + r"/?(\s|$)" + end_url)
-    def github(self, msg):
+    async def github(self, msg):
         url = "https://api.github.com/repos/{}/{}".format(*msg.args)
-        repo = yield from public_api(url)
+        repo = await public_api(url)
         repo["name"] = self.bot.text.bold(repo["name"])
         repo["language"] = self.bot.text.purple("[", repo["language"], "]")
         repo["stars"] = self.bot.text.yellow("(", repo["stargazers_count"], "*)")
