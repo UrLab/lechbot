@@ -1,18 +1,32 @@
-name: pre-commit
-
+name: linting
 on:
-  pull_request:
   push:
-    branches: [master]
+    branches:
+      - "master"
+  pull_request:
+    branches:
+      - "master"
 
 jobs:
-  pre-commit:
+  linting:
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
 
-    - uses: actions/setup-python@v2
+    env:
+      testdirs: ircbot plugins
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v1
       with:
         python-version: 3.9
 
-    - run: pip install black isort
+    - name: Install Python dependencies
+      run: pip install isort black
+
+    - name: Check code formatting
+      run: |
+        black --check --diff ${{ env.testdirs }}
+        isort --profile black --check-only --diff  ${{ env.testdirs }}
