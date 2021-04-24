@@ -32,9 +32,9 @@ class Topic(BotPlugin):
             )
             self.bot.set_topic(topic_string, msg.chan)
 
-    def find_title(self, url):
-        r = yield from aiohttp.get(url)
-        page_bytes = yield from r.read()
+    async def find_title(self, url):
+        r = await aiohttp.get(url)
+        page_bytes = await r.read()
         r.release()
         page = page_bytes.decode("utf-8")
         title_start = page.find("<title>")
@@ -46,7 +46,7 @@ class Topic(BotPlugin):
             return ""
 
     @BotPlugin.command(r"\!motd +(https?://[^ ]+)")
-    def music_of_the_day(self, msg):
+    async def music_of_the_day(self, msg):
         """Change la musique du jour"""
         now = datetime.now()
         with Persistent("topic.json") as current_topic:
@@ -64,7 +64,7 @@ class Topic(BotPlugin):
             music_url = "http://youtu.be/%s" % video_id
 
         try:
-            yield from private_api(
+            await private_api(
                 "/space/change_motd", {"nick": msg.user, "url": music_url}
             )
         except ApiError as e:
@@ -74,7 +74,7 @@ class Topic(BotPlugin):
         self.bot.log.info("Music of the day changed by " + msg.user)
         self.make_topic(msg, new_music=music_url)
         try:
-            title = yield from self.find_title(music_url)
+            title = await self.find_title(music_url)
         except:
             self.bot.log.exception("Fetch MotD title")
             title = ""
@@ -82,7 +82,7 @@ class Topic(BotPlugin):
         msg.reply(fmt.format(self.bot.text.bold(title)), hilight=True)
 
     @BotPlugin.command(r"\!topic prepend +([^ ].+)")
-    def prepend_topic(self, msg):
+    async def prepend_topic(self, msg):
         """Insère une nouvelle annonce à l'avant du topic"""
         with Persistent("topic.json") as current_topic:
             topic = current_topic.get("topic", {}).get("text", "")
