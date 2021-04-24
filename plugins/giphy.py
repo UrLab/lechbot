@@ -16,22 +16,22 @@ class Giphy(BotPlugin):
             return m.group(1)
         return url
 
-    def search_gif(self, query):
+    async def search_gif(self, query):
         url = "http://api.giphy.com/v1/gifs/search?api_key={}&q={}"
         q = query.replace(" ", "+")
-        r = yield from public_api(url.format(self.giphy_key, q))
+        r = await public_api(url.format(self.giphy_key, q))
         chosen = random.choice(r["data"])
         return self.clean_url(chosen["images"]["original"]["url"])
 
     @BotPlugin.command(r"\!gif (#[\w\d_-]+) (.+)")
-    def gif(self, msg):
+    async def gif(self, msg):
         """Cherche un gif et le poste sur un autre chan"""
-        gif = yield from self.search_gif(msg.args[1])
+        gif = await self.search_gif(msg.args[1])
         reply = "{}: {}".format(msg.user, gif)
         self.bot.say(reply, target=msg.args[0])
 
     @BotPlugin.command(r"\!gif (.+)")
-    def gif_here(self, msg):
+    async def gif_here(self, msg):
         """Cherche un gif et le poste ici"""
-        gif = yield from self.search_gif(msg.args[0])
+        gif = await self.search_gif(msg.args[0])
         msg.reply(gif)
