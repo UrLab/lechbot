@@ -292,4 +292,9 @@ class AbstractBot:
     def naturaltime(self, time):
         if isinstance(time, timedelta):
             return humanize.naturaldelta(time)
-        return humanize.naturaltime(parse_time(time))
+        if isinstance(time, str):
+            time = parse_time(time)
+        # Workaround for bug with timezone-aware datetime in humanize lib
+        if time.tzinfo:
+            time = time.replace(tzinfo=None)
+        return humanize.naturaltime(time)
