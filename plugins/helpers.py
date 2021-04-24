@@ -8,7 +8,6 @@ from config import FULL_PAMELA, INCUBATOR, INCUBATOR_SECRET, SPACEAPI
 
 logger = getLogger(__name__)
 TIMEFMT = "%Y-%m-%d %H:%M:%S"
-unsafe_conn = aiohttp.TCPConnector(verify_ssl=False)
 
 
 class ApiError(Exception):
@@ -71,7 +70,7 @@ async def private_api(endpoint, data):
     return res
 
 
-async def public_api(endpoint, verify_ssl=True):
+async def public_api(endpoint):
     """Call UrLab incubator public API"""
     if not endpoint.startswith("http"):
         if endpoint[-1] != "/":
@@ -80,9 +79,6 @@ async def public_api(endpoint, verify_ssl=True):
     else:
         url = endpoint
     args = {"headers": {"User-agent": "UrLab [LechBot]"}}
-    if not verify_ssl:
-        args["connector"] = unsafe_conn
-        logger.warning("Using unverified SSL for " + url)
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url, **args) as response:
