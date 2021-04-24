@@ -44,5 +44,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build docker image
-        run: docker build -t urlab/lechbot .
+      - name: Build container image
+        uses: docker/build-push-action@v1
+        with: 
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.pkg.github.com
+          repository: ${{ github.repository }}/lechbot
+          tag_with_sha: true
+          tag_with_ref: true
