@@ -7,19 +7,18 @@
     $ cd lechbot
     $ virtualenv -p python3.4 ve3
     $ source ve3/bin/activate
-    $ pip install -r requirements-frozen.txt
+    $ pip install -r requirements.txt
 
 ## Configuration && run
 
 Create a file called local_config.py (in the same directory as config.py), and edit config values as needed.
-In order to test the bot locally, you might be interested in runnning an instance of [UrLab's Incubator](https://github.com/UrLab/incubator) and a
-[crossbar](http://crossbar.io) broker.
+In order to test the bot locally, you might be interested in runnning an instance of [UrLab's Incubator](https://github.com/UrLab/incubator).
 
 ### Test in command line only
 
 `$ python lechbot.py [ --debug ]`
 
-For a minimal setup, add `--local` so that lechbot won't try to poll from crossbar, twitter or other distant APIs.
+For a minimal setup, add `--local` so that lechbot won't try to poll from twitter or other distant APIs.
 
 ### Connect to irc
 

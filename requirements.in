@@ -1,0 +1,10 @@
+git+https://github.com/titouanc/asyncirc
+aiohttp==0.21
+aioamqp
+aioauth-client
+humanize
+python-dateutil
+beautifulsoup4
+pytz
+roman
+pip-tools
