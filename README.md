@@ -5,7 +5,7 @@
 
     $ git clone git@github.com:urlab/lechbot
     $ cd lechbot
-    $ virtualenv -p python3.4 ve3
+    $ virtualenv -p python3.9 ve3
     $ source ve3/bin/activate
     $ pip install -r requirements.txt
 
