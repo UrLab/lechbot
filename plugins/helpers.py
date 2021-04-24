@@ -38,11 +38,11 @@ class ApiError(Exception):
 def protect(func):
     """Catch and log exceptions that occurs in call to func"""
 
-    def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs):
         try:
             r = func(*args, **kwargs)
             if asyncio.iscoroutine(r):
-                r = yield from r
+                r = await r
             return r
         except:
             logger.exception("Error in {}".format(func.__name__))
