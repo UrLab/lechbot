@@ -86,7 +86,8 @@ class UrlShow(TwitterBasePlugin):
         msg.reply("{author} {when} «{title}» ({files})".format(**f))
 
     @BotPlugin.command(
-        r".*https?://www\.reddit\.com/r/([\w\d_\.-]+)/comments/([\w\d_\.-]+)" + end_url
+        r".*https?://www\.reddit\.com/r/([\w\d_\.-]+)/comments/([\w\d_\.-]+)/([\w\d_\.-]+)/"
+        + end_url
     )
     async def reddit(self, msg):
         url = "https://api.reddit.com/r/{}/comments/{}".format(*msg.args[:2])
