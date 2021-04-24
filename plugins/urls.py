@@ -91,7 +91,7 @@ class UrlShow(TwitterBasePlugin):
     )
     async def reddit(self, msg):
         url = "https://api.reddit.com/r/{}/comments/{}".format(*msg.args[:2])
-        data = await public_api(url, verify_ssl=False)
+        data = await public_api(url)
         post = data[0]["data"]["children"][0]["data"]
         post["author"] = self.bot.text.bold("@" + post["author"])
         post["upvote_ratio"] = self.bot.text.yellow("(", post["upvote_ratio"], "+)")
