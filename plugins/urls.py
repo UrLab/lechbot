@@ -1,8 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from ircbot.plugin import BotPlugin
 
 from .helpers import public_api
+from .komoot import describe_tour_summary, komoot_api
 from .twitter import TwitterBasePlugin
 
 
@@ -12,7 +13,6 @@ class UrlShow(TwitterBasePlugin):
     """
 
     komoot_url = r".*https?://www.komoot\.(?:fr|de)"
-    komoot_api = "https://www.komoot.fr/api/v007"
     github_repo = r".*https?://github\.com/([\w\d_\.-]+)/([\w\d_\.-]+)"
     urlab_url = r".*https?://urlab\.be"
     end_url = r"(?:$|\s|\)|\]|\})"
@@ -185,28 +185,50 @@ class UrlShow(TwitterBasePlugin):
 
     @BotPlugin.command(komoot_url + r"/highlight/(\d+)")
     async def komoot_highlight(self, msg):
-        # Examples:
-        # https://www.komoot.fr/highlight/753971
-        # https://www.komoot.fr/highlight/2032270
+        # Point: https://www.komoot.fr/highlight/753971
+        # Segment: https://www.komoot.fr/highlight/2032270
         hl_id = msg.args[0]
-        res = await public_api(f"{self.komoot_api}/highlights/{hl_id}")
+        res = await komoot_api(f"/highlights/{hl_id}")
 
-        if res["score"] < 0.3:
-            score_color = self.bot.text.red
-        elif res["score"] < 0.7:
-            score_color = self.bot.text.yellow
-        else:
-            score_color = self.bot.text.green
-        score = score_color(f"{round(100 * res['score'])}%")
+        score = round(5 * res["score"])
+        score_stars = score * self.bot.text.yellow("★") + (5 - score) * "★"
         name = self.bot.text.bold(res["name"])
-        sport = self.bot.text.grey(f"({res['sport']})")
+        creator = res["_embedded"]["creator"]["display_name"]
 
-        text = f"{name} {sport} {score}"
-
+        text = f"{name} {score_stars}"
         if res["type"] == "highlight_segment":
             text += self.bot.text.cyan(
                 f"{self.bot.naturalunits(res['distance'])}m "
                 f"[⇗ {res['elevation_up']}m ⇘ {res['elevation_down']}m]"
             )
+        text += f" (par @{creator})"
+
+        msg.reply(text)
+
+    @BotPlugin.command(komoot_url + r"/tour/(\d+)")
+    async def komoot_tour(self, msg):
+        # Done: https://www.komoot.fr/tour/229408387
+        # Planified: https://www.komoot.fr/tour/226867974
+        tour_id = msg.args[0]
+        res = await komoot_api(f"/tours/{tour_id}")
+
+        name = self.bot.text.bold(res["name"])
+        create_time = self.bot.text.grey(self.bot.naturaltime(res["date"]))
+        tour_time = self.bot.naturaltime(timedelta(seconds=res["duration"]))
+
+        if res["type"] == "tour_planned":
+            tour_type = self.bot.text.yellow("planifié")
+            tour_time = "~" + tour_time
+        else:
+            tour_type = self.bot.text.green("effectué")
+        distance = self.bot.text.cyan(
+            f"{self.bot.naturalunits(res['distance'])}m "
+            f"[⇗ {int(res['elevation_up'])}m ⇘ {int(res['elevation_down'])}m]"
+        )
+        creator = res["_embedded"]["creator"]["display_name"]
+
+        text = f"{name}: {tour_time}, {distance} ({tour_type} {create_time} par @{creator})"
+        if "summary" in res:
+            text += "\n" + describe_tour_summary(res["summary"])
 
         msg.reply(text)
