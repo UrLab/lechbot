@@ -20,9 +20,9 @@ class UrlShow(TwitterBasePlugin):
         return self.bot.text.bold(res)
 
     @BotPlugin.command(r".*https?://(?:mobile\.)?twitter.com/[^/]+/status/(\d+)")
-    def twitter_status(self, msg):
+    async def twitter_status(self, msg):
         url = "statuses/show/{}.json".format(msg.args[0])
-        tweet = yield from self.twitter_request(
+        tweet = await self.twitter_request(
             "GET", url, params={"tweet_mode": "extended"}
         )
         msg.reply(self.format_tweet(tweet))
