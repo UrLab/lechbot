@@ -5,9 +5,9 @@ from .helpers import mkurl, private_api, public_api
 
 class TechWednesday(BotPlugin):
     @BotPlugin.command(r"\!tw +([^ ].+)")
-    def add_to_next_tw(self, msg):
+    async def add_to_next_tw(self, msg):
         """Ajoute un point à l'ordre du jour de la prochaine réunion"""
-        yield from private_api(
+        await private_api(
             "/events/add_point_to_next_meeting",
             {"point": msg.args[0] + " (" + msg.user + ")"},
         )
@@ -18,10 +18,10 @@ class TechWednesday(BotPlugin):
         self.bot.log.info('Add "' + msg.args[0] + '" to next tw by ' + msg.user)
 
     @BotPlugin.command(r"\!tw")
-    def next_tw(self, msg):
+    async def next_tw(self, msg):
         """Affiche l'ordre du jour de la prochaine réunion"""
         try:
-            next_meeting = yield from public_api("/events/next_meeting")
+            next_meeting = await public_api("/events/next_meeting")
             when = self.bot.naturaltime(next_meeting["event"]["start"])
             msg.reply(self.bot.text.bold("Prochaine réunion " + when))
             for line in next_meeting["OJ"].split("\n"):
