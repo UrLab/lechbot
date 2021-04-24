@@ -14,37 +14,35 @@ from .text import make_style
 reader, writer = None, None
 
 
-@asyncio.coroutine
-def stdio(loop=None):
+async def stdio(loop=None):
     if loop is None:
         loop = asyncio.get_event_loop()
 
     reader = asyncio.StreamReader()
     reader_protocol = asyncio.StreamReaderProtocol(reader)
 
-    writer_transport, writer_protocol = yield from loop.connect_write_pipe(
+    writer_transport, writer_protocol = await loop.connect_write_pipe(
         FlowControlMixin, os.fdopen(0, "wb")
     )
     writer = StreamWriter(writer_transport, writer_protocol, None, loop)
 
-    yield from loop.connect_read_pipe(lambda: reader_protocol, sys.stdin)
+    await loop.connect_read_pipe(lambda: reader_protocol, sys.stdin)
 
     return reader, writer
 
 
-@asyncio.coroutine
-def async_input(message):
+async def async_input(message):
     if isinstance(message, str):
         message = message.encode("utf8")
 
     global reader, writer
     if (reader, writer) == (None, None):
-        reader, writer = yield from stdio()
+        reader, writer = await stdio()
 
     writer.write(message)
-    yield from writer.drain()
+    await writer.drain()
 
-    line = yield from reader.readline()
+    line = await reader.readline()
     return line.decode("utf8").replace("\r", "").replace("\n", "")
 
 
@@ -62,12 +60,12 @@ class CLIBot(AbstractBot):
         cyan = staticmethod(make_style("\033[36m", "\033[0m"))
         grey = staticmethod(make_style("\033[37m", "\033[0m"))
 
-    def stdin_mainloop(self):
+    async def stdin_mainloop(self):
         print("\033[1;31m>>> RUNNING IN COMMAND LINE MODE ONLY <<<\033[0m")
         user = "cli"
         map(self.joined, self.chanlist)
         while True:
-            text = yield from async_input("")
+            text = await async_input("")
             print("%s < \033[1;34mcli\033[0m> %s" % (self.main_chan, text))
             self.feed(user, self.main_chan, text)
 
