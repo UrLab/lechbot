@@ -197,7 +197,7 @@ class UrlShow(TwitterBasePlugin):
 
         text = f"{name} {score_stars}"
         if res["type"] == "highlight_segment":
-            text += self.bot.text.cyan(
+            text += self.bot.text.blue(
                 f"{self.bot.naturalunits(res['distance'])}m "
                 f"[⇗ {res['elevation_up']}m ⇘ {res['elevation_down']}m]"
             )
@@ -221,7 +221,7 @@ class UrlShow(TwitterBasePlugin):
             tour_time = "~" + tour_time
         else:
             tour_type = self.bot.text.green("effectué")
-        distance = self.bot.text.cyan(
+        distance = self.bot.text.blue(
             f"{self.bot.naturalunits(res['distance'])}m "
             f"[⇗ {int(res['elevation_up'])}m ⇘ {int(res['elevation_down'])}m]"
         )
