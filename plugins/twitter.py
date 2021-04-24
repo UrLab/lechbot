@@ -26,9 +26,7 @@ class TwitterBasePlugin(BotPlugin):
         self.twitter = TwitterClient(**credentials)
 
     async def twitter_request(self, *args, **kwargs):
-        response = await self.twitter.request(*args, **kwargs)
-        res = await response.json()
-        await response.release()
+        res = await self.twitter.request(*args, **kwargs)
         return res
 
     def format_tweet(self, tweet):
@@ -50,21 +48,21 @@ class Twitter(TwitterBasePlugin):
     """
 
     @BotPlugin.command(r"\!twitter +([^ ].+)")
-    def tweet_message(self, msg):
+    async def tweet_message(self, msg):
         """Tweete un message"""
         text = msg.args[0]
-        yield from self.twitter_request(
+        await self.twitter_request(
             "POST", "statuses/update.json", params={"status": text}
         )
         msg.reply("Pinky pinky !", hilight=True)
         self.bot.log.info('Tweet "' + text + '" by ' + msg.user)
 
     @BotPlugin.command(r"\!retweet https?://.*twitter.com/[^/]+/status/(\d+)")
-    def retweet_message(self, msg):
+    async def retweet_message(self, msg):
         """Retweete un message"""
         tweet_id = msg.args[0]
         url = "statuses/retweet/{}.json".format(tweet_id)
-        yield from self.twitter_request("POST", url)
+        await self.twitter_request("POST", url)
         url = "statuses/show/{}.json".format(msg.args[0])
-        tweet = yield from self.twitter_request("GET", url)
+        tweet = await self.twitter_request("GET", url)
         msg.reply("Retweeté \\\\o< " + self.format_tweet(tweet), hilight=True)
