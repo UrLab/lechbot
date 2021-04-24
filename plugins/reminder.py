@@ -114,7 +114,5 @@ class Reminder(BotPlugin):
         await asyncio.sleep(30)
 
         while True:
-            await self.janitor()
-            await asyncio.sleep(PERIOD / 2)
             await self.remind_events()
             await asyncio.sleep(PERIOD / 2)
