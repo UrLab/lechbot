@@ -13,7 +13,6 @@ from plugins import (
     Trump,
     Twitter,
     UrlShow,
-    VUBMenu,
 )
 
 CHANS = {
@@ -26,7 +25,6 @@ CHANS = {
         Reminder(),
         Twitter(TWITTER_CONFIG),
         UrlShow(TWITTER_CONFIG),
-        VUBMenu(),
         Giphy(GIPHY_KEY),
         HelpPlugin(),
         Poll(),
@@ -35,7 +33,6 @@ CHANS = {
     ],
     "QUERY": [
         TechWednesday(),
-        VUBMenu(),
         HelpPlugin(),
         Trump(),
     ],
