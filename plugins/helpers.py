@@ -83,10 +83,10 @@ async def public_api(endpoint, verify_ssl=True):
     if not verify_ssl:
         args["connector"] = unsafe_conn
         logger.warning("Using unverified SSL for " + url)
-    response = await aiohttp.get(url, **args)
-    res = await response.json()
-    await response.release()
-    return res
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, **args) as response:
+            return await response.json()
 
 
 @asyncio.coroutine
