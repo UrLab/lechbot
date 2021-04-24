@@ -6,4 +6,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-# RUN python lechbot.py 
+CMD python lechbot.py --irc
