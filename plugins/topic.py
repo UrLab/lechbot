@@ -33,9 +33,10 @@ class Topic(BotPlugin):
             self.bot.set_topic(topic_string, msg.chan)
 
     async def find_title(self, url):
-        r = await aiohttp.get(url)
-        page_bytes = await r.read()
-        r.release()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                page_bytes = await r.read()
+
         page = page_bytes.decode("utf-8")
         title_start = page.find("<title>")
         title_end = page.find("</title>")
