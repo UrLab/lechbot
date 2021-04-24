@@ -50,11 +50,11 @@ class Reminder(BotPlugin):
         self.bot.log.info("Reminding Ev#{id} {title}".format(**event))
 
     @protect
-    def remind_events(self):
+    async def remind_events(self):
         """
         Rappelle les évènements proches
         """
-        events = yield from public_api("/events/")
+        events = await public_api("/events/")
         now = datetime.now()
 
         for event in events["results"]:
@@ -71,13 +71,13 @@ class Reminder(BotPlugin):
                     break
 
     @protect
-    def janitor(self):
+    async def janitor(self):
         """
         Désigne des gens pour faire les corvées de UrLab quand c'est ouvert
         """
         # Récupération de l'état actuel du HS
-        data = yield from full_pamela()
-        space = yield from spaceapi()
+        data = await full_pamela()
+        space = await spaceapi()
         people = set(data)
         if space["state"]["open"] and len(people) >= JANITOR_MINIMAL_PEOPLE:
             now = time()
@@ -100,21 +100,21 @@ class Reminder(BotPlugin):
                         self.say(fmt.format(who=who, action=task["action"]))
 
                         # Envoi d'une notification sonore au hackerspace
-                        # yield from lechbot_notif('trash')
+                        # await lechbot_notif('trash')
 
                         # On enregitre dans le cache
                         janitor[name] = {"time": now, "who": who}
                         self.bot.log.info("%s designated for %s" % (who, name))
 
     @BotPlugin.on_connect
-    def reminder(self):
+    async def reminder(self):
         if self.bot.local_only:
             return
         # Sleep 30 to be sure that we are connected to IRC.
-        yield from asyncio.sleep(30)
+        await asyncio.sleep(30)
 
         while True:
-            yield from self.janitor()
-            yield from asyncio.sleep(PERIOD / 2)
-            yield from self.remind_events()
-            yield from asyncio.sleep(PERIOD / 2)
+            await self.janitor()
+            await asyncio.sleep(PERIOD / 2)
+            await self.remind_events()
+            await asyncio.sleep(PERIOD / 2)
