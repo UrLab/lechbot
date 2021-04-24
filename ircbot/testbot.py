@@ -1,5 +1,6 @@
-import re
 import asyncio
+import re
+
 from .abstractbot import AbstractBot
 
 
@@ -10,7 +11,8 @@ class RunTestBot(AbstractBot):
     the bot's nickname, feed the message to the bot, otherwise assert that
     the bot has replied the expected text.
     """
-    input_regexp = re.compile(r'(#?[^ ]+) +<([^>]+)> *(.*)')
+
+    input_regexp = re.compile(r"(#?[^ ]+) +<([^>]+)> *(.*)")
 
     @asyncio.coroutine
     def mainloop(self):
@@ -23,7 +25,7 @@ class RunTestBot(AbstractBot):
                 target, user, text = match.groups()
                 if user == self.nickname:
                     print("EXPECTING", match.groups())
-                    assert self.output[0] == ('say', target, text)
+                    assert self.output[0] == ("say", target, text)
                     self.output = self.output[1:]
                 else:
                     print("FEEDING", match.groups())
@@ -56,7 +58,7 @@ class RunTestBot(AbstractBot):
         self.output = []
 
     def _say(self, target, text):
-        self.output.append(('say', target, text))
+        self.output.append(("say", target, text))
 
     def _topic(self, chan, text):
-        self.output.append(('topic', chan, text))
+        self.output.append(("topic", chan, text))

@@ -2,12 +2,12 @@
 Largely inspired by https://gist.github.com/nathan-hoad/8966377
 """
 
-import os
 import asyncio
+import os
 import sys
 import unicodedata
+from asyncio.streams import FlowControlMixin, StreamWriter
 
-from asyncio.streams import StreamWriter, FlowControlMixin
 from .abstractbot import AbstractBot
 from .text import make_style
 
@@ -22,7 +22,9 @@ def stdio(loop=None):
     reader = asyncio.StreamReader()
     reader_protocol = asyncio.StreamReaderProtocol(reader)
 
-    writer_transport, writer_protocol = yield from loop.connect_write_pipe(FlowControlMixin, os.fdopen(0, 'wb'))
+    writer_transport, writer_protocol = yield from loop.connect_write_pipe(
+        FlowControlMixin, os.fdopen(0, "wb")
+    )
     writer = StreamWriter(writer_transport, writer_protocol, None, loop)
 
     yield from loop.connect_read_pipe(lambda: reader_protocol, sys.stdin)
@@ -33,7 +35,7 @@ def stdio(loop=None):
 @asyncio.coroutine
 def async_input(message):
     if isinstance(message, str):
-        message = message.encode('utf8')
+        message = message.encode("utf8")
 
     global reader, writer
     if (reader, writer) == (None, None):
@@ -43,22 +45,22 @@ def async_input(message):
     yield from writer.drain()
 
     line = yield from reader.readline()
-    return line.decode('utf8').replace('\r', '').replace('\n', '')
+    return line.decode("utf8").replace("\r", "").replace("\n", "")
 
 
-is_printable = lambda c: unicodedata.category(c) != 'Cc'
+is_printable = lambda c: unicodedata.category(c) != "Cc"
 
 
 class CLIBot(AbstractBot):
     class text:
-        bold = staticmethod(make_style('\033[1m', '\033[0m'))
-        red = staticmethod(make_style('\033[31m', '\033[0m'))
-        green = staticmethod(make_style('\033[32m', '\033[0m'))
-        yellow = staticmethod(make_style('\033[33m', '\033[0m'))
-        blue = staticmethod(make_style('\033[34m', '\033[0m'))
-        purple = staticmethod(make_style('\033[35m', '\033[0m'))
-        cyan = staticmethod(make_style('\033[36m', '\033[0m'))
-        grey = staticmethod(make_style('\033[37m', '\033[0m'))
+        bold = staticmethod(make_style("\033[1m", "\033[0m"))
+        red = staticmethod(make_style("\033[31m", "\033[0m"))
+        green = staticmethod(make_style("\033[32m", "\033[0m"))
+        yellow = staticmethod(make_style("\033[33m", "\033[0m"))
+        blue = staticmethod(make_style("\033[34m", "\033[0m"))
+        purple = staticmethod(make_style("\033[35m", "\033[0m"))
+        cyan = staticmethod(make_style("\033[36m", "\033[0m"))
+        grey = staticmethod(make_style("\033[37m", "\033[0m"))
 
     def stdin_mainloop(self):
         print("\033[1;31m>>> RUNNING IN COMMAND LINE MODE ONLY <<<\033[0m")

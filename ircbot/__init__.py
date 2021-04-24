@@ -1,4 +1,4 @@
-from .ircbot import IRCBot
 from .clibot import CLIBot
-from .testbot import RunTestBot
+from .ircbot import IRCBot
 from .plugin import BotPlugin
+from .testbot import RunTestBot

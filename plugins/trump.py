@@ -1,6 +1,7 @@
-from ircbot.plugin import BotPlugin
 import json
 import random
+
+from ircbot.plugin import BotPlugin
 
 n = 3
 
@@ -53,7 +54,10 @@ def read_json():
     try:
         with open("data/trump_data.json", "r") as f:
             probas = json.load(f)
-        probas = {tuple([x.strip()[1:][:-1] for x in k[1:][:-1].split(",")]): v for k, v in probas.items()}
+        probas = {
+            tuple([x.strip()[1:][:-1] for x in k[1:][:-1].split(",")]): v
+            for k, v in probas.items()
+        }
         return probas
     except FileNotFoundError:
         return False
@@ -62,7 +66,7 @@ def read_json():
 class Trump(BotPlugin):
     probas = read_json()
 
-    @BotPlugin.command(r'\!trump$')
+    @BotPlugin.command(r"\!trump$")
     def train(self, msg):
         if self.probas:
             try:

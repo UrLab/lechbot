@@ -1,27 +1,27 @@
+import asyncio
 import logging
 from sys import stdout
-from config import NICKNAME, MAIN_CHAN
-from ircbot import CLIBot, IRCBot
+
 import humanize
-import asyncio
 
 from chanconfig import CHANS
+from config import MAIN_CHAN, NICKNAME
+from ircbot import CLIBot, IRCBot
 
 
 def main(loglevel, klass, options):
-    humanize.i18n.activate('fr_FR')
+    humanize.i18n.activate("fr_FR")
     fmt = "%(levelname)7s %(asctime)s | %(module)s:%(funcName)s | %(message)s"
-    logging.basicConfig(
-        stream=stdout, level=loglevel,
-        format=fmt)
+    logging.basicConfig(stream=stdout, level=loglevel, format=fmt)
 
     bot = klass(NICKNAME, CHANS, main_chan=MAIN_CHAN, local_only=options.local)
 
-    @bot.command(r'tg %s$' % NICKNAME)
+    @bot.command(r"tg %s$" % NICKNAME)
     def shut_up(msg):
         """Je meurs"""
-        bot.log.info('Shutting down; asked by ' + msg.user.nick)
+        bot.log.info("Shutting down; asked by " + msg.user.nick)
         exit()
+
     bot.connect(host="chat.freenode.net", port=6697)
     bot.log.info("Starting")
 
@@ -38,20 +38,31 @@ def main(loglevel, klass, options):
 if __name__ == "__main__":
     import argparse
 
-    optparser = argparse.ArgumentParser(
-        description=u"LechBot, le bot de #urlab")
+    optparser = argparse.ArgumentParser(description=u"LechBot, le bot de #urlab")
     optparser.add_argument(
-        "--irc", "-i", action='store_true',
-        dest='online', default=False,
-        help="Connect to IRC")
+        "--irc",
+        "-i",
+        action="store_true",
+        dest="online",
+        default=False,
+        help="Connect to IRC",
+    )
     optparser.add_argument(
-        "--debug", "-d", action='store_true',
-        dest='debug', default=False,
-        help="Also output debug informations")
+        "--debug",
+        "-d",
+        action="store_true",
+        dest="debug",
+        default=False,
+        help="Also output debug informations",
+    )
     optparser.add_argument(
-        "--local", "-l", action='store_true',
-        dest='local', default=False,
-        help="Don't try to connect to Twitter")
+        "--local",
+        "-l",
+        action="store_true",
+        dest="local",
+        default=False,
+        help="Don't try to connect to Twitter",
+    )
 
     options = optparser.parse_args()
 
