@@ -3,7 +3,6 @@ services:
   lechbot:
     # uses local directory Dockerfile
     build: .
-    image: lechbot_lechbot
     deploy: 
       restart_policy:
         # restart if something went wrong
