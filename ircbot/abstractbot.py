@@ -108,7 +108,7 @@ class AbstractBot:
         """
         self.log.debug("SPAWN " + repr(maybe_coroutine))
         if asyncio.iscoroutine(maybe_coroutine):
-            asyncio.async(maybe_coroutine)
+            asyncio.ensure_future(maybe_coroutine)
 
     def connect(self, **kwargs):
         """

@@ -76,4 +76,4 @@ class CLIBot(AbstractBot):
         print("\033[1;36mSet topic of %s\033[0m %s" % (target, text))
 
     def _connect(self, **kwargs):
-        asyncio.async(self.stdin_mainloop())
+        asyncio.ensure_future(self.stdin_mainloop())
