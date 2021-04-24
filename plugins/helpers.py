@@ -61,10 +61,12 @@ def mkurl(endpoint, host=INCUBATOR):
 async def private_api(endpoint, data):
     """Call UrLab incubator private API"""
     data["secret"] = INCUBATOR_SECRET
-    response = await aiohttp.post(mkurl(endpoint), data=data)
-    res = await response.json()
-    status_code = response.status
-    await response.release()
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(mkurl(endpoint), data=data) as response:
+            res = await response.json()
+            status_code = response.status
+
     if status_code != 200:
         raise ApiError(response=res, code=status_code)
     return res
