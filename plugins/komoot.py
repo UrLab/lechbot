@@ -1,6 +1,8 @@
 from collections import Counter
 
-from .helpers import public_api
+import aiohttp
+
+from config import KOMOOT_CREDENTIALS
 
 # See https://static.komoot.de/doc/external-api/v007/index.html#
 API_ROOT = "https://external-api.komoot.de/v007"
@@ -89,5 +91,13 @@ def describe_tour_summary(summary):
     return "\n".join(texts)
 
 
-def komoot_api(api_path):
-    return public_api(f"{API_ROOT}{api_path}")
+async def komoot_api(path):
+    async with aiohttp.ClientSession() as session:
+        # 1. Login as Lechbot
+        async with session.post(
+            "https://account.komoot.com/v1/signin", data=KOMOOT_CREDENTIALS
+        ) as response:
+            await response.json()
+        # 2. Actual API call
+        async with session.get(f"{API_ROOT}{path}") as response:
+            return await response.json()
