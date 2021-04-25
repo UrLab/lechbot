@@ -37,9 +37,9 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{name} {language} {stars}: «{description}»"
         msg.reply(fmt.format(**repo))
 
-    @BotPlugin.command(github_repo + r"/(issues|pull)/(\d+)(/\w+)?" + end_url)
+    @BotPlugin.command(github_repo + r"/(issues|pull)/(\d+)(?:/\w+)?" + end_url)
     async def github_issue(self, msg):
-        user, repo, kind, id, _ = msg.args
+        user, repo, kind, id = msg.args
         args = user, repo, id
         url = "https://api.github.com/repos/{}/{}/issues/{}".format(*args)
         issue = await public_api(url)
