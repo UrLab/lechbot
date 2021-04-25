@@ -208,7 +208,7 @@ class UrlShow(TwitterBasePlugin):
     @BotPlugin.command(komoot_url + r"/tour/(\d+)")
     async def komoot_tour(self, msg):
         # Done: https://www.komoot.fr/tour/229408387
-        # Planified: https://www.komoot.fr/tour/226867974
+        # Planned: https://www.komoot.fr/tour/226867974
         tour_id = msg.args[0]
         res = await komoot_api(f"/tours/{tour_id}")
 
