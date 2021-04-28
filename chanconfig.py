@@ -60,4 +60,5 @@ RATELIMIT = {
 try:
     from local_chanconfig import CHANS, RATELIMIT
 except ImportError:
+    print("Cannot load local chan config; using gitted config")
     pass
