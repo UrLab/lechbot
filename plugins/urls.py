@@ -61,6 +61,33 @@ class UrlShow(TwitterBasePlugin):
         }
         msg.reply("{author} {when} «{title}» ({stats})".format(**f))
 
+    @BotPlugin.command(github_repo + r"/releases(?:/tag)/([^ ]+)")
+    async def github_release(self, msg):
+        url = "https://api.github.com/repos/{}/{}/releases/tags/{}".format(*msg.args)
+        release = await public_api(url)
+        name = self.bot.text.bold(release["name"])
+        if release["draft"]:
+            status = self.bot.text.red("ébauché")
+        elif release["prerelease"]:
+            status = self.bot.text.yellow("pré-publié")
+        else:
+            status = self.bot.text.green("publié")
+        if release.get("published_at", None):
+            release_date = self.bot.text.grey(
+                self.bot.naturaltime(release["published_at"])
+            )
+        else:
+            release_date = self.bot.text.grey(
+                self.bot.naturaltime(release["created_at"])
+            )
+        author = release["author"]["login"]
+        tag = self.bot.text.yellow(f"({release['tag_name']})")
+        if len(release["assets"]):
+            files = self.bot.text.blue(f"[{len(release['assets'])} fichiers]")
+        else:
+            files = ""
+        msg.reply(f"«{name}» {tag} {status} {release_date} by @{author} {files}")
+
     @BotPlugin.command(github_repo)
     async def github_repo(self, msg):
         url = "https://api.github.com/repos/{}/{}".format(*msg.args)
