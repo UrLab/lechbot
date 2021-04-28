@@ -6,6 +6,7 @@ from config import KOMOOT_CREDENTIALS
 
 # See https://static.komoot.de/doc/external-api/v007/index.html#
 API_ROOT = "https://external-api.komoot.de/v007"
+WEB_ROOT = "https://www.komoot.com"
 
 
 # See https://static.komoot.de/doc/external-api/v007/surfaces.html
@@ -93,11 +94,21 @@ def describe_tour_summary(summary):
 
 async def komoot_api(path):
     async with aiohttp.ClientSession() as session:
+        async with session.get(f"{API_ROOT}{path}") as response:
+            return await response.json()
+
+
+async def komoot_web(path):
+    async with aiohttp.ClientSession() as session:
         # 1. Login as Lechbot
         async with session.post(
             "https://account.komoot.com/v1/signin", data=KOMOOT_CREDENTIALS
         ) as response:
             await response.json()
-        # 2. Actual API call
-        async with session.get(f"{API_ROOT}{path}") as response:
+        # 2. Transfer the cookies to the main domain
+        await session.get("https://account.komoot.com/actions/transfer?type=signin")
+        # 3. Actual call
+        async with session.get(
+            f"{WEB_ROOT}{path}", headers={"onlyprops": "true"}
+        ) as response:
             return await response.json()

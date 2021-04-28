@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from ircbot.plugin import BotPlugin
 
 from .helpers import public_api
-from .komoot import describe_tour_summary, komoot_api
+from .komoot import describe_tour_summary, komoot_api, komoot_web
 from .twitter import TwitterBasePlugin
 
 
@@ -210,11 +210,22 @@ class UrlShow(TwitterBasePlugin):
         # Done: https://www.komoot.fr/tour/229408387
         # Planned: https://www.komoot.fr/tour/226867974
         tour_id = msg.args[0]
-        res = await komoot_api(f"/tours/{tour_id}")
+        page = await komoot_web(f"/tour/{tour_id}")
+        res = page["page"]["_embedded"]["tour"]
 
         name = self.bot.text.bold(res["name"])
         create_time = self.bot.text.grey(self.bot.naturaltime(res["date"]))
-        tour_time = self.bot.naturaltime(timedelta(seconds=res["duration"]))
+
+        if res["type"] == "tour_planned":
+            duration = timedelta(seconds=res["duration"])
+        else:
+            duration = timedelta(seconds=res["time_in_motion"])
+        if duration < timedelta(hours=10):
+            hours = int(duration.total_seconds() // 3600)
+            minutes = int((duration.total_seconds() // 60) % 60)
+            tour_time = f"{hours}h{minutes:02}"
+        else:
+            tour_time = self.bot.naturaltime(duration)
 
         if res["type"] == "tour_planned":
             tour_type = self.bot.text.yellow("planifié")
@@ -225,9 +236,8 @@ class UrlShow(TwitterBasePlugin):
             f"{self.bot.naturalunits(res['distance'])}m "
             f"[⇗ {int(res['elevation_up'])}m ⇘ {int(res['elevation_down'])}m]"
         )
-        creator = res["_embedded"]["creator"]["display_name"]
 
-        text = f"{name}: {tour_time}, {distance} ({tour_type} {create_time} par @{creator})"
+        text = f"{name}: {tour_time}, {distance} ({tour_type} {create_time})"
         if "summary" in res:
             text += "\n" + describe_tour_summary(res["summary"])
 
