@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from ircbot.plugin import BotPlugin
 
 from .helpers import public_api
-from .komoot import describe_tour_summary, komoot_api, komoot_web
+from .komoot import describe_tour_summary, komoot_api
 from .twitter import TwitterBasePlugin
 
 
@@ -188,7 +188,7 @@ class UrlShow(TwitterBasePlugin):
         # Point: https://www.komoot.fr/highlight/753971
         # Segment: https://www.komoot.fr/highlight/2032270
         hl_id = msg.args[0]
-        res = await komoot_api(f"/highlights/{hl_id}")
+        res = await komoot_api(f"/highlights/{hl_id}", auth=False)
 
         score = round(5 * res["score"])
         score_stars = score * self.bot.text.yellow("★") + (5 - score) * "★"
@@ -210,8 +210,7 @@ class UrlShow(TwitterBasePlugin):
         # Done: https://www.komoot.fr/tour/229408387
         # Planned: https://www.komoot.fr/tour/226867974
         tour_id = msg.args[0]
-        page = await komoot_web(f"/tour/{tour_id}")
-        res = page["page"]["_embedded"]["tour"]
+        res = await komoot_api(f"/tours/{tour_id}")
 
         name = self.bot.text.bold(res["name"])
         create_time = self.bot.text.grey(self.bot.naturaltime(res["date"]))
@@ -236,8 +235,9 @@ class UrlShow(TwitterBasePlugin):
             f"{self.bot.naturalunits(res['distance'])}m "
             f"[⇗ {int(res['elevation_up'])}m ⇘ {int(res['elevation_down'])}m]"
         )
+        creator = res["_embedded"]["creator"]["display_name"]
 
-        text = f"{name}: {tour_time}, {distance} ({tour_type} {create_time})"
+        text = f"{name}: {tour_time}, {distance} ({tour_type} {create_time} par @{creator})"
         if "summary" in res:
             text += "\n" + describe_tour_summary(res["summary"])
 
