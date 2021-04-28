@@ -13,7 +13,6 @@ class UrlShow(TwitterBasePlugin):
 
     github_repo = r".*https?://github\.com/([\w\d_\.-]+)/([\w\d_\.-]+)"
     urlab_url = r".*https?://urlab\.be"
-    end_url = r"(?:$|\s|\)|\]|\})"
 
     def check_mark(self, ok=True):
         res = self.bot.text.green("✓") if ok else self.bot.text.red("✗")
@@ -27,17 +26,7 @@ class UrlShow(TwitterBasePlugin):
         )
         msg.reply(self.format_tweet(tweet))
 
-    @BotPlugin.command(github_repo + r"/?(\s|$)" + end_url)
-    async def github(self, msg):
-        url = "https://api.github.com/repos/{}/{}".format(*msg.args)
-        repo = await public_api(url)
-        repo["name"] = self.bot.text.bold(repo["name"])
-        repo["language"] = self.bot.text.purple("[", repo["language"], "]")
-        repo["stars"] = self.bot.text.yellow("(", repo["stargazers_count"], "*)")
-        fmt = "{name} {language} {stars}: «{description}»"
-        msg.reply(fmt.format(**repo))
-
-    @BotPlugin.command(github_repo + r"/(issues|pull)/(\d+)(?:/\w+)?" + end_url)
+    @BotPlugin.command(github_repo + r"/(issues|pull)/(\d+)(?:/\w+)?")
     async def github_issue(self, msg):
         user, repo, kind, id = msg.args
         args = user, repo, id
@@ -55,7 +44,7 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{author} {when} {number}: «{title}» {labels}"
         msg.reply(fmt.format(**issue))
 
-    @BotPlugin.command(github_repo + r"/commit/([0-9a-fA-F]{,40})" + end_url)
+    @BotPlugin.command(github_repo + r"/commit/([0-9a-fA-F]{,40})")
     async def github_commit(self, msg):
         url = "https://api.github.com/repos/{}/{}/commits/{}".format(*msg.args)
         commit = await public_api(url)
@@ -72,8 +61,18 @@ class UrlShow(TwitterBasePlugin):
         }
         msg.reply("{author} {when} «{title}» ({stats})".format(**f))
 
-    @BotPlugin.command(r".*https?://gist\.github\.com/[^/]+/([0-9a-z]+)" + end_url)
-    async def gist(self, msg):
+    @BotPlugin.command(github_repo)
+    async def github_repo(self, msg):
+        url = "https://api.github.com/repos/{}/{}".format(*msg.args)
+        repo = await public_api(url)
+        repo["name"] = self.bot.text.bold(repo["name"])
+        repo["language"] = self.bot.text.purple("[", repo["language"], "]")
+        repo["stars"] = self.bot.text.yellow("(", repo["stargazers_count"], "*)")
+        fmt = "{name} {language} {stars}: «{description}»"
+        msg.reply(fmt.format(**repo))
+
+    @BotPlugin.command(r".*https?://gist\.github\.com/[^/]+/([0-9a-z]+)")
+    async def github_gist(self, msg):
         url = "https://api.github.com/gists/{}".format(msg.args[0])
         gist = await public_api(url)
         filelist = ", ".join(i["filename"] for i in gist["files"].values())
@@ -87,7 +86,6 @@ class UrlShow(TwitterBasePlugin):
 
     @BotPlugin.command(
         r".*https?://www\.reddit\.com/r/([\w\d_\.-]+)/comments/([\w\d_\.-]+)/([\w\d_\.-]+)/"
-        + end_url
     )
     async def reddit(self, msg):
         url = "https://api.reddit.com/r/{}/comments/{}".format(*msg.args[:2])
@@ -99,7 +97,7 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{author} {upvote_ratio}: «{title}» {url}"
         msg.reply(fmt.format(**post))
 
-    @BotPlugin.command(r".*https?://news\.ycombinator\.com/item\?id=(\d+)" + end_url)
+    @BotPlugin.command(r".*https?://news\.ycombinator\.com/item\?id=(\d+)")
     async def hackernews(self, msg):
         url = "https://hacker-news.firebaseio.com/v0/item/"
         post = await public_api(url + "{}.json".format(msg.args[0]))
@@ -108,7 +106,7 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{by}: «{title}» {url}"
         msg.reply(fmt.format(**post))
 
-    # @BotPlugin.command(r'.*https?://(www\.)?youtube\.com/watch\?v=(\w+)' + end_url)
+    # @BotPlugin.command(r'.*https?://(www\.)?youtube\.com/watch\?v=(\w+)')
     # def youtube(self, msg):
     #     # Not available atm because of API restrictions
     #     pass
@@ -136,19 +134,17 @@ class UrlShow(TwitterBasePlugin):
             fmt = "«{title}» [{solved} {score}] ({date}) {tags}\n -> {url}"
             msg.reply(fmt.format(**ctx))
 
-    @BotPlugin.command(
-        r".*https?://stackoverflow\.com\/questions\/(\d+)\/[^ /]+" + end_url
-    )
+    @BotPlugin.command(r".*https?://stackoverflow\.com\/questions\/(\d+)\/[^ /]+")
     async def stackoverflow(self, msg):
         await self.generic_stackexchange(msg, q_id=msg.args[0])
 
     @BotPlugin.command(
-        r".*https?://([^\.]+)\.stackexchange\.com\/questions\/(\d+)\/[^ /]+" + end_url
+        r".*https?://([^\.]+)\.stackexchange\.com\/questions\/(\d+)\/[^ /]+"
     )
     async def stackexchange(self, msg):
         await self.generic_stackexchange(msg, q_id=msg.args[1], site=msg.args[0])
 
-    @BotPlugin.command(urlab_url + r"/(projects/\d+)" + end_url)
+    @BotPlugin.command(urlab_url + r"/(projects/\d+)")
     async def urlab_project(self, msg):
         project_status = {
             "p": self.bot.text.yellow,  # Proposition
@@ -163,7 +159,7 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{title}: {desc}"
         msg.reply(fmt.format(**proj))
 
-    @BotPlugin.command(urlab_url + r"/(events/\d+)" + end_url)
+    @BotPlugin.command(urlab_url + r"/(events/\d+)")
     async def urlab_event(self, msg):
         event_status = {
             "r": self.bot.text.bold,  # Ready
