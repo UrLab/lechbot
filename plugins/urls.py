@@ -1,8 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from ircbot.plugin import BotPlugin
 
 from .helpers import public_api
+from .komoot import KOMOOT_URL, describe_tour_summary, komoot_api
 from .twitter import TwitterBasePlugin
 
 
@@ -11,6 +12,7 @@ class UrlShow(TwitterBasePlugin):
     Post a preview for some well-known and frequent URLs
     """
 
+    komoot_url = rf".*{KOMOOT_URL}"
     github_repo = r".*https?://github\.com/([\w\d_\.-]+)/([\w\d_\.-]+)"
     urlab_url = r".*https?://urlab\.be"
 
@@ -203,3 +205,66 @@ class UrlShow(TwitterBasePlugin):
         evt["place"] = self.bot.text.purple(evt["place"])
         fmt = "{title} ({when} :: {place})"
         msg.reply(fmt.format(**evt))
+
+    @BotPlugin.command(komoot_url + r"/highlight/(\d+)")
+    async def komoot_highlight(self, msg):
+        # Point: https://www.komoot.fr/highlight/753971
+        # Segment: https://www.komoot.fr/highlight/2032270
+        hl_id = msg.args[0]
+        res = await komoot_api(f"/highlights/{hl_id}", auth=False)
+
+        score = round(5 * res["score"])
+        score_stars = score * self.bot.text.yellow("★") + (5 - score) * "★"
+        name = self.bot.text.bold(res["name"])
+        creator = res["_embedded"]["creator"]["display_name"]
+
+        text = f"{name} {score_stars}"
+        if res["type"] == "highlight_segment":
+            text += self.bot.text.blue(
+                f"{self.bot.naturalunits(res['distance'])}m "
+                f"[⇗ {res['elevation_up']}m ⇘ {res['elevation_down']}m]"
+            )
+        text += f" (par @{creator})"
+
+        msg.reply(text)
+
+    @BotPlugin.command(komoot_url + r"/tour/(\d+)")
+    async def komoot_tour(self, msg):
+        # Done: https://www.komoot.fr/tour/229408387
+        # Planned: https://www.komoot.fr/tour/226867974
+        tour_id = msg.args[0]
+        res = await komoot_api(f"/tours/{tour_id}")
+
+        if res.get("error") == "AccessDenied":
+            return msg.reply("Ce tour est privé")
+
+        name = self.bot.text.bold(res["name"])
+        create_time = self.bot.text.grey(self.bot.naturaltime(res["date"]))
+
+        if res["type"] == "tour_planned":
+            duration = timedelta(seconds=res["duration"])
+        else:
+            duration = timedelta(seconds=res["time_in_motion"])
+        if duration < timedelta(hours=10):
+            hours = int(duration.total_seconds() // 3600)
+            minutes = int((duration.total_seconds() // 60) % 60)
+            tour_time = f"{hours}h{minutes:02}"
+        else:
+            tour_time = self.bot.naturaltime(duration)
+
+        if res["type"] == "tour_planned":
+            tour_type = self.bot.text.yellow("planifié")
+            tour_time = "~" + tour_time
+        else:
+            tour_type = self.bot.text.green("effectué")
+        distance = self.bot.text.blue(
+            f"{self.bot.naturalunits(res['distance'])}m "
+            f"[⇗ {int(res['elevation_up'])}m ⇘ {int(res['elevation_down'])}m]"
+        )
+        creator = res["_embedded"]["creator"]["display_name"]
+
+        text = f"{name}: {tour_time}, {distance} ({tour_type} {create_time} par @{creator})"
+        if "summary" in res:
+            text += "\n" + describe_tour_summary(res["summary"])
+
+        msg.reply(text)

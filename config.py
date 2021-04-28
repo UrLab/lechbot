@@ -29,6 +29,12 @@ TWITTER_CONFIG = {
 
 GIPHY_KEY = "secret"
 
+KOMOOT_CREDENTIALS = {
+    "email": "fillme",
+    "password": "fillme",
+    "user_id": "fillme",
+}
+
 try:
     from local_config import *  # pragma: no flakes # NOQA
 except ImportError:

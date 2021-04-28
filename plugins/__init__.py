@@ -1,5 +1,6 @@
 from .ascii import Ascii
 from .giphy import Giphy
+from .komoot import Komoot
 from .les_republicains import LesRepublicains
 from .poll import Poll
 from .react import React
