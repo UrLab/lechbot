@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from ircbot.plugin import BotPlugin
 
 from .helpers import public_api
-from .komoot import describe_tour_summary, komoot_api
+from .komoot import KOMOOT_URL, describe_tour_summary, komoot_api
 from .twitter import TwitterBasePlugin
 
 
@@ -12,7 +12,7 @@ class UrlShow(TwitterBasePlugin):
     Post a preview for some well-known and frequent URLs
     """
 
-    komoot_url = r".*https?://www.komoot\.(?:fr|de)"
+    komoot_url = rf".*{KOMOOT_URL}"
     github_repo = r".*https?://github\.com/([\w\d_\.-]+)/([\w\d_\.-]+)"
     urlab_url = r".*https?://urlab\.be"
     end_url = r"(?:$|\s|\)|\]|\})"
@@ -211,6 +211,9 @@ class UrlShow(TwitterBasePlugin):
         # Planned: https://www.komoot.fr/tour/226867974
         tour_id = msg.args[0]
         res = await komoot_api(f"/tours/{tour_id}")
+
+        if res.get("error") == "AccessDenied":
+            return msg.reply("Ce tour est privé")
 
         name = self.bot.text.bold(res["name"])
         create_time = self.bot.text.grey(self.bot.naturaltime(res["date"]))

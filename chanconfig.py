@@ -3,6 +3,7 @@ from ircbot.plugin import HelpPlugin
 from plugins import (
     Ascii,
     Giphy,
+    Komoot,
     LesRepublicains,
     Poll,
     React,
@@ -26,6 +27,7 @@ CHANS = {
         Twitter(TWITTER_CONFIG),
         UrlShow(TWITTER_CONFIG),
         Giphy(GIPHY_KEY),
+        Komoot(),
         HelpPlugin(),
         Poll(),
         LesRepublicains(),

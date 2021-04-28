@@ -32,6 +32,7 @@ GIPHY_KEY = "secret"
 KOMOOT_CREDENTIALS = {
     "email": "fillme",
     "password": "fillme",
+    "user_id": "fillme",
 }
 
 try:

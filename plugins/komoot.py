@@ -3,10 +3,11 @@ from collections import Counter
 import aiohttp
 
 from config import KOMOOT_CREDENTIALS
+from ircbot.plugin import BotPlugin
 
 # See https://static.komoot.de/doc/external-api/v007/index.html#
 API_ROOT = "https://www.komoot.com/api/v007"
-
+KOMOOT_URL = r"https?://www.komoot\.(?:fr|de|com)"
 
 # See https://static.komoot.de/doc/external-api/v007/surfaces.html
 surface_types = {
@@ -91,16 +92,35 @@ def describe_tour_summary(summary):
     return "\n".join(texts)
 
 
+async def komoot_auth(session):
+    # 1. Login as Lechbot
+    async with session.post(
+        "https://account.komoot.com/v1/signin", data=KOMOOT_CREDENTIALS
+    ) as response:
+        await response.json()
+    # 2. Transfer the cookies to the main domain
+    await session.get("https://account.komoot.com/actions/transfer?type=signin")
+
+
 async def komoot_api(path, auth=True):
     async with aiohttp.ClientSession() as session:
         if auth:
-            # 1. Login as Lechbot
-            async with session.post(
-                "https://account.komoot.com/v1/signin", data=KOMOOT_CREDENTIALS
-            ) as response:
-                await response.json()
-            # 2. Transfer the cookies to the main domain
-            await session.get("https://account.komoot.com/actions/transfer?type=signin")
+            await komoot_auth(session)
         # 3. Actual call
         async with session.get(f"{API_ROOT}{path}") as response:
             return await response.json()
+
+
+class Komoot(BotPlugin):
+    @BotPlugin.command(rf"\!follow {KOMOOT_URL}/user/(\d+)")
+    async def follow(self, msg):
+        """Demande au compte Komoot de Lechbot de suivre un utilisateur"""
+        target_user = msg.args[0]
+        async with aiohttp.ClientSession() as session:
+            await komoot_auth(session)
+            path = f"/users/{KOMOOT_CREDENTIALS['user_id']}/relations/{target_user}"
+            async with session.patch(
+                f"{API_ROOT}{path}", json={"relation_to_follow": "follow"}
+            ) as response:
+                await response.json()
+        msg.reply("Lechbot suit maintenant cet utilisateur o/")
