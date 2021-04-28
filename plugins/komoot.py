@@ -112,7 +112,7 @@ async def komoot_api(path, auth=True):
 
 
 class Komoot(BotPlugin):
-    @BotPlugin.command(rf"\!follow {KOMOOT_URL}/user/(\d+)")
+    @BotPlugin.command(rf"\!komoot follow {KOMOOT_URL}/user/(\d+)")
     async def follow(self, msg):
         """Ordonne à Lechbot de suivre un utilisateur sur Komoot, lui donnant ainsi accès aux tours visible par les amis de cet utilisateur une fois que l'utilisateur a accepté la demande de suivi à son tour."""
         target_user = msg.args[0]
