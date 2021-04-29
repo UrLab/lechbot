@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import re
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import humanize
 
@@ -294,6 +294,8 @@ class AbstractBot:
             return humanize.naturaldelta(time)
         if isinstance(time, str):
             time = parse_time(time)
+        elif isinstance(time, (float, int)):
+            time = datetime.fromtimestamp(time)
         # Workaround for bug with timezone-aware datetime in humanize lib
         if time.tzinfo:
             time = time.replace(tzinfo=None)
