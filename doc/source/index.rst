@@ -3,7 +3,7 @@
 Quickstart
 ==========
 
-This is the most simple bot: it connects to freenode, join ``#my_chan``, and
+This is the most simple bot: it connects to libera, join ``#my_chan``, and
 register a command ``!hello``, which always replies ``world``.
 
 ::
@@ -16,7 +16,7 @@ register a command ``!hello``, which always replies ``world``.
     def hello(msg):
         msg.reply("World")
 
-    bot.connect(host="chat.freenode.net", port=6697).run()
+    bot.connect(host="irc.libera.chat", port=6697).run()
 
 
 Captures
@@ -85,7 +85,7 @@ example becomes
             msg.reply("world")
 
     bot = IRCBot("AnnaBot", {'#my_chan': [Hello()]})
-    bot.connect(host="chat.freenode.net", port=6697).run()
+    bot.connect(host="irc.libera.chat", port=6697).run()
 
 
 API Reference
