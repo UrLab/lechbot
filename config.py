@@ -1,6 +1,10 @@
 # Bot nickname
 NICKNAME = "DechBot"
 
+# Server configuration
+SERVER = "irc.libera.chat"
+PORT = 6697
+
 # Main chan for this bot
 MAIN_CHAN = "#titoufaitdestests"
 

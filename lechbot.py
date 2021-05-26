@@ -5,7 +5,7 @@ from sys import stdout
 import humanize
 
 from chanconfig import CHANS
-from config import MAIN_CHAN, NICKNAME
+from config import MAIN_CHAN, NICKNAME, PORT, SERVER
 from ircbot import CLIBot, IRCBot
 
 
@@ -22,7 +22,7 @@ def main(loglevel, klass, options):
         bot.log.info("Shutting down; asked by " + msg.user.nick)
         exit()
 
-    bot.connect(host="chat.freenode.net", port=6697)
+    bot.connect(host=SERVER, port=PORT)
     bot.log.info("Starting")
 
     if bot.local_only:
