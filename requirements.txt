@@ -6,7 +6,7 @@
 #
 aioamqp==0.14.0
     # via -r requirements.in
-aioauth-client==0.25.6
+aioauth-client==0.25.7
     # via -r requirements.in
 aiohttp==3.7.4
     # via -r requirements.in
@@ -38,8 +38,6 @@ idna==3.1
     # via
     #   rfc3986
     #   yarl
-importlib-metadata==4.0.1
-    # via pep517
 multidict==5.1.0
     # via
     #   aiohttp
@@ -69,16 +67,9 @@ soupsieve==2.2.1
 toml==0.10.2
     # via pep517
 typing-extensions==3.7.4.3
-    # via
-    #   aiohttp
-    #   importlib-metadata
-    #   yarl
+    # via aiohttp
 yarl==1.6.3
     # via aiohttp
-zipp==3.4.1
-    # via
-    #   importlib-metadata
-    #   pep517
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
