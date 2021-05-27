@@ -75,6 +75,7 @@ typing-extensions==3.7.4.3
     #   yarl
 yarl==1.6.3
     # via aiohttp
+youtube_dl==2021.5.16
 zipp==3.4.1
     # via
     #   importlib-metadata

@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 from time import time
 
-import aiohttp
+import youtube_dl
 
 from ircbot.persist import Persistent
 from ircbot.plugin import BotPlugin
@@ -32,19 +32,15 @@ class Topic(BotPlugin):
             )
             self.bot.set_topic(topic_string, msg.chan)
 
-    async def find_title(self, url):
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as r:
-                page_bytes = await r.read()
-
-        page = page_bytes.decode("utf-8")
-        title_start = page.find("<title>")
-        title_end = page.find("</title>")
-        if title_start > 0 and title_end > 0:
-            title_start += len("<title>")
-            return page[title_start:title_end]
-        else:
-            return ""
+    def find_title(self, url):
+        ydl_opts = {}
+        try:
+            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                info_dict = ydl.extract_info(url, download=False)
+                video_title = info_dict.get('title', None)
+            return video_title
+        except:
+            return "Title was not found /o\ "
 
     @BotPlugin.command(r"\!motd +(https?://[^ ]+)")
     async def music_of_the_day(self, msg):
@@ -75,7 +71,7 @@ class Topic(BotPlugin):
         self.bot.log.info("Music of the day changed by " + msg.user)
         self.make_topic(msg, new_music=music_url)
         try:
-            title = await self.find_title(music_url)
+            title = self.find_title(music_url)
         except:
             self.bot.log.exception("Fetch MotD title")
             title = ""
