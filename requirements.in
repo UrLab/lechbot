@@ -1,5 +1,5 @@
 git+https://github.com/titouanc/asyncirc
-aiohttp==3.7.4
+aiohttp==3.7.4.post0
 aioamqp
 aioauth-client
 humanize
