@@ -50,10 +50,10 @@ class IRCBot(AbstractBot):
             self.log.info("Logging with SASL and username {}".format(self.nickname))
             sasl.auth(self.conn, self.nickname, config.IRC_PASSWORD)
             self.conn = self.conn.register(
-                self.nickname, "ident", "LechBot", config.IRC_PASSWORD
+                self.nickname, "ident", config.NICKNAME, config.IRC_PASSWORD
             )
         else:
-            self.conn = self.conn.register(self.nickname, "ident", "LechBot")
+            self.conn = self.conn.register(self.nickname, "ident", config.NICKNAME)
 
         self.conn = self.conn.join(self.chanlist)
         self.conn.queue_timer = self.TIMER
