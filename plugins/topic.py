@@ -39,7 +39,7 @@ class Topic(BotPlugin):
                 info_dict = ydl.extract_info(url, download=False)
                 video_title = info_dict.get("title", None)
             return video_title
-        except:
+        except Exception:
             return ""
 
     @BotPlugin.command(r"\!motd +(https?://[^ ]+)")
