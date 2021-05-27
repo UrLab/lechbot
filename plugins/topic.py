@@ -40,7 +40,7 @@ class Topic(BotPlugin):
                 video_title = info_dict.get("title", None)
             return video_title
         except:
-            return "Title was not found /o\ "
+            return ""
 
     @BotPlugin.command(r"\!motd +(https?://[^ ]+)")
     async def music_of_the_day(self, msg):
