@@ -39,7 +39,6 @@ class Topic(BotPlugin):
             video_title = info_dict.get("title", None)
         return video_title
 
-
     @BotPlugin.command(r"\!motd +(https?://[^ ]+)")
     async def music_of_the_day(self, msg):
         """Change la musique du jour"""
