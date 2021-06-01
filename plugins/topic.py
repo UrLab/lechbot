@@ -34,13 +34,11 @@ class Topic(BotPlugin):
 
     def find_title(self, url):
         ydl_opts = {}
-        try:
-            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                info_dict = ydl.extract_info(url, download=False)
-                video_title = info_dict.get("title", None)
-            return video_title
-        except Exception:
-            return ""
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(url, download=False)
+            video_title = info_dict.get("title", None)
+        return video_title
+
 
     @BotPlugin.command(r"\!motd +(https?://[^ ]+)")
     async def music_of_the_day(self, msg):
