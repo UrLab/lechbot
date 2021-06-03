@@ -9,3 +9,4 @@ pytz
 roman
 pip-tools
 youtube_dl
+sentry-sdk
