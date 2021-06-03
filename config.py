@@ -39,6 +39,8 @@ KOMOOT_CREDENTIALS = {
     "user_id": "fillme",
 }
 
+SENTRY_DSN = None
+
 try:
     from local_config import *  # pragma: no flakes # NOQA
 except ImportError:
