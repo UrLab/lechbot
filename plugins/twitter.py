@@ -31,11 +31,12 @@ class TwitterBasePlugin(BotPlugin):
         urls = [x["expanded_url"] for x in entities]
         url_lines = "\n".join(" -> " + self.bot.text.blue(u) for u in urls)
         f = {
-            "name": self.bot.text.bold("@", tweet["user"]["screen_name"]),
+            "name": self.bot.text.bold("@", tweet["user"]["name"]),
+            "date": self.bot.text.grey(self.bot.naturaltime(tweet["created_at"])),
             "text": tweet["full_text"] if "full_text" in tweet else tweet["text"],
             "urls": url_lines,
         }
-        return "{name}: «{text}»\n{urls}".format(**f)
+        return "{name} {date}: «{text}»\n{urls}".format(**f)
 
 
 class Twitter(TwitterBasePlugin):
