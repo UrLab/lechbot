@@ -6,7 +6,7 @@
 #
 aioamqp==0.14.0
     # via -r requirements.in
-aioauth-client==0.25.6
+aioauth-client==0.25.7
     # via -r requirements.in
 aiohttp==3.7.4.post0
     # via -r requirements.in
@@ -76,7 +76,7 @@ urllib3==1.26.5
     # via sentry-sdk
 yarl==1.6.3
     # via aiohttp
-youtube_dl==2021.6.6
+youtube-dl==2021.6.6
     # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
