@@ -76,7 +76,7 @@ urllib3==1.26.5
     # via sentry-sdk
 yarl==1.6.3
     # via aiohttp
-youtube-dl==2021.5.16
+youtube_dl==2021.6.6
     # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
