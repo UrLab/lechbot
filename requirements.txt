@@ -34,7 +34,7 @@ httpcore==0.13.3
     # via httpx
 httpx==0.18.1
     # via aioauth-client
-humanize==3.7.1
+humanize==3.8.0
     # via -r requirements.in
 idna==3.1
     # via
@@ -76,7 +76,7 @@ urllib3==1.26.5
     # via sentry-sdk
 yarl==1.6.3
     # via aiohttp
-youtube_dl==2021.6.6
+youtube-dl==2021.6.6
     # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
