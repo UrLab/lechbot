@@ -6,7 +6,7 @@
 #
 aioamqp==0.14.0
     # via -r requirements.in
-aioauth-client==0.25.6
+aioauth-client==0.26.0
     # via -r requirements.in
 aiohttp==3.7.4.post0
     # via -r requirements.in
