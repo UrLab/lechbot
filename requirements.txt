@@ -12,7 +12,7 @@ aiohttp==3.7.4.post0
     # via -r requirements.in
 async-timeout==3.0.1
     # via aiohttp
-git+https://github.com/titouanc/asyncirc
+asyncio-irc @ git+https://github.com/titouanc/asyncirc
     # via -r requirements.in
 attrs==21.2.0
     # via aiohttp
@@ -48,7 +48,7 @@ pamqp==2.3.0
     # via aioamqp
 pep517==0.10.0
     # via pip-tools
-pip-tools==6.3.0
+pip-tools==6.3.1
     # via -r requirements.in
 python-dateutil==2.8.2
     # via -r requirements.in
