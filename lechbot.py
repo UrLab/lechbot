@@ -18,7 +18,13 @@ def main(loglevel, klass, options):
     if SENTRY_DSN:
         sentry_sdk.init(SENTRY_DSN, traces_sample_rate=1.0)
 
-    bot = klass(NICKNAME, CHANS, bridge_bots=BRIDGE_BOTS, main_chan=MAIN_CHAN, local_only=options.local)
+    bot = klass(
+        NICKNAME,
+        CHANS,
+        bridge_bots=BRIDGE_BOTS,
+        main_chan=MAIN_CHAN,
+        local_only=options.local,
+    )
 
     @bot.command(r"tg %s$" % NICKNAME)
     def shut_up(msg):

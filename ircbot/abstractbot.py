@@ -73,7 +73,9 @@ class AbstractBot:
         purple = staticmethod(make_style("<purple>", "</purple>"))
         grey = staticmethod(make_style("<grey>", "</grey>"))
 
-    def __init__(self, nickname, channels={}, bridge_bots=set(), main_chan=None, local_only=False):
+    def __init__(
+        self, nickname, channels={}, bridge_bots=set(), main_chan=None, local_only=False
+    ):
         """
         Create a new bot.
 
@@ -154,7 +156,7 @@ class AbstractBot:
         # If this is the case, extract the original author and text that was
         # sent on the other side of the bridge, and use them as user and text
         if user in self.bridge_bots:
-            match = re.match(r'^\s*<\s*([^>]+)\s*>\s*(.+)', text)
+            match = re.match(r"^\s*<\s*([^>]+)\s*>\s*(.+)", text)
             if match:
                 user = match.group(1)
                 text = match.group(2)
