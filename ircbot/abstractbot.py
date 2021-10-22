@@ -73,7 +73,7 @@ class AbstractBot:
         purple = staticmethod(make_style("<purple>", "</purple>"))
         grey = staticmethod(make_style("<grey>", "</grey>"))
 
-    def __init__(self, nickname, channels={}, main_chan=None, local_only=False):
+    def __init__(self, nickname, channels={}, bridge_bots=set(), main_chan=None, local_only=False):
         """
         Create a new bot.
 
@@ -81,6 +81,14 @@ class AbstractBot:
         :type nickname: str.
         :param channels: The plugins to run in every channels the bot connects to.
         :type channels: dict.
+        :param bridge_bots: Nicks of other IRC bots acting as bridges between
+                            the IRC channel and other IM networks (like Discord).
+                            The bots will post messages in the form
+                            "<author_on_other_im> message on other IM".
+                            With this setting, Lechbot will extract the true
+                            username from the <> and strip the message as it
+                            would have been sent directly to IRC by the author
+        :param bridge_bots: set[str]
         :param main_chan: The main channel of this bot. If None, use the first
                           found key of channels.
         :type main_chan: str.
@@ -95,6 +103,7 @@ class AbstractBot:
         self.nickname = nickname
         self.local_only = local_only
         self.connected = False
+        self.bridge_bots = set(bridge_bots)
         chans = {}
         # {chan: [Plugin]} ->
         #    {chan: {'on_join': [func], 'commands': [(regexp, func)], ...}}
@@ -141,6 +150,15 @@ class AbstractBot:
         :param text: The message content.
         :type text: str.
         """
+        # First check if the message was sent over a bridge by a bot.
+        # If this is the case, extract the original author and text that was
+        # sent on the other side of the bridge, and use them as user and text
+        if user in self.bridge_bots:
+            match = re.match(r'^\s*<\s*([^>]+)\s*>\s*(.+)', text)
+            if match:
+                user = match.group(1)
+                text = match.group(2)
+
         target = target.lower()
         is_query = target[0] == "#"
         if is_query:

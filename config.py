@@ -8,6 +8,9 @@ PORT = 6697
 # Main chan for this bot
 MAIN_CHAN = "#titoufaitdestests"
 
+# IRC<->otherIM bridge bots
+BRIDGE_BOTS = ["LeBID"]
+
 # Url to Incubator
 INCUBATOR = "http://localhost:8000/"
 
