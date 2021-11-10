@@ -8,9 +8,11 @@ aioamqp==0.14.0
     # via -r requirements.in
 aioauth-client==0.27.2
     # via -r requirements.in
-aiohttp==3.7.4.post0
+aiohttp==3.8.0
     # via -r requirements.in
-async-timeout==3.0.1
+aiosignal==1.2.0
+    # via aiohttp
+async-timeout==4.0.0a3
     # via aiohttp
 asyncio-irc @ git+https://github.com/titouanc/asyncirc
     # via -r requirements.in
@@ -24,10 +26,14 @@ certifi==2020.12.5
     # via
     #   httpx
     #   sentry-sdk
-chardet==3.0.4
+charset-normalizer==2.0.7
     # via aiohttp
 click==8.0.1
     # via pip-tools
+frozenlist==1.2.0
+    # via
+    #   aiohttp
+    #   aiosignal
 h11==0.12.0
     # via httpcore
 httpcore==0.13.3
@@ -71,7 +77,7 @@ soupsieve==2.2.1
 toml==0.10.2
     # via pep517
 typing-extensions==3.10.0.0
-    # via aiohttp
+    # via async-timeout
 urllib3==1.26.5
     # via sentry-sdk
 wheel==0.36.2
