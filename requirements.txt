@@ -40,7 +40,7 @@ httpcore==0.13.3
     # via httpx
 httpx==0.18.1
     # via aioauth-client
-humanize==3.13.1
+humanize==3.14.0
     # via -r requirements.in
 idna==3.1
     # via
@@ -84,7 +84,7 @@ wheel==0.36.2
     # via pip-tools
 yarl==1.6.3
     # via aiohttp
-youtube_dl==2021.12.17
+youtube-dl==2021.12.17
     # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
