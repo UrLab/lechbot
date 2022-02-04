@@ -1,7 +1,8 @@
 git+https://github.com/titouanc/asyncirc
 aiohttp==3.8.1
 aioamqp
-aioauth-client
+# v0.25.7 and upper breaks tweets urls
+aioauth-client<0.25.7
 humanize
 python-dateutil
 beautifulsoup4
