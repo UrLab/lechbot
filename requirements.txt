@@ -54,7 +54,7 @@ pamqp==2.3.0
     # via aioamqp
 pep517==0.10.0
     # via pip-tools
-pip-tools==6.4.0
+pip-tools==6.5.1
     # via -r requirements.in
 python-dateutil==2.8.2
     # via -r requirements.in
