@@ -4,8 +4,6 @@
 #
 #    pip-compile
 #
-aioamqp==0.14.0
-    # via -r requirements.in
 aioauth-client==0.27.3
     # via -r requirements.in
 aiohttp==3.8.1
@@ -50,8 +48,6 @@ multidict==5.1.0
     # via
     #   aiohttp
     #   yarl
-pamqp==2.3.0
-    # via aioamqp
 pep517==0.10.0
     # via pip-tools
 pip-tools==6.6.0
