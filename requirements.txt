@@ -20,6 +20,8 @@ beautifulsoup4==4.11.1
     # via -r requirements.in
 blinker==1.4
     # via asyncio-irc
+build==0.8.0
+    # via pip-tools
 certifi==2020.12.5
     # via
     #   httpx
@@ -48,10 +50,14 @@ multidict==5.1.0
     # via
     #   aiohttp
     #   yarl
+packaging==21.3
+    # via build
 pep517==0.10.0
-    # via pip-tools
-pip-tools==6.6.0
+    # via build
+pip-tools==6.8.0
     # via -r requirements.in
+pyparsing==3.0.9
+    # via packaging
 python-dateutil==2.8.2
     # via -r requirements.in
 pytz==2022.1
@@ -72,6 +78,8 @@ soupsieve==2.2.1
     # via beautifulsoup4
 toml==0.10.2
     # via pep517
+tomli==2.0.1
+    # via build
 typing-extensions==3.10.0.0
     # via async-timeout
 urllib3==1.26.5
