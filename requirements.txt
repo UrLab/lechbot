@@ -58,7 +58,7 @@ packaging==21.3
     # via build
 pep517==0.10.0
     # via build
-pip-tools==6.9.0
+pip-tools==6.12.0
     # via -r requirements.in
 pyparsing==3.0.9
     # via packaging
@@ -83,8 +83,6 @@ soupsieve==2.2.1
     # via beautifulsoup4
 toml==0.10.2
     # via pep517
-tomli==2.0.1
-    # via build
 typing-extensions==3.10.0.0
     # via async-timeout
 urllib3==1.26.5
