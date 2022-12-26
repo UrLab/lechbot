@@ -87,7 +87,7 @@ typing-extensions==3.10.0.0
     # via async-timeout
 urllib3==1.26.5
     # via sentry-sdk
-wheel==0.36.2
+wheel==0.38.1
     # via pip-tools
 yarl==1.6.3
     # via aiohttp
