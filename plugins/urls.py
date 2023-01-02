@@ -1,3 +1,5 @@
+import html
+import re
 from datetime import datetime, timedelta
 
 from ircbot.plugin import BotPlugin
@@ -27,6 +29,18 @@ class UrlShow(TwitterBasePlugin):
             "GET", url, params={"tweet_mode": "extended"}
         )
         msg.reply(self.format_tweet(tweet))
+
+    @BotPlugin.command(
+        r".*(?P<url>https://(\w+\.\w+)/(@\w+)?@\w+.\w+/(?P<toot_id>\d+))"
+    )
+    async def mastodon_toot(self, msg):
+        url = f"https://mamot.fr/api/v1/statuses/{msg.kwargs['toot_id']}"
+        response = await public_api(url)
+        name = self.bot.text.bold("@", response["account"]["acct"])
+        date = self.bot.text.grey(self.bot.naturaltime(response["created_at"]))
+        text = html.unescape(re.sub("<[^<]+?>", "", response["content"]))
+
+        msg.reply(f"{name} {date}: «{text}»")
 
     @BotPlugin.command(github_repo + r"/(issues|pull)/(\d+)(?:/\w+)?")
     async def github_issue(self, msg):
