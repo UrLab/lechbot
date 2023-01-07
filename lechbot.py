@@ -6,7 +6,7 @@ import humanize
 import sentry_sdk
 
 from chanconfig import CHANS
-from config import MAIN_CHAN, NICKNAME, PORT, SENTRY_DSN, SERVER, BRIDGE_BOTS
+from config import BRIDGE_BOTS, MAIN_CHAN, NICKNAME, PORT, SENTRY_DSN, SERVER
 from ircbot import CLIBot, IRCBot
 
 
@@ -48,7 +48,7 @@ def main(loglevel, klass, options):
 if __name__ == "__main__":
     import argparse
 
-    optparser = argparse.ArgumentParser(description=u"LechBot, le bot de #urlab")
+    optparser = argparse.ArgumentParser(description="LechBot, le bot de #urlab")
     optparser.add_argument(
         "--irc",
         "-i",
