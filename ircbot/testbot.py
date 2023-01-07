@@ -14,8 +14,7 @@ class RunTestBot(AbstractBot):
 
     input_regexp = re.compile(r"(#?[^ ]+) +<([^>]+)> *(.*)")
 
-    @asyncio.coroutine
-    def mainloop(self):
+    async def mainloop(self):
         """
         Main coroutine for the test backend.
         """
