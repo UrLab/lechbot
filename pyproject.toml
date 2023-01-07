@@ -1,0 +1,5 @@
+[tool.pytest.ini_options]
+markers = [
+    "network: marks test as using the network (without needing credentials)",
+    "auth_network: marks test as using the network and needing valid credentials",
+]
