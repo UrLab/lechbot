@@ -87,11 +87,9 @@ async def public_api(endpoint):
             return await response.json()
 
 
-@asyncio.coroutine
-def spaceapi():
+async def spaceapi():
     return public_api(SPACEAPI)
 
 
-@asyncio.coroutine
-def full_pamela():
+async def full_pamela():
     return private_api(FULL_PAMELA, {})
