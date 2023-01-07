@@ -31,10 +31,10 @@ class UrlShow(TwitterBasePlugin):
         msg.reply(self.format_tweet(tweet))
 
     @BotPlugin.command(
-        r".*(?P<url>https://(\w+\.\w+)/(@\w+)?@\w+.\w+/(?P<toot_id>\d+))"
+        r".*(?P<url>https://(?P<domain>\w+\.\w+)/(@\w+)?@\w+.\w+/(?P<toot_id>\d+))"
     )
     async def mastodon_toot(self, msg):
-        url = f"https://mamot.fr/api/v1/statuses/{msg.kwargs['toot_id']}"
+        url = f"https://{msg.kwargs['domain']}/api/v1/statuses/{msg.kwargs['toot_id']}"
         response = await public_api(url)
         name = self.bot.text.bold("@", response["account"]["acct"])
         date = self.bot.text.grey(self.bot.naturaltime(response["created_at"]))
