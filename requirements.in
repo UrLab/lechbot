@@ -1,5 +1,5 @@
 git+https://github.com/titouanc/asyncirc
-aiohttp==3.8.1
+aiohttp
 aioauth-client
 humanize
 python-dateutil
