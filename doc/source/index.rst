@@ -38,7 +38,7 @@ Reply options
 Hilight made easy.
 
 ::
-    
+
     @bot.command(r'\!hello +([^ ]+)')
     def hello_someone(msg):
         msg.reply("Hello " + msg.args[0])
@@ -48,7 +48,7 @@ Hilight made easy.
 Reply in private conversation is also this simple:
 
 ::
-    
+
     @bot.command(r'\!hello +([^ ]+)')
     def hello_someone(msg):
         msg.reply("Hello " + msg.args[0])
@@ -147,4 +147,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

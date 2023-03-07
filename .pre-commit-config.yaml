@@ -1,10 +1,19 @@
 repos:
--   repo: https://github.com/psf/black
-    rev: 22.12.0
-    hooks:
-    -   id: black
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v2.4.0
+  hooks:
+  - id: trailing-whitespace
+  - id: end-of-file-fixer
+    exclude: ^data/
+  - id: check-added-large-files
+    exclude: ^data/
 
--   repo: https://github.com/pre-commit/mirrors-isort
-    rev: v5.10.1
-    hooks:
-    -   id: isort
+- repo: https://github.com/psf/black
+  rev: 22.12.0
+  hooks:
+  - id: black
+
+- repo: https://github.com/pre-commit/mirrors-isort
+  rev: v5.10.1
+  hooks:
+  - id: isort
