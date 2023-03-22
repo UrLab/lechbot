@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 from time import time
 
-import youtube_dl
+from yt_dlp import YoutubeDL
 
 from ircbot.persist import Persistent
 from ircbot.plugin import BotPlugin
@@ -33,10 +33,9 @@ class Topic(BotPlugin):
             self.bot.set_topic(topic_string, msg.chan)
 
     def find_title(self, url):
-        ydl_opts = {}
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        with YoutubeDL() as ydl:
             info_dict = ydl.extract_info(url, download=False)
-            video_title = info_dict.get("title", None)
+            video_title = info_dict.get('title', None)
         return video_title
 
     @BotPlugin.command(r"\!motd +(https?://[^ ]+)")
