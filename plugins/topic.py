@@ -35,7 +35,7 @@ class Topic(BotPlugin):
     def find_title(self, url):
         with YoutubeDL() as ydl:
             info_dict = ydl.extract_info(url, download=False)
-            video_title = info_dict.get('title', None)
+            video_title = info_dict.get("title", None)
         return video_title
 
     @BotPlugin.command(r"\!motd +(https?://[^ ]+)")
