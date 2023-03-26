@@ -7,7 +7,7 @@ beautifulsoup4
 pytz
 roman
 pip-tools
-youtube_dl
+yt-dlp
 sentry-sdk
 
 pytest
