@@ -17,9 +17,7 @@ async-timeout==4.0.2
 asyncio-irc @ git+https://github.com/titouanc/asyncirc
     # via -r requirements.in
 attrs==22.2.0
-    # via
-    #   aiohttp
-    #   pytest
+    # via aiohttp
 beautifulsoup4==4.12.1
     # via -r requirements.in
 blinker==1.5
@@ -75,7 +73,7 @@ pluggy==1.0.0
     # via pytest
 pycryptodomex==3.17
     # via yt-dlp
-pytest==7.2.2
+pytest==7.3.0
     # via
     #   -r requirements.in
     #   pytest-asyncio
