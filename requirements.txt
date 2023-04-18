@@ -18,7 +18,7 @@ asyncio-irc @ git+https://github.com/titouanc/asyncirc
     # via -r requirements.in
 attrs==22.2.0
     # via aiohttp
-beautifulsoup4==4.12.1
+beautifulsoup4==4.12.2
     # via -r requirements.in
 blinker==1.5
     # via asyncio-irc
