@@ -87,7 +87,7 @@ rfc3986[idna2008]==1.5.0
     # via httpx
 roman==4.0
     # via -r requirements.in
-sentry-sdk==1.21.1
+sentry-sdk==1.22.1
     # via -r requirements.in
 six==1.16.0
     # via python-dateutil
