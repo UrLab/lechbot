@@ -85,7 +85,7 @@ pytz==2023.3
     # via -r requirements.in
 rfc3986[idna2008]==1.5.0
     # via httpx
-roman==4.0
+roman==4.1
     # via -r requirements.in
 sentry-sdk==1.23.0
     # via -r requirements.in
