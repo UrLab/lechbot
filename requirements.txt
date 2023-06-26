@@ -73,7 +73,7 @@ pluggy==1.0.0
     # via pytest
 pycryptodomex==3.17
     # via yt-dlp
-pytest==7.3.2
+pytest==7.4.0
     # via
     #   -r requirements.in
     #   pytest-asyncio
