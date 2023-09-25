@@ -106,7 +106,7 @@ wheel==0.40.0
     # via pip-tools
 yarl==1.8.2
     # via aiohttp
-yt-dlp==2023.3.4
+yt-dlp==2023.9.24
     # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
