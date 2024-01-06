@@ -71,7 +71,7 @@ pip-tools==6.13.0
     # via -r requirements.in
 pluggy==1.0.0
     # via pytest
-pycryptodomex==3.17
+pycryptodomex==3.19.1
     # via yt-dlp
 pytest==7.3.2
     # via
@@ -84,7 +84,9 @@ python-dateutil==2.8.2
 pytz==2023.3
     # via -r requirements.in
 rfc3986[idna2008]==1.5.0
-    # via httpx
+    # via
+    #   httpx
+    #   rfc3986
 roman==4.1
     # via -r requirements.in
 sentry-sdk==1.28.1
