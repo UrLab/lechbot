@@ -69,11 +69,11 @@ pep517==0.13.0
     # via build
 pip-tools==6.13.0
     # via -r requirements.in
-pluggy==1.0.0
+pluggy==1.4.0
     # via pytest
 pycryptodomex==3.19.1
     # via yt-dlp
-pytest==7.3.2
+pytest==8.0.0
     # via
     #   -r requirements.in
     #   pytest-asyncio
