@@ -48,7 +48,7 @@ httpx==0.23.2
     # via aioauth-client
 humanize==4.6.0
     # via -r requirements.in
-idna==3.4
+idna==3.7
     # via
     #   anyio
     #   rfc3986
@@ -84,9 +84,7 @@ python-dateutil==2.8.2
 pytz==2023.3
     # via -r requirements.in
 rfc3986[idna2008]==1.5.0
-    # via
-    #   httpx
-    #   rfc3986
+    # via httpx
 roman==4.1
     # via -r requirements.in
 sentry-sdk==1.28.1
