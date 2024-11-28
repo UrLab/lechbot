@@ -1,0 +1,4 @@
+- le lechebot peut se co à irc en utilisant sasl ou sans auth voir _connect dans ircbot.py
+    - les deux possibilitées ne fonctionnent pas en meme temps, parce que si l'import `from asyncirc.plugins import sasl` est présent, la connetion sans sasl ne fonctionne pas
+    - garder la possibilité de faire les deux ? (pour quoi faire)
+    - si on garde les deux, il faut ou faire un import conditionel pour éviter que ça foire quand sasl n'est pas utilisé, ou try d'update la lib asyncirc pour voir si c'est fix

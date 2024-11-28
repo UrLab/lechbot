@@ -40,9 +40,8 @@ def main(loglevel, klass, options):
             "You are in local mode, we will not try to poll from"
             " twitter, the incubator or any other distant api."
         )
-        asyncio.get_event_loop().run_forever()
-    else:
-        asyncio.get_event_loop().run_forever()
+    
+    asyncio.get_event_loop().run_forever()
 
 
 if __name__ == "__main__":

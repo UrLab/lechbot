@@ -1,10 +1,12 @@
 from time import sleep, time
 
-from asyncirc import irc
-from asyncirc.plugins import sasl
-
 import config
 
+from asyncirc import irc
+if hasattr(config, "IRC_PASSWORD") and config.IRC_PASSWORD:
+    from asyncirc.plugins import sasl # if its imported and connection without sasl is used, it crashes
+else:
+    pass # not using sasl
 from .abstractbot import AbstractBot
 from .text import make_style
 
@@ -31,7 +33,7 @@ class IRCBot(AbstractBot):
         self.last_say = time()
 
         self.conn = irc.connect(host, port, use_ssl=True)
-        sleep(4)
+        
 
         @self.conn.on("nickserv-auth-success")
         def auth_success(message_text):
@@ -40,6 +42,8 @@ class IRCBot(AbstractBot):
         @self.conn.on("nickserv-auth-fail")
         def auth_fail(message_text):
             self.log.info("Auth failed (%s)", message_text)
+
+        sleep(4)
 
         if hasattr(config, "IRC_PASSWORD") and config.IRC_PASSWORD:
 

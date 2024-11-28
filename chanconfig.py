@@ -17,6 +17,22 @@ from plugins import (
 )
 
 CHANS = {
+    "#urlab": [
+        Ascii(),
+        Topic(),
+        Space(),
+        React(),
+        TechWednesday(),
+        Reminder(),
+        Twitter(TWITTER_CONFIG),
+        UrlShow(TWITTER_CONFIG),
+        Giphy(GIPHY_KEY),
+        Komoot(),
+        HelpPlugin(),
+        Poll(),
+        LesRepublicains(),
+        Trump(),
+    ],
     "#titoufaitdestests": [
         Ascii(),
         Topic(),
