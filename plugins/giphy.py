@@ -10,7 +10,7 @@ from .helpers import public_api
 class Giphy(BotPlugin):
     def __init__(self, giphy_key):
         self.giphy_key = giphy_key
-        self.default_gif = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbHplbzc4MjQ2MDRjemcxMDZ3dXhvc3N3aTBodW9lcGt6am9iNzYwNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tHIRLHtNwxpjIFqPdV/giphy.gif"
+        self.default_gif = "https://media4.giphy.com/media/d83xlXYBDGp6E/giphy.gif"
 
     def clean_url(self, url):
         m = re.match(r"^(https://.+/giphy\.gif).*", url)
