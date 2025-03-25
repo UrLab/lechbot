@@ -2,3 +2,5 @@
     - les deux possibilitées ne fonctionnent pas en meme temps, parce que si l'import `from asyncirc.plugins import sasl` est présent, la connetion sans sasl ne fonctionne pas
     - garder la possibilité de faire les deux ? (pour quoi faire)
     - si on garde les deux, il faut ou faire un import conditionel pour éviter que ça foire quand sasl n'est pas utilisé, ou try d'update la lib asyncirc pour voir si c'est fix
+
+- dans les args du bot, faire un object channel pour réduire la complexité de la structure passée en argument chans

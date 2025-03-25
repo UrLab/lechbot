@@ -6,9 +6,11 @@ from ircbot.plugin import BotPlugin
 from .helpers import public_api
 
 
+
 class Giphy(BotPlugin):
     def __init__(self, giphy_key):
         self.giphy_key = giphy_key
+        self.default_gif = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbHplbzc4MjQ2MDRjemcxMDZ3dXhvc3N3aTBodW9lcGt6am9iNzYwNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tHIRLHtNwxpjIFqPdV/giphy.gif"
 
     def clean_url(self, url):
         m = re.match(r"^(https://.+/giphy\.gif).*", url)
@@ -20,7 +22,12 @@ class Giphy(BotPlugin):
         url = "http://api.giphy.com/v1/gifs/search?api_key={}&q={}"
         q = query.replace(" ", "+")
         r = await public_api(url.format(self.giphy_key, q))
-        chosen = random.choice(r["data"])
+        gif_data = r["data"]
+        
+        if not gif_data:
+            return self.default_gif
+        
+        chosen = random.choice(gif_data)
         return self.clean_url(chosen["images"]["original"]["url"])
 
     @BotPlugin.command(r"\!gif (#[\w\d_-]+) (.+)")

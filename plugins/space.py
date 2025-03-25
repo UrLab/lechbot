@@ -1,6 +1,3 @@
-import asyncio
-from time import time
-
 from ircbot.plugin import BotPlugin
 
 from .helpers import private_api, spaceapi
@@ -25,7 +22,7 @@ class Space(BotPlugin):
         else:
             msg.reply("Le hackerspace a fermé " + when)
 
-    @BotPlugin.command(r"sudo \!(open|close)")
+    @BotPlugin.command(r"\!hs (open|close)", need_sudo=True)
     async def change_spacestatus(self, msg):
         """Change le statut du hackerspace en cas de dysfonctionnement de HAL"""
         status = msg.args[0]

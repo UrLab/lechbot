@@ -14,10 +14,12 @@ from plugins import (
     Trump,
     Twitter,
     UrlShow,
+    Sudo
 )
 
 CHANS = {
     "#urlab": [
+        Sudo(),
         Ascii(),
         Topic(),
         Space(),
@@ -34,6 +36,7 @@ CHANS = {
         Trump(),
     ],
     "#titoufaitdestests": [
+        Sudo(),
         Ascii(),
         Topic(),
         Space(),

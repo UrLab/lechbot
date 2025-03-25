@@ -1,6 +1,6 @@
 import asyncio
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 from operator import itemgetter
 from time import time
 
@@ -55,7 +55,7 @@ class Reminder(BotPlugin):
         Rappelle les évènements proches
         """
         events = await public_api("/events/")
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
 
         for event in events["results"]:
             if not event.get("start", None):

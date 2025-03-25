@@ -11,3 +11,4 @@ from .topic import Topic
 from .trump import Trump
 from .twitter import Twitter
 from .urls import UrlShow
+from .sudo import Sudo

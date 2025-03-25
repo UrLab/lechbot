@@ -88,7 +88,7 @@ async def public_api(endpoint):
 
 
 async def spaceapi():
-    return public_api(SPACEAPI)
+    return await public_api(SPACEAPI)
 
 
 async def full_pamela():

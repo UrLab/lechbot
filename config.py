@@ -12,7 +12,7 @@ MAIN_CHAN = "#titoufaitdestests"
 BRIDGE_BOTS = ["LeBID"]
 
 # Url to Incubator
-INCUBATOR = "http://localhost:8000/"
+INCUBATOR = "https://urlab.be/"
 
 # Secret string to perform private API calls to incubator.
 # Go to [INCUBATOR]/admin/space/privateapikey/ to obtain one

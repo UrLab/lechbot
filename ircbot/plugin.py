@@ -10,17 +10,22 @@ class BotPlugin:
         self.chan = chan
         callbacks = {
             "commands": [],
+            "sudo_commands": [],
             "on_join": [],
             "on_connect": [],
         }
         for member in map(partial(getattr, self), dir(self)):
             if hasattr(member, "_botplugin_special_tag_pattern"):
                 pattern = member._botplugin_special_tag_pattern
-                callbacks["commands"].append((re.compile(pattern), member))
+                if hasattr(member, "_need_sudo") and member._need_sudo:
+                    callbacks["sudo_commands"].append((re.compile(pattern), member))
+                else:                
+                    callbacks["commands"].append((re.compile(pattern), member))
             elif hasattr(member, "_botplugin_special_tag_onjoin"):
                 callbacks["on_join"].append(member)
             elif hasattr(member, "_botplugin_special_tag_onconnect"):
                 callbacks["on_connect"].append(member)
+                
         callbacks["commands"].sort(key=lambda P: P[1]._special_tag_id)
         return callbacks
 
@@ -31,7 +36,7 @@ class BotPlugin:
         self.bot.set_topic(text, target=self.chan)
 
     @classmethod
-    def command(cls, pattern):
+    def command(cls, pattern, need_sudo=False):
         cls.comment_tag_id += 1
         # Here's the trick. We keep a static id, which is incremented any time
         # we declare a new command, so that we know in which order they have
@@ -41,6 +46,7 @@ class BotPlugin:
         def wrapper(func):
             func._botplugin_special_tag_pattern = pattern
             func._special_tag_id = cls.comment_tag_id
+            func._need_sudo = need_sudo
             return func
 
         return wrapper

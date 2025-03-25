@@ -52,7 +52,6 @@ class Message:
             text = self.user + ": " + text
         self.bot.say(text, target=target, strip_text=strip_text)
 
-
 class AbstractBot:
     """
     Base class for all bots backends. Define the common behaviour for the bot,
@@ -99,7 +98,7 @@ class AbstractBot:
         :type local_only: bool
 
         :example:
-            >>> Bot("Bot", {'#chan': AwesomePlugin()})
+            >>> Bot("Bot", {'#chan': [AwesomePlugin()]})
         """
         self.main_chan = main_chan
         self.nickname = nickname
@@ -118,6 +117,7 @@ class AbstractBot:
                     chans[chan][k] = chans[chan].get(k, []) + list(v)
         self.channels = chans
         self.log = logging.getLogger(__name__)
+        
 
     def spawn(self, maybe_coroutine):
         """
@@ -141,7 +141,7 @@ class AbstractBot:
                 self.spawn(callback())
         return self
 
-    def feed(self, user, target, text):
+    def feed(self, user, target, text, sudo=False):
         """
         Feed a new message into the bot
 
@@ -155,18 +155,27 @@ class AbstractBot:
         # First check if the message was sent over a bridge by a bot.
         # If this is the case, extract the original author and text that was
         # sent on the other side of the bridge, and use them as user and text
+
         if user in self.bridge_bots:
-            match = re.match(r"^\s*<\s*([^>]+)\s*>\s*(.+)", text)
+            self.log.debug("msg from bridge")
+            match = re.match(r"^\s*\[\s*([^>]+)\s*\]\s*(.+)", text)
             if match:
+                self.log.debug("command from bridge" + user)
                 user = match.group(1)
                 text = match.group(2)
+            
 
         target = target.lower()
         is_query = target[0] == "#"
+        commands = []
         if is_query:
-            commands = self.channels.get(target, {}).get("commands", [])
+            channel_callbacks = self.channels.get(target, {})
+            commands = channel_callbacks.get("commands", [])
+            if sudo:
+                commands.extend(channel_callbacks.get("sudo_commands", []))
         else:
             commands = self.channels.get("query", {}).get("commands", [])
+
         for (pattern, callback) in commands:
             match = pattern.match(text)
             if match:
