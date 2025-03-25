@@ -157,10 +157,9 @@ class AbstractBot:
         # sent on the other side of the bridge, and use them as user and text
 
         if user in self.bridge_bots:
-            self.log.debug("msg from bridge")
-            match = re.match(r"^\s*\[\s*([^>]+)\s*\]\s*(.+)", text)
+            match = re.match(r"^\s*\[\s*([^>]+)\s*\]:\s*(.+)", text)
             if match:
-                self.log.debug("command from bridge" + user)
+                self.log.debug("message from bridged user" + user)
                 user = match.group(1)
                 text = match.group(2)
             
