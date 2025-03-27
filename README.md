@@ -6,12 +6,16 @@
 
 ```bash
 # build l'image
-docker build -t lechebot .
+podman build -t lechebot .
 # pour usage rapide:
 # --rm le docker est supr au moment de le stop
-docker run --rm lechebot
-docker run -it --rm lechebot bash # run bash to manually start lechbot and choose comand line options
+podman run --rm --volume ./data:/lechebot/data lechebot
+podman run -it --rm --volume ./data:/lechebot/data lechebot bash # run bash to manually start lechbot and choose comand line options
 ```
+
+## data
+
+the data/ folder is shared with the container
 
 ## Installation en local
 ```bash
@@ -27,7 +31,7 @@ $ pip install -r requirements.txt
 Create a file called local_config.py (in the same directory as config.py), and edit config values as needed.
 In order to test the bot locally, you might be interested in runnning an instance of [UrLab's Incubator](https://github.com/UrLab/incubator).
 
-to use the sudo plugin you need to add a sudoers.json files in the data/
+to use the `sudo` plugin you need to add a sudoers.json files in the data/ dir
 
 sudoers.json:
 ```json
@@ -35,7 +39,7 @@ sudoers.json:
     "users": []
 }
 ```
-with the user names of the sudoers in the users array (you can allways add some later using the bot command or modifying the file)
+with the user names of the sudoers in the users array (you can allways add some later using the bot command or by modifying the file)
 
 ### Test in command line only
 
