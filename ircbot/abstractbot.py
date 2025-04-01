@@ -2,6 +2,7 @@ import asyncio
 import logging
 import re
 from datetime import datetime, timedelta
+from .command import Command, ECommandType
 
 import humanize
 
@@ -51,6 +52,8 @@ class Message:
         if hilight:
             text = self.user + ": " + text
         self.bot.say(text, target=target, strip_text=strip_text)
+
+
 
 class AbstractBot:
     """
@@ -117,7 +120,7 @@ class AbstractBot:
                     chans[chan][k] = chans[chan].get(k, []) + list(v)
         self.channels = chans
         self.log = logging.getLogger(__name__)
-        
+
 
     def spawn(self, maybe_coroutine):
         """
@@ -162,25 +165,26 @@ class AbstractBot:
                 self.log.debug("message from bridged user" + user)
                 user = match.group(1)
                 text = match.group(2)
-            
+
 
         target = target.lower()
         is_query = target[0] == "#"
         commands = []
         if is_query:
             channel_callbacks = self.channels.get(target, {})
-            commands = channel_callbacks.get("commands", [])
+            commands = channel_callbacks.get(ECommandType.COMMAND, [])
             if sudo:
-                commands.extend(channel_callbacks.get("sudo_commands", []))
+                commands.extend(channel_callbacks.get(ECommandType.SUDO_COMMAND, []))
         else:
-            commands = self.channels.get("query", {}).get("commands", [])
+            commands = self.channels.get("query", {}).get(ECommandType.COMMAND, [])
 
-        for (pattern, callback) in commands:
-            match = pattern.match(text)
+        for command in commands:
+            match = command.regex.match(text)
             if match:
                 evt = user, target, text, match.groups(), match.groupdict()
-                self.log.debug("Match for %s" % pattern)
-                self.spawn(callback(Message(self, *evt)))
+                self.log.debug("Match for %s" % command.regex)
+                self.log.debug("running " + command.callback.__str__())
+                self.spawn(command.callback(Message(self, *evt)))
                 break
 
     def joined(self, chan):
@@ -192,8 +196,8 @@ class AbstractBot:
         :type chan: str.
         """
         callbacks = self.channels.get(chan, {})
-        for callback in callbacks.get("on_join", []):
-            self.spawn(callback())
+        for command in callbacks.get(ECommandType.JOIN, []):
+            self.spawn(command.callback())
 
     def say(self, text, target=None, strip_text=True):
         """

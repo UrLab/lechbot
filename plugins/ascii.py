@@ -6,6 +6,7 @@ from ircbot.plugin import BotPlugin
 class Ascii(BotPlugin):
     @BotPlugin.command(r"\!penisbird")
     def penisbird(self, msg):
+        """exactement ce a quoi vous vous attendez"""
         msg.reply(" < )\n ( \\\n  X\n8====D", strip_text=False)
 
     @BotPlugin.command(r"\!train")
@@ -19,6 +20,7 @@ class Ascii(BotPlugin):
 
     @BotPlugin.command(r"\!whoIsGod")
     def whoIsGod(self, msg):
+        """https://templeos.org/"""
         msg.reply(
             "  _ _____ _ _            \n"
             " (_)_   _(_) |_ ___ _  _ \n"
@@ -33,6 +35,7 @@ class Ascii(BotPlugin):
 
     @BotPlugin.command(r"\!rose")
     def rose(self, msg):
+        """cultivons notre jardin"""
         msg.reply("--------{---(@\n", strip_text=False)
 
     @BotPlugin.command(r"\!happybithday")
@@ -47,6 +50,7 @@ class Ascii(BotPlugin):
 
     @BotPlugin.command(r"\!dice")
     def dice(self, msg):
+        """faire dice roll"""
         msg.reply("[::]\n", strip_text=False)
 
     @BotPlugin.command(r"\!spider")
@@ -55,6 +59,7 @@ class Ascii(BotPlugin):
 
     @BotPlugin.command(r"\!huhu")
     def huhu(self, msg):
+        """huhu"""
         msg.reply("█▬█ █▄█ █▬█ █▄█\n", strip_text=False)
 
     @BotPlugin.command(r"\!hugme")
@@ -76,6 +81,7 @@ class Ascii(BotPlugin):
 
     @BotPlugin.command(r"\!thisslowos")
     def thisslowos(self, msg):
+        """windaube"""
         msg.reply(
             "             _.-;;-._\n"
             "      '-..-'|   ||   |\n"
@@ -105,6 +111,7 @@ class Ascii(BotPlugin):
 
     @BotPlugin.command(r"\!key")
     def key(self, msg):
+        """master password of all urlab services"""
         msg.reply(
             "    .--.\n"
             "   /.-. '----------.\n"
@@ -115,6 +122,7 @@ class Ascii(BotPlugin):
 
     @BotPlugin.command(r"\!letsplaychess")
     def letsplaychess(self, msg):
+        """please implement it"""
         msg.reply(
             "♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜\n"
             "♟ ♟ ♟ ♟ ♟ ♟ ♟ ♟\n"
@@ -140,5 +148,6 @@ class Ascii(BotPlugin):
 
     @BotPlugin.command(r"\!throwdice")
     def throwdice(self, msg):
+        """unfaire dice roll"""
         dices = "⚀⚁⚂⚃⚄⚅"
         msg.reply("%s\n" % choice(dices), strip_text=False)

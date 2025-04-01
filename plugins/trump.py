@@ -67,7 +67,7 @@ def read_json():
 class Trump(BotPlugin):
     probas = read_json()
 
-    @BotPlugin.command(r"\!trump$")
+    @BotPlugin.command(r"\!trump")
     def train(self, msg):
         if date.today().day == 7 and date.today().month == 11:
             msg.reply(

@@ -15,14 +15,14 @@ class UrlShow(TwitterBasePlugin):
     """
 
     komoot_url = rf".*{KOMOOT_URL}"
-    github_repo = r".*https?://github\.com/([\w\d_\.-]+)/([\w\d_\.-]+)"
+    github_repo_pattern = r".*https?://github\.com/([\w\d_\.-]+)/([\w\d_\.-]+)"
     urlab_url = r".*https?://urlab\.be"
 
     def check_mark(self, ok=True):
         res = self.bot.text.green("✓") if ok else self.bot.text.red("✗")
         return self.bot.text.bold(res)
 
-    @BotPlugin.command(r".*https?://(?:mobile\.)?twitter.com/[^/]+/status/(\d+)")
+    @BotPlugin.command(r".*https?://(?:mobile\.)?twitter.com/[^/]+/status/(\d+)", help=False)
     async def twitter_status(self, msg):
         url = "statuses/show/{}.json".format(msg.args[0])
         tweet = await self.twitter_request(
@@ -32,7 +32,7 @@ class UrlShow(TwitterBasePlugin):
 
     @BotPlugin.command(
         r".*(?P<url>https://(?P<domain>\w+\.\w+)/(@\w+)?@\w+.\w+/(?P<toot_id>\d+))"
-    )
+        , help=False)
     async def mastodon_toot(self, msg):
         url = f"https://{msg.kwargs['domain']}/api/v1/statuses/{msg.kwargs['toot_id']}"
         response = await public_api(url)
@@ -42,7 +42,7 @@ class UrlShow(TwitterBasePlugin):
 
         msg.reply(f"{name} {date}: «{text}»")
 
-    @BotPlugin.command(github_repo + r"/(issues|pull)/(\d+)(?:/\w+)?")
+    @BotPlugin.command(github_repo_pattern + r"/(issues|pull)/(\d+)(?:/\w+)?", help=False)
     async def github_issue(self, msg):
         user, repo, kind, id = msg.args
         args = user, repo, id
@@ -60,7 +60,7 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{author} {when} {number}: «{title}» {labels}"
         msg.reply(fmt.format(**issue))
 
-    @BotPlugin.command(github_repo + r"/commit/([0-9a-fA-F]{,40})")
+    @BotPlugin.command(github_repo_pattern + r"/commit/([0-9a-fA-F]{,40})", help=False)
     async def github_commit(self, msg):
         url = "https://api.github.com/repos/{}/{}/commits/{}".format(*msg.args)
         commit = await public_api(url)
@@ -77,7 +77,7 @@ class UrlShow(TwitterBasePlugin):
         }
         msg.reply("{author} {when} «{title}» ({stats})".format(**f))
 
-    @BotPlugin.command(github_repo + r"/releases(?:/tag)/([^ ]+)")
+    @BotPlugin.command(github_repo_pattern + r"/releases(?:/tag)/([^ ]+)", help=False)
     async def github_release(self, msg):
         url = "https://api.github.com/repos/{}/{}/releases/tags/{}".format(*msg.args)
         release = await public_api(url)
@@ -104,7 +104,7 @@ class UrlShow(TwitterBasePlugin):
             files = ""
         msg.reply(f"«{name}» {tag} {status} {release_date} by @{author} {files}")
 
-    @BotPlugin.command(github_repo)
+    @BotPlugin.command(github_repo_pattern, help=False)
     async def github_repo(self, msg):
         url = "https://api.github.com/repos/{}/{}".format(*msg.args)
         repo = await public_api(url)
@@ -114,7 +114,7 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{name} {language} {stars}: «{description}»"
         msg.reply(fmt.format(**repo))
 
-    @BotPlugin.command(r".*https?://gist\.github\.com/[^/]+/([0-9a-z]+)")
+    @BotPlugin.command(r".*https?://gist\.github\.com/[^/]+/([0-9a-z]+)", help=False)
     async def github_gist(self, msg):
         url = "https://api.github.com/gists/{}".format(msg.args[0])
         gist = await public_api(url)
@@ -129,7 +129,7 @@ class UrlShow(TwitterBasePlugin):
 
     @BotPlugin.command(
         r".*https?://www\.reddit\.com/r/([\w\d_\.-]+)/comments/([\w\d_\.-]+)/([\w\d_\.-]+)/"
-    )
+        , help=False)
     async def reddit(self, msg):
         url = "https://api.reddit.com/r/{}/comments/{}".format(*msg.args[:2])
         data = await public_api(url)
@@ -140,7 +140,7 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{author} {upvote_ratio}: «{title}» {url}"
         msg.reply(fmt.format(**post))
 
-    @BotPlugin.command(r".*https?://news\.ycombinator\.com/item\?id=(\d+)")
+    @BotPlugin.command(r".*https?://news\.ycombinator\.com/item\?id=(\d+)", help=False)
     async def hackernews(self, msg):
         url = "https://hacker-news.firebaseio.com/v0/item/"
         post = await public_api(url + "{}.json".format(msg.args[0]))
@@ -177,17 +177,17 @@ class UrlShow(TwitterBasePlugin):
             fmt = "«{title}» [{solved} {score}] ({date}) {tags}\n -> {url}"
             msg.reply(fmt.format(**ctx))
 
-    @BotPlugin.command(r".*https?://stackoverflow\.com\/questions\/(\d+)\/[^ /]+")
+    @BotPlugin.command(r".*https?://stackoverflow\.com\/questions\/(\d+)\/[^ /]+", help=False)
     async def stackoverflow(self, msg):
         await self.generic_stackexchange(msg, q_id=msg.args[0])
 
     @BotPlugin.command(
         r".*https?://([^\.]+)\.stackexchange\.com\/questions\/(\d+)\/[^ /]+"
-    )
+        , help=False)
     async def stackexchange(self, msg):
         await self.generic_stackexchange(msg, q_id=msg.args[1], site=msg.args[0])
 
-    @BotPlugin.command(urlab_url + r"/(projects/\d+)")
+    @BotPlugin.command(urlab_url + r"/(projects/\d+)", help=False)
     async def urlab_project(self, msg):
         project_status = {
             "p": self.bot.text.yellow,  # Proposition
@@ -202,7 +202,7 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{title}: {desc}"
         msg.reply(fmt.format(**proj))
 
-    @BotPlugin.command(urlab_url + r"/(events/\d+)")
+    @BotPlugin.command(urlab_url + r"/(events/\d+)", help=False)
     async def urlab_event(self, msg):
         event_status = {
             "r": self.bot.text.bold,  # Ready
@@ -220,7 +220,7 @@ class UrlShow(TwitterBasePlugin):
         fmt = "{title} ({when} :: {place})"
         msg.reply(fmt.format(**evt))
 
-    @BotPlugin.command(komoot_url + r"/highlight/(\d+)")
+    @BotPlugin.command(komoot_url + r"/highlight/(\d+)", help=False)
     async def komoot_highlight(self, msg):
         # Point: https://www.komoot.fr/highlight/753971
         # Segment: https://www.komoot.fr/highlight/2032270
@@ -242,7 +242,7 @@ class UrlShow(TwitterBasePlugin):
 
         msg.reply(text)
 
-    @BotPlugin.command(komoot_url + r"/tour/(\d+)")
+    @BotPlugin.command(komoot_url + r"/tour/(\d+)", help=False)
     async def komoot_tour(self, msg):
         # Done: https://www.komoot.fr/tour/229408387
         # Planned: https://www.komoot.fr/tour/226867974
