@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from time import time
+from time import time, sleep
 
 from yt_dlp import YoutubeDL
 
@@ -34,9 +34,13 @@ class Topic(BotPlugin):
 
     def find_title(self, url):
         with YoutubeDL() as ydl:
-            info_dict = ydl.extract_info(url, download=False)
-            video_title = info_dict.get("title", None)
-        return video_title
+            try:
+                info_dict = ydl.extract_info(url, download=False)
+                video_title = info_dict.get("title", None)
+                return video_title
+            except:
+                self.bot.log.exception("could not find title")
+                return None
 
     @BotPlugin.command(r"\!motd +(https?://[^ ]+)")
     async def music_of_the_day(self, msg):
@@ -63,14 +67,14 @@ class Topic(BotPlugin):
         except ApiError as e:
             if e.error_type == "TRY_AGAIN_TOMORROW":
                 msg.reply("La musique du jour a déjà été changée aujourd'hui !")
+                return
 
         self.bot.log.info("Music of the day changed by " + msg.user)
         self.make_topic(msg, new_music=music_url)
-        try:
-            title = self.find_title(music_url)
-        except:
-            self.bot.log.exception("Fetch MotD title")
-            title = ""
+
+        title = self.find_title(music_url)
+        title = title if title else music_url
+
         fmt = "tu viens de changer la musique du jour >>> d*-*b <<< {}"
         msg.reply(fmt.format(self.bot.text.bold(title)), hilight=True)
 

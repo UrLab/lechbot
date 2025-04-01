@@ -47,6 +47,8 @@ with the user names of the sudoers in the users array (you can allways add some 
 
 For a minimal setup, add `--local` so that lechbot won't try to poll from twitter or other distant APIs.
 
+Il peut être nécessaire de mettre a jour yt-dlp pour que !motd fonctionne correctement
+
 ### Connect to irc
 
 `$ python lechbot.py --irc [ --debug ]`
