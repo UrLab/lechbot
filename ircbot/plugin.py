@@ -94,16 +94,14 @@ class HelpPlugin(BotPlugin):
         if chan not in self.bot.channels:
             msg.reply("Pas de commande sur le chan %s" % chan, hilight=True)
         else:
-            msg.reply("Je te réponds en privé ;)", hilight=True)
             commands = self.bot.channels.get(chan, {}).get(ECommandType.COMMAND, [])
-            msg.reply(self.bot.text.red("Aide pour " + chan), private=True)
+            msg.reply(self.bot.text.red("Aide pour " + chan))
             for command in commands:
                 if not command.public: # dont show not public commands, usefull to hide some internal commands
                     continue
                 cmd = self.bot.text.bold(command.regex.pattern.replace("\\", ""))
                 reply = cmd
                 if command.callback.__doc__:
-
                     doc = command.callback.__doc__.strip()
                     if doc:
                         reply += ": " + doc
