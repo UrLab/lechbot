@@ -89,13 +89,12 @@ class HelpPlugin(BotPlugin):
     @BotPlugin.command(r"\!help +(#[^ ]+)")
     def tell_help_for_chan(self, msg):
         """Affiche la liste des commandes pour un chan"""
-        print("help")
         chan = msg.args[0].lower()
         if chan not in self.bot.channels:
             msg.reply("Pas de commande sur le chan %s" % chan, hilight=True)
         else:
             commands = self.bot.channels.get(chan, {}).get(ECommandType.COMMAND, [])
-            msg.reply(self.bot.text.red("Aide pour " + chan))
+            msg.reply(self.bot.text.red("Aide pour " + chan), private=True)
             for command in commands:
                 if not command.public: # dont show not public commands, usefull to hide some internal commands
                     continue
@@ -110,6 +109,5 @@ class HelpPlugin(BotPlugin):
     @BotPlugin.command(r"\!help")
     def tell_help(self, msg):
         """Affiche la liste des commandes du chan où c'est demandé"""
-        print("hello ?" + self.__str__())
         msg.args = [self.chan]
         self.tell_help_for_chan(msg)

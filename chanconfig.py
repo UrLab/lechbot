@@ -35,7 +35,7 @@ CHANS = {
         LesRepublicains(),
         Trump(),
     ],
-    "#titoufaitdestests": [
+    "#vincentdev": [
         Sudo(),
         Ascii(),
         Topic(),
