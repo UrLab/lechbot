@@ -9,8 +9,8 @@
 podman build -t lechebot .
 # pour usage rapide:
 # --rm le docker est supr au moment de le stop
-podman run -d --rm --volume ./data:/lechebot/data lechebot
-podman run -it --rm --volume ./data:/lechebot/data lechebot bash # run bash to manually start lechbot and choose comand line options
+podman run --name lechebot -d --rm --volume ./data:/lechebot/data lechebot
+podman run -it --rm --volume ./data:/lechebot/data lechebot bash # run bash to manually start lechbot and choose comand line options
 ```
 
 ## data
